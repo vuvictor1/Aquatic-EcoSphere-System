@@ -46,7 +46,7 @@ try: # Main loop to read and store the temperature value
             fahrenheit = celsius * 9 / 5 + 32 # convert to Fahrenheit
             fahrenheit = round(fahrenheit, 2)  # round to 2 decimal places
             print(f"Temperature: {fahrenheit:.2f} °F")
-            insert_data_into_db('temperature_sensor', fahrenheit) # insert the temps in database
+            insert_data_into_db('temperature', fahrenheit) # insert the temps in database
 
         except Exception as e: # catch any errors
             print(f"Error reading temperature: {e}")
