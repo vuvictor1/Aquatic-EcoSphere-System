@@ -44,6 +44,7 @@ try: # Main loop to read and store the temperature value
         try:
             celsius = sensor.get_temperature() # get the temperature in Celsius
             fahrenheit = celsius * 9 / 5 + 32 # convert to Fahrenheit
+            fahrenheit = round(fahrenheit, 2)  # round to 2 decimal places
             print(f"Temperature: {fahrenheit:.2f} °F")
             insert_data_into_db('temperature_sensor', fahrenheit) # insert the temps in database
 

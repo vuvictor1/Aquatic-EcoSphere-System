@@ -55,6 +55,7 @@ def insert_data_into_db(sensor_type, value): # Function to insert data into the 
 try: # Main loop to read and store the TDS value
     while True: 
         tds = read_tds() 
+        tds = round(tds, 2) # round TDS to 2 decimal places
         print(f'TDS: {tds:.2f} ppm') 
         insert_data_into_db('tds_sensor', tds) # insert the TDS data
         time.sleep(2)
