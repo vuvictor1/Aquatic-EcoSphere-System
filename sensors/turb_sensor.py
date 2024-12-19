@@ -54,7 +54,7 @@ try:
         turbidity = round(turbidity, 2) # round to 2 decimal places
 
         print(f"Turbidity: {turbidity:.2f} NTU")  
-        insert_data_into_db('turbidity_sensor', turbidity) # insert turbidity data indatabase
+        insert_data_into_db('turbidity', turbidity) # insert turbidity data indatabase
         
         time.sleep(2)  
 finally:
