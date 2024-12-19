@@ -1,0 +1,1 @@
+The scripts here are used on the Raspberry Pi to collect sensor data, which is then uploaded to a MySQL database. Local .env file is required.
