@@ -57,7 +57,7 @@ try: # Main loop to read and store the TDS value
         tds = read_tds() 
         tds = round(tds, 2) # round TDS to 2 decimal places
         print(f'TDS: {tds:.2f} ppm') 
-        insert_data_into_db('tds_sensor', tds) # insert the TDS data
+        insert_data_into_db('total dissolved solids', tds) # insert the TDS data
         time.sleep(2)
 finally:
     connection.close() # close the connection when done
