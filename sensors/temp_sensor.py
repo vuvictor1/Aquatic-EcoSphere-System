@@ -32,7 +32,7 @@ sensor = W1ThermSensor() # Create a sensor object
 def insert_data_into_db(sensor_type, value): # Function to insert data into the database
     try:
         with connection.cursor() as cursor: # cursor object
-            sql = "INSERT INTO sensor_data (sensor_type, value, timestamp) VALUES (%s, %s, NOW())" # SQL query
+            sql = "INSERT INTO sensor_data (sensor_type, value, timestamp) VALUES (%s, %s, DATE_FORMAT(NOW(), '%H:%i'))" # SQL query
             cursor.execute(sql, (sensor_type, value)) # execute the query
             connection.commit() # commit the changes
 
@@ -51,6 +51,6 @@ try: # Main loop to read and store the temperature value
         except Exception as e: # catch any errors
             print(f"Error reading temperature: {e}")
 
-        time.sleep(2) # wait 2secs before reading again
+        time.sleep(600) # wait 10min before reading again
 finally:
     connection.close() # close connection when done
