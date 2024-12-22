@@ -32,7 +32,7 @@ sensor = W1ThermSensor() # Create a sensor object
 def insert_data_into_db(sensor_type, value): # Function to insert data into the database
     try:
         with connection.cursor() as cursor: # cursor object
-            sql = "INSERT INTO sensor_data (sensor_type, value, timestamp) VALUES (%s, %s, DATE_FORMAT(NOW(), '%H:%i'))" # SQL query
+            sql = "INSERT INTO sensor_data (sensor_type, value, timestamp) VALUES (%s, %s, NOW())" # sql query
             cursor.execute(sql, (sensor_type, value)) # execute the query
             connection.commit() # commit the changes
 
@@ -44,8 +44,7 @@ try: # Main loop to read and store the temperature value
         try:
             celsius = sensor.get_temperature() # get the temperature in Celsius
             fahrenheit = celsius * 9 / 5 + 32 # convert to Fahrenheit
-            fahrenheit = round(fahrenheit, 2)  # round to 2 decimal places
-            print(f"Temperature: {fahrenheit:.2f} °F")
+            print(f"Temperature: {fahrenheit} °F")
             insert_data_into_db('temperature', fahrenheit) # insert the temps in database
 
         except Exception as e: # catch any errors
