@@ -41,7 +41,7 @@ def read_turbidity(analog_voltage): # Uses analog voltage to find turbidity
 def insert_data_into_db(sensor_type, value): # Function to insert data into the database
     try:
         with connection.cursor() as cursor:
-            sql = "INSERT INTO sensor_data (sensor_type, value, timestamp) VALUES (%s, %s, NOW())"
+            sql = "INSERT INTO sensor_data (sensor_type, value, timestamp) VALUES (%s, %s, DATE_FORMAT(NOW(), '%H:%i'))"
             cursor.execute(sql, (sensor_type, value)) # Execute the query
             connection.commit() # commit to the database
     except Exception as e:
@@ -52,10 +52,8 @@ try:
         voltage = channel_3.voltage # read voltage from the sensor
         turbidity = read_turbidity(voltage) # read turbidity value
         turbidity = round(turbidity, 2) # round to 2 decimal places
-
         print(f"Turbidity: {turbidity:.2f} NTU")  
         insert_data_into_db('turbidity', turbidity) # insert turbidity data indatabase
-        
-        time.sleep(2)  
+        time.sleep(600) # sleep for 10 minutes  
 finally:
     connection.close() # Close connection when done

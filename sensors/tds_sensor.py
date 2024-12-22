@@ -45,7 +45,7 @@ def read_tds(): # Function to read the TDS value
 def insert_data_into_db(sensor_type, value): # Function to insert data into the database
     try: 
         with connection.cursor() as cursor: # Cursor object 
-            sql = "INSERT INTO sensor_data (sensor_type, value, timestamp) VALUES (%s, %s, NOW())" # the SQL query to insert data
+            sql = "INSERT INTO sensor_data (sensor_type, value, timestamp) VALUES (%s, %s, DATE_FORMAT(NOW(), '%H:%i'))" # the SQL query to insert data
             cursor.execute(sql, (sensor_type, value)) # execute the query
             connection.commit() # commit the changes to database
 
@@ -58,6 +58,6 @@ try: # Main loop to read and store the TDS value
         tds = round(tds, 2) # round TDS to 2 decimal places
         print(f'TDS: {tds:.2f} ppm') 
         insert_data_into_db('total dissolved solids', tds) # insert the TDS data
-        time.sleep(2)
+        time.sleep(600) # wait 10min before reading again
 finally:
     connection.close() # close the connection when done
