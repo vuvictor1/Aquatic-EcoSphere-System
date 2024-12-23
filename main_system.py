@@ -89,7 +89,8 @@ def generate_graphs():  # Function to generate graphs for each sensor type
                 'tooltip': {
                     'trigger': 'axis',
                     'textStyle': {  # Add text style for tooltip
-                        'color': '#FFFFFF'  # Set tooltip text color to white
+                        # Set tooltip text color to white
+                        'color': '#rgb(16, 15, 109)'
                     }
                 },
                 'xAxis': {
