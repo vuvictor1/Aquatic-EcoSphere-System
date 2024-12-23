@@ -55,7 +55,7 @@ app.layout = dmc.Container([  # Create a container for the app layout
     ]),
     dcc.Interval(  # Interval component for automatic updates
         id='interval-component',
-        interval=60*15*1000,  # Refresh every 15 minutes (in milliseconds)
+        interval=5*1*1000,  # Refresh every 15 minutes (in milliseconds)
         n_intervals=0  # Initial value
     ),
     # Button for manual refresh
