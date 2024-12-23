@@ -3,12 +3,30 @@ from dash import Dash, dash_table, dcc, callback, Output, Input
 import pandas as pd  # Importing pandas for data manipulation
 import plotly.express as px  # Importing Plotly Express for creating visualizations
 import dash_mantine_components as dmc
+from sqlalchemy import create_engine  # Import SQLAlchemy's create_engine
 from datetime import datetime
 
-# Load the dataset from a local file or a public URL into a pandas DataFrame
-df = pd.read_csv('sensor_data.csv')  # Ensure the path is correct
+# Step 1: Create a SQLAlchemy engine
+db_config = {
+    'user': 'root',
+    'password': 'ZAJDlxblTEhBCDhOsvxwwQDXjWWCfPoR',
+    'host': 'autorack.proxy.rlwy.net',
+    'port': 22542,
+    'database': 'railway'
+}
+# Create the connection string
+connection_string = f"mysql+mysqlconnector://{db_config['user']}:{
+    db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['database']}"
+engine = create_engine(connection_string)
 
-# Convert the timestamp column to datetime
+# Step 2: Query the table
+query = "SELECT * FROM sensor_data"  # Replace with your table name
+df = pd.read_sql(query, engine)  # Use the SQLAlchemy engine
+
+# Step 3: Close the engine connection (optional, as it is managed by SQLAlchemy)
+engine.dispose()
+
+# Step 4: Convert the timestamp column to datetime
 df['timestamp'] = pd.to_datetime(df['timestamp'])
 
 # Initialize the Dash application
@@ -19,7 +37,6 @@ app.layout = dmc.Container([  # Create a container for the app layout
     dmc.Title('Sensor Data Visualization',  # Title of the app
               color="blue", size="h3"),  # Set title color and size
     dmc.RadioGroup(  # Create a radio button group for user input
-        # Create radio buttons for turbidity, temperature, and total dissolved solids
         [dmc.Radio('Turbidity', value='turbidity'),
          dmc.Radio('Temperature', value='temperature'),
          dmc.Radio('Total Dissolved Solids', value='total dissolved solids')],
@@ -29,9 +46,7 @@ app.layout = dmc.Container([  # Create a container for the app layout
     ),
     dcc.DatePickerRange(  # Date picker for selecting date range
         id='date-picker-range',
-        # Set the start date to the minimum date in the dataset
         start_date=df['timestamp'].min().date(),
-        # Set the end date to the maximum date in the dataset
         end_date=df['timestamp'].max().date(),
         display_format='YYYY-MM-DD'  # Format for displaying the date
     ),
@@ -39,28 +54,23 @@ app.layout = dmc.Container([  # Create a container for the app layout
         dmc.Col([  # First column for the data table
             dash_table.DataTable(
                 id='data-table',  # Add ID for the data table
-                # Create a data table from the DataFrame
                 data=df.to_dict('records'),
                 page_size=12,  # Set the number of rows per page
-                # Enable horizontal scrolling if needed
                 style_table={'overflowX': 'auto'}
             )
         ], span=6),  # This column will take up 6 out of 12 grid spaces
         dmc.Col([  # Second column for the graph
-            # Placeholder for the graph, initially empty
             dcc.Graph(figure={}, id='graph-placeholder')
         ], span=6),  # This column will also take up 6 out of 12 grid spaces
     ]),
-], fluid=True)  # Set the container to be fluid, allowing it to resize with the window
+], fluid=True)  # Set the container to be fluid
 
 # Define a callback function to update the graph and table based on user input
 
 
 @callback(
     Output(component_id='graph-placeholder', component_property='figure'),
-    # Output for the data table
     Output(component_id='data-table', component_property='data'),
-    # Input from the radio group
     Input(component_id='sensor-type-radio', component_property='value'),
     Input(component_id='date-picker-range',
           component_property='start_date'),  # Start date input
