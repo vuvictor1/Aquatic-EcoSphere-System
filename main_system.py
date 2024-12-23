@@ -3,27 +3,12 @@
 # Description: Main system file that connects to the MySQL database for sensor data
 # Copyright (C) 2024 Victor V. Vu and Jordan Morris
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
-import pymysql
-from dotenv import load_dotenv
-import os
-from urllib.parse import urlparse
 from nicegui import ui
+from db_connection import create_connection  # Import the connection function
 
-load_dotenv()  # Load environment variables from .env
-
-# Parse database URL from .env file
-db_url = os.getenv('DATABASE_URL')
-parsed_url = urlparse(db_url)
 
 # Establish MySQL connection
-connection = pymysql.connect(
-    host=parsed_url.hostname,
-    user=parsed_url.username,
-    password=parsed_url.password,
-    database=parsed_url.path[1:],
-    port=parsed_url.port,
-    autocommit=True  # enable autocommit to refresh data
-)
+connection = create_connection()
 
 
 def get_latest_data():  # Function to extract current latest sensor data
