@@ -6,30 +6,14 @@ Description: This script reads the TDS (Total Dissolved Solids) value from the T
 Copyright (C) 2024 Victor V. Vu and Jordan Morris
 License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 """
-import time
 import board
 import busio
 import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
-import pymysql
-from dotenv import load_dotenv
-import os
-from urllib.parse import urlparse
+from connect_timer import create_connection
+from connect_timer import control_timer
 
-load_dotenv() # Load environment variables from .env file
-
-# Parse the database URL
-db_url = os.getenv('DATABASE_URL')
-parsed_url = urlparse(db_url)
-
-connection = pymysql.connect( # Connect to MySQL
-    host=parsed_url.hostname,
-    user=parsed_url.username,
-    password=parsed_url.password,
-    database=parsed_url.path[1:],  
-    port=parsed_url.port
-)
-
+connection = create_connection() # Create a connection to the database
 i2c = busio.I2C(board.SCL, board.SDA) # I2C interface that reads from GPIO pins SCL and SDA
 ads = ADS.ADS1115(i2c) # ADS1115 object that converts the analog signal to digital
 channel_1 = AnalogIn(ads, ADS.P1) # Read from analog input channel on Pin 1
@@ -57,6 +41,6 @@ try: # Main loop to read and store the TDS value
         tds = read_tds() 
         print(f'TDS: {tds} ppm') 
         insert_data_into_db('total dissolved solids', tds) # insert the TDS data
-        time.sleep(600) # wait 10min before reading again
+        control_timer() # wait for a speficied time
 finally:
     connection.close() # close the connection when done
