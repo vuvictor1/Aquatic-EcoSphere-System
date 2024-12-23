@@ -48,6 +48,57 @@ def update_data(): # Function to update sensor labels
             labels[sensor_type][1].set_text(f"Value: {value['value']:.2f}") # cut off to 2 decimal places (not rounded)
             labels[sensor_type][2].set_text(f"Timestamp: {value['timestamp']}")
 
+def get_all_data(): # Function to extract all sensor data
+    with connection.cursor() as cursor: # cursor object to interact with db
+        # Query to get all data for each sensor type
+        cursor.execute(""" 
+            SELECT sensor_type, value, timestamp
+            FROM sensor_data
+            ORDER BY timestamp
+        """)
+        results = cursor.fetchall() # store all results
+        sensor_data = {}
+        for row in results:
+            sensor_type = row[0]
+            if sensor_type not in sensor_data:
+                sensor_data[sensor_type] = []
+            sensor_data[sensor_type].append({'value': row[1], 'timestamp': row[2]})
+        return sensor_data 
+
+def generate_graphs(): # Function to generate graphs for each sensor type
+    data = get_all_data() # get all data
+    if data: # If data is not empty
+        for sensor_type, values in data.items(): # Iterate through each sensor to generate graph
+            timestamps = [entry['timestamp'] for entry in values]
+            sensor_values = [entry['value'] for entry in values]
+            ui.echart({
+                'title': {
+                    'text': sensor_type
+                },
+                'tooltip': {
+                    'trigger': 'axis'
+                },
+                'xAxis': {
+                    'type': 'category',
+                    'data': timestamps
+                },
+                'yAxis': {
+                    'type': 'value'
+                },
+                'series': [{
+                    'data': sensor_values,
+                    'type': 'line',
+                    'name': sensor_type,
+                    'smooth': True,
+                    'areaStyle': {}
+                }],
+                'toolbox': {
+                    'feature': {
+                        'saveAsImage': {}
+                    }
+                }
+            }).style('width: 400px; height: 300px;')
+
 # Inject CSS to change the background color of the entire page
 ui.add_head_html("""
 <style>
@@ -79,6 +130,10 @@ with ui.row().style('display: flex; justify-content: center; align-items: center
             value_label = ui.label(f'{sensor_type} Value: Loading...').style('color: white;')
             timestamp_label = ui.label(f'{sensor_type} Timestamp: Loading...').style('color: white;')
             labels[sensor_type] = (sensor_label, value_label, timestamp_label)
+
+# Generate Graphs below the sensor cards
+with ui.row().style('display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px; padding: 20px; width: 100%;'):
+    generate_graphs()
 
 # Footer
 with ui.footer().style('background-color: #3AAFA9; display: flex; justify-content: center; align-items: center;'):
