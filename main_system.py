@@ -6,7 +6,6 @@
 from nicegui import ui
 from db_connection import create_connection  # Import the connection function
 
-
 # Establish MySQL connection
 connection = create_connection()
 
@@ -180,5 +179,5 @@ with ui.footer().style('background-color: #3AAFA9; display: flex; justify-conten
     ui.label('Copyright 2024 of Victor Vu and Jordan Morris').style(
         'color: #FFFFFF; font-size: 16px;')
 
-ui.timer(600, update_data)  # update data every 600ms
+ui.timer(10, update_data)  # update data every 10s just for testing
 ui.run()  # run the UI
