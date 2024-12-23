@@ -54,65 +54,35 @@ ui.add_head_html("""
     body {
         background-color: #3B3B3B; /* Change to black */
     }
-    .dashboard-header {
-        background-color: #3AAFA9;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 20px;
-    }
-    .dashboard-footer {
-        background-color: #3AAFA9;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 10px 20px;
-    }
-    .dashboard-content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 20px;
-        padding: 20px;
-    }
-    .sensor-card {
-        background-color: #2C2C2C;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        color: white;
-        width: 200px;
-    }
 </style>
 """)
 
 # Header
-with ui.header().classes('dashboard-header'):
-    ui.label('Homepage').style('text-align: center; color: white; font-size: 24px;')
+with ui.header().style('background-color: #3AAFA9;'):
+    ui.label('Homepage').style('color: white; font-size: 24px;')
     ui.button(on_click=lambda: right_drawer.toggle(), icon='menu').props('flat color=white')
 
 # Right Drawer
-with ui.right_drawer(fixed=False).style('background-color: #6C757D').props('bordered') as right_drawer:
-    ui.label('Recommendation:').style('text-align: center; color: white;')
+with ui.right_drawer(fixed=False).style('background-color: #6C757D; display: flex; align-items: center;').props('bordered') as right_drawer:
+    ui.label('[Recommendations]').style('color: white; font-size: 18px;')
 
 # Main Content
-with ui.row().classes('dashboard-content'):
-    ui.markdown('<h1 style="color:white; text-align: center;">Welcome to Aquatic EcoSphere System</h1>')
+with ui.row().style('display: flex; justify-content: center; align-items: center; width: 100%;'):
+    ui.label('Welcome to Aquatic EcoSphere System').style('color: white; font-size: 32px; text-align: center;')
 
 # Sensor Cards
 labels = {} # dictionary to store sensor labels
-with ui.row().classes('dashboard-content'):
+with ui.row().style('display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px; padding: 20px; width: 100%;'):
     for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']: 
-        with ui.column().classes('sensor-card'):
-            sensor_label = ui.label(f'Sensor Type: {sensor_type}').style('color: white; font-weight: bold;')
+        with ui.column().style('background-color: #2C2C2C; padding: 20px; border-radius: 10px; text-align: center; color: white; width: 200px; margin: 10px;'):
+            sensor_label = ui.label(f'{sensor_type}').style('color: white; font-weight: bold; ')
             value_label = ui.label(f'{sensor_type} Value: Loading...').style('color: white;')
             timestamp_label = ui.label(f'{sensor_type} Timestamp: Loading...').style('color: white;')
             labels[sensor_type] = (sensor_label, value_label, timestamp_label)
 
 # Footer
-with ui.footer().classes('dashboard-footer'):
-    ui.label('Copyright 2024 of Victor Vu and Jordan Morris').style('text-align: center; font-weight: bold; color: white;')
+with ui.footer().style('background-color: #3AAFA9; display: flex; justify-content: center; align-items: center;'):
+    ui.label('Copyright 2024 of Victor Vu and Jordan Morris').style('color: white; font-size: 16px;')
 
 ui.timer(600, update_data) # update data every 600ms
 ui.run() # run the UI
