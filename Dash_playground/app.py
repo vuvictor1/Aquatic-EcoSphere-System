@@ -63,6 +63,13 @@ app.layout = dmc.Container([  # Create a container for the app layout
             dcc.Graph(figure={}, id='graph-placeholder')
         ], span=6),  # This column will also take up 6 out of 12 grid spaces
     ]),
+    dcc.Interval(  # Interval component for automatic updates
+        id='interval-component',
+        interval=10*1000,  # Refresh every 10 seconds (in milliseconds)
+        n_intervals=0  # Initial value
+    ),
+    # Button for manual refresh
+    dmc.Button("Refresh Data", id='refresh-button')
 ], fluid=True)  # Set the container to be fluid
 
 # Define a callback function to update the graph and table based on user input
@@ -72,13 +79,16 @@ app.layout = dmc.Container([  # Create a container for the app layout
     Output(component_id='graph-placeholder', component_property='figure'),
     Output(component_id='data-table', component_property='data'),
     Input(component_id='sensor-type-radio', component_property='value'),
-    Input(component_id='date-picker-range',
-          component_property='start_date'),  # Start date input
-    Input(component_id='date-picker-range',
-          component_property='end_date')  # End date input
-)
-# Function to update the graph and table
-def update_graph(selected_sensor, start_date, end_date):
+    Input(component_id='date-picker-range', component_property='start_date'),
+    Input(component_id='date-picker-range', component_property='end_date'),
+    Input('interval-component', 'n_intervals'),  # Input from the interval
+    Input('refresh-button', 'n_clicks'))  # Input from the refresh button
+def update_graph(selected_sensor, start_date, end_date, n_intervals, n_clicks):
+    # Re-query the database to get the latest data
+    df = pd.read_sql(query, engine)  # Re-fetch data from the database
+    df['timestamp'] = pd.to_datetime(
+        df['timestamp'])  # Convert timestamp again
+
     # Convert start and end dates to datetime objects
     start_date_dt = pd.to_datetime(start_date)
     end_date_dt = pd.to_datetime(end_date)
