@@ -15,6 +15,13 @@ engine = get_database_connection()
 # Fetch initial data
 df = fetch_sensor_data(engine)
 
+# Get the earliest and latest timestamps
+earliest_timestamp = df['timestamp'].min().date()
+latest_timestamp = df['timestamp'].max().date()
+
+# Set the end date to the day after the latest timestamp
+end_date = latest_timestamp + pd.Timedelta(days=1)
+
 # Define the layout of the app
 app.layout = dmc.Container([  # Create a container for the app layout
     dmc.Title('Sensor Data Visualization',  # Title of the app
@@ -29,8 +36,8 @@ app.layout = dmc.Container([  # Create a container for the app layout
     ),
     dcc.DatePickerRange(  # Date picker for selecting date range
         id='date-picker-range',
-        start_date=df['timestamp'].min().date(),
-        end_date=df['timestamp'].max().date(),
+        start_date=earliest_timestamp,  # Set to the earliest timestamp
+        end_date=end_date,  # Set to the day after the latest timestamp
         display_format='YYYY-MM-DD'  # Format for displaying the date
     ),
     dmc.Grid([  # Create a grid layout for organizing components
