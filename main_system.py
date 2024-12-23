@@ -48,44 +48,71 @@ def update_data(): # Function to update sensor labels
             labels[sensor_type][1].set_text(f"Value: {value['value']:.2f}") # cut off to 2 decimal places (not rounded)
             labels[sensor_type][2].set_text(f"Timestamp: {value['timestamp']}")
 
-# Work in progress Top and Right Navigation Bar -----------------------------------------------------------
 # Inject CSS to change the background color of the entire page
-#ui.add_head_html("""
-#<style>
-#    body {
-#        background-color: #333330; /* Change to black */
-#    }
-#</style>
-#""")
+ui.add_head_html("""
+<style>
+    body {
+        background-color: #3B3B3B; /* Change to black */
+    }
+    .dashboard-header {
+        background-color: #3AAFA9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+    }
+    .dashboard-footer {
+        background-color: #3AAFA9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 20px;
+    }
+    .dashboard-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 20px;
+    }
+    .sensor-card {
+        background-color: #2C2C2C;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        color: white;
+        width: 200px;
+    }
+</style>
+""")
 
+# Header
+with ui.header().classes('dashboard-header'):
+    ui.label('Homepage').style('text-align: center; color: white; font-size: 24px;')
+    ui.button(on_click=lambda: right_drawer.toggle(), icon='menu').props('flat color=white')
 
-with ui.header(elevated=True).style('background-color: #3874c8').classes('items-center justify-between'):
-        ui.label('HEADER')
-        ui.button(on_click=lambda: right_drawer.toggle(), icon='menu').props('flat color=white')
+# Right Drawer
+with ui.right_drawer(fixed=False).style('background-color: #6C757D').props('bordered') as right_drawer:
+    ui.label('Recommendation:').style('text-align: center; color: white;')
 
-with ui.right_drawer(fixed=False).style('background-color: #ebf1fa').props('bordered') as right_drawer:
-        ui.label('RIGHT DRAWER')
+# Main Content
+with ui.row().classes('dashboard-content'):
+    ui.markdown('<h1 style="color:white; text-align: center;">Welcome to Aquatic EcoSphere System</h1>')
 
-# Header elements
-with ui.row().style('display: flex; justify-content: center; align-items: center; width: 100%;'): # Center the row
-    ui.markdown('# Welcome to Aquatic EcoSphere System') # header
-
-with ui.footer().style('background-color: #3874c8'):
-        ui.label('FOOTER')
-#----------------------------------------------------------------------------------------------------------
-
+# Sensor Cards
 labels = {} # dictionary to store sensor labels
-
-#-Work in progress Dash Board------------------------------------------------------------------------------------
-# Create UI elements for each sensor type
-with ui.row().style('display: flex; justify-content: center; align-items: center; width: 100%;'): # Center the row
+with ui.row().classes('dashboard-content'):
     for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']: 
-        with ui.column().style('display: flex; align-items: center;'): # Center the column
-            sensor_label = ui.label(f'Sensor Type: {sensor_type}') # create sensor label
-            value_label = ui.label(f'{sensor_type} Value: Loading...') # create value label
-            timestamp_label = ui.label(f'{sensor_type} Timestamp: Loading...') # create timestamp label
-            labels[sensor_type] = (sensor_label, value_label, timestamp_label) # store labels in dictionary
-#----------------------------------------------------------------------------------------------------------
+        with ui.column().classes('sensor-card'):
+            sensor_label = ui.label(f'Sensor Type: {sensor_type}').style('color: white; font-weight: bold;')
+            value_label = ui.label(f'{sensor_type} Value: Loading...').style('color: white;')
+            timestamp_label = ui.label(f'{sensor_type} Timestamp: Loading...').style('color: white;')
+            labels[sensor_type] = (sensor_label, value_label, timestamp_label)
+
+# Footer
+with ui.footer().classes('dashboard-footer'):
+    ui.label('Copyright 2024 of Victor Vu and Jordan Morris').style('text-align: center; font-weight: bold; color: white;')
 
 ui.timer(600, update_data) # update data every 600ms
 ui.run() # run the UI
