@@ -65,6 +65,18 @@ def generate_graphs():  # Function to generate graphs for each sensor type
         for sensor_type, values in data.items():  # Iterate through each sensor to generate graph
             timestamps = [entry['timestamp'] for entry in values]
             sensor_values = [entry['value'] for entry in values]
+
+            # Calculate min and max for auto-scaling
+            # If there are sensor values, calculate the minimum value and subtract 5 for padding,
+            # ensuring it does not go below 0. If there are no values, set min_value to 0.
+            min_value = round(max(min(sensor_values) - 5, 0),
+                              1) if sensor_values else 0
+
+            # If there are sensor values, calculate the maximum value and add 5 for padding.
+            # If there are no values, set max_value to 100 as a default.
+            max_value = round(max(sensor_values) + 5,
+                              1) if sensor_values else 100
+
             ui.echart({
                 'title': {
                     'text': sensor_type,
@@ -88,6 +100,8 @@ def generate_graphs():  # Function to generate graphs for each sensor type
                 },
                 'yAxis': {
                     'type': 'value',
+                    'min': min_value,  # Set minimum value for y-axis
+                    'max': max_value,  # Set maximum value for y-axis
                     'axisLabel': {  # Add axis label style
                         'color': '#FFFFFF'  # Set y-axis label color to white
                     }
