@@ -10,7 +10,6 @@ from db_connection import create_connection  # Import the connection function
 # Establish MySQL connection
 connection = create_connection()
 
-
 def get_latest_data():  # Function to extract current latest sensor data
     with connection.cursor() as cursor:  # cursor object to interact with db
         cursor.execute("SET time_zone = '-08:00';")  # set timezone to PST
@@ -62,73 +61,77 @@ def get_all_data():  # Function to extract all sensor data
 def generate_graphs():  # Function to generate graphs for each sensor type
     data = get_all_data()  # get all data
     if data:  # If data is not empty
-        for sensor_type, values in data.items():  # Iterate through each sensor to generate graph
-            timestamps = [entry['timestamp'] for entry in values]
-            sensor_values = [entry['value'] for entry in values]
+        # Define the desired order of sensor types
+        desired_order = ['total dissolved solids', 'turbidity', 'temperature']
+        for sensor_type in desired_order:  # Iterate through each sensor in the desired order
+            if sensor_type in data:
+                values = data[sensor_type]
+                timestamps = [entry['timestamp'] for entry in values]
+                sensor_values = [entry['value'] for entry in values]
 
-            # Define padding as a percentage of the range
-            padding = 0.1
-            if sensor_values:
-                # Calculate the minimum value for the graph
-                # Subtract padding from the minimum sensor value to ensure the graph has some space
-                min_sensor_value = min(sensor_values)
-                max_sensor_value = max(sensor_values)
-                # Calculate the range of sensor values
-                range_value = max_sensor_value - min_sensor_value
+                # Define padding as a percentage of the range
+                padding = 0.1
+                if sensor_values:
+                    # Calculate the minimum value for the graph
+                    # Subtract padding from the minimum sensor value to ensure the graph has some space
+                    min_sensor_value = min(sensor_values)
+                    max_sensor_value = max(sensor_values)
+                    # Calculate the range of sensor values
+                    range_value = max_sensor_value - min_sensor_value
 
-                # Calculate the minimum value with padding, ensuring it does not go below 0
-                min_value = round(
-                    max(min_sensor_value - (range_value * padding), 0), 1)
+                    # Calculate the minimum value with padding, ensuring it does not go below 0
+                    min_value = round(
+                        max(min_sensor_value - (range_value * padding), 0), 1)
 
-                # Calculate the maximum value with padding
-                max_value = round(max_sensor_value +
-                                  (range_value * padding), 1)
-            else:
-                min_value = 0
-                max_value = 100
+                    # Calculate the maximum value with padding
+                    max_value = round(max_sensor_value +
+                                      (range_value * padding), 1)
+                else:
+                    min_value = 0
+                    max_value = 100
 
-            ui.echart({
-                'title': {
-                    'text': sensor_type,
-                    'textStyle': {  # Add text style for title
-                        'color': '#FFFFFF'  # Set title text color to white
+                ui.echart({
+                    'title': {
+                        'text': sensor_type,
+                        'textStyle': {  # Add text style for title
+                            'color': '#FFFFFF'  # Set title text color to white
+                        }
+                    },
+                    'tooltip': {
+                        'trigger': 'axis',
+                        'textStyle': {  # Add text style for tooltip
+                            # Set tooltip text color to white
+                            'color': '#rgb(16, 15, 109)'
+                        }
+                    },
+                    'xAxis': {
+                        'type': 'category',
+                        'data': timestamps,
+                        'axisLabel': {  # Add axis label style
+                            'color': '#FFFFFF'  # Set x-axis label color to white
+                        }
+                    },
+                    'yAxis': {
+                        'type': 'value',
+                        'min': min_value,  # Set minimum value for y-axis
+                        'max': max_value,  # Set maximum value for y-axis
+                        'axisLabel': {  # Add axis label style
+                            'color': '#FFFFFF'  # Set y-axis label color to white
+                        }
+                    },
+                    'series': [{
+                        'data': sensor_values,
+                        'type': 'line',
+                        'name': sensor_type,
+                        'smooth': True,
+                        'areaStyle': {}
+                    }],
+                    'toolbox': {
+                        'feature': {
+                            'saveAsImage': {}
+                        }
                     }
-                },
-                'tooltip': {
-                    'trigger': 'axis',
-                    'textStyle': {  # Add text style for tooltip
-                        # Set tooltip text color to white
-                        'color': '#rgb(16, 15, 109)'
-                    }
-                },
-                'xAxis': {
-                    'type': 'category',
-                    'data': timestamps,
-                    'axisLabel': {  # Add axis label style
-                        'color': '#FFFFFF'  # Set x-axis label color to white
-                    }
-                },
-                'yAxis': {
-                    'type': 'value',
-                    'min': min_value,  # Set minimum value for y-axis
-                    'max': max_value,  # Set maximum value for y-axis
-                    'axisLabel': {  # Add axis label style
-                        'color': '#FFFFFF'  # Set y-axis label color to white
-                    }
-                },
-                'series': [{
-                    'data': sensor_values,
-                    'type': 'line',
-                    'name': sensor_type,
-                    'smooth': True,
-                    'areaStyle': {}
-                }],
-                'toolbox': {
-                    'feature': {
-                        'saveAsImage': {}
-                    }
-                }
-            }).style('width: 400px; height: 300px;')
+                }).style('width: 400px; height: 300px;')
 
 
 # Inject CSS to change the background color of the entire page
