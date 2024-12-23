@@ -15,11 +15,11 @@ def get_latest_data():  # Function to extract current latest sensor data
     with connection.cursor() as cursor:  # cursor object to interact with db
         cursor.execute("SET time_zone = '-08:00';")  # set timezone to PST
         # Query to get latest data for each sensor type
-        cursor.execute(""" 
+        cursor.execute("""
             SELECT sensor_type, value, timestamp
             FROM sensor_data
             WHERE (sensor_type, timestamp) IN (
-                SELECT sensor_type, MAX(timestamp) 
+                SELECT sensor_type, MAX(timestamp)
                 FROM sensor_data
                 GROUP BY sensor_type
             )
@@ -43,7 +43,7 @@ def get_all_data():  # Function to extract all sensor data
     with connection.cursor() as cursor:  # cursor object to interact with db
         cursor.execute("SET time_zone = '-08:00';")  # set timezone to PST
         # Query to get all data for each sensor type
-        cursor.execute(""" 
+        cursor.execute("""
             SELECT sensor_type, value, timestamp
             FROM sensor_data
             ORDER BY timestamp
@@ -66,16 +66,26 @@ def generate_graphs():  # Function to generate graphs for each sensor type
             timestamps = [entry['timestamp'] for entry in values]
             sensor_values = [entry['value'] for entry in values]
 
-            # Calculate min and max for auto-scaling
-            # If there are sensor values, calculate the minimum value and subtract 5 for padding,
-            # ensuring it does not go below 0. If there are no values, set min_value to 0.
-            min_value = round(max(min(sensor_values) - 5, 0),
-                              1) if sensor_values else 0
+            # Define padding as a percentage of the range
+            padding = 0.1
+            if sensor_values:
+                # Calculate the minimum value for the graph
+                # Subtract padding from the minimum sensor value to ensure the graph has some space
+                min_sensor_value = min(sensor_values)
+                max_sensor_value = max(sensor_values)
+                # Calculate the range of sensor values
+                range_value = max_sensor_value - min_sensor_value
 
-            # If there are sensor values, calculate the maximum value and add 5 for padding.
-            # If there are no values, set max_value to 100 as a default.
-            max_value = round(max(sensor_values) + 5,
-                              1) if sensor_values else 100
+                # Calculate the minimum value with padding, ensuring it does not go below 0
+                min_value = round(
+                    max(min_sensor_value - (range_value * padding), 0), 1)
+
+                # Calculate the maximum value with padding
+                max_value = round(max_sensor_value +
+                                  (range_value * padding), 1)
+            else:
+                min_value = 0
+                max_value = 100
 
             ui.echart({
                 'title': {
