@@ -1,36 +1,19 @@
-# Import necessary libraries
+# app.py
 from dash import Dash, dash_table, dcc, callback, Output, Input
 import pandas as pd  # Importing pandas for data manipulation
 import plotly.express as px  # Importing Plotly Express for creating visualizations
 import dash_mantine_components as dmc
-from sqlalchemy import create_engine  # Import SQLAlchemy's create_engine
-from datetime import datetime
-
-# Step 1: Create a SQLAlchemy engine
-db_config = {
-    'user': 'root',
-    'password': 'ZAJDlxblTEhBCDhOsvxwwQDXjWWCfPoR',
-    'host': 'autorack.proxy.rlwy.net',
-    'port': 22542,
-    'database': 'railway'
-}
-# Create the connection string
-connection_string = f"mysql+mysqlconnector://{db_config['user']}:{
-    db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['database']}"
-engine = create_engine(connection_string)
-
-# Step 2: Query the table
-query = "SELECT * FROM sensor_data"  # Replace with your table name
-df = pd.read_sql(query, engine)  # Use the SQLAlchemy engine
-
-# Step 3: Close the engine connection (optional, as it is managed by SQLAlchemy)
-engine.dispose()
-
-# Step 4: Convert the timestamp column to datetime
-df['timestamp'] = pd.to_datetime(df['timestamp'])
+# Import functions from database.py
+from database import get_database_connection, fetch_sensor_data
 
 # Initialize the Dash application
 app = Dash()
+
+# Create a database connection
+engine = get_database_connection()
+
+# Fetch initial data
+df = fetch_sensor_data(engine)
 
 # Define the layout of the app
 app.layout = dmc.Container([  # Create a container for the app layout
@@ -65,7 +48,7 @@ app.layout = dmc.Container([  # Create a container for the app layout
     ]),
     dcc.Interval(  # Interval component for automatic updates
         id='interval-component',
-        interval=10*1000,  # Refresh every 10 seconds (in milliseconds)
+        interval=60*15*1000,  # Refresh every 15 minutes (in milliseconds)
         n_intervals=0  # Initial value
     ),
     # Button for manual refresh
@@ -84,10 +67,8 @@ app.layout = dmc.Container([  # Create a container for the app layout
     Input('interval-component', 'n_intervals'),  # Input from the interval
     Input('refresh-button', 'n_clicks'))  # Input from the refresh button
 def update_graph(selected_sensor, start_date, end_date, n_intervals, n_clicks):
-    # Re-query the database to get the latest data
-    df = pd.read_sql(query, engine)  # Re-fetch data from the database
-    df['timestamp'] = pd.to_datetime(
-        df['timestamp'])  # Convert timestamp again
+    # Re-fetch data from the database
+    df = fetch_sensor_data(engine)  # Use the function from database.py
 
     # Convert start and end dates to datetime objects
     start_date_dt = pd.to_datetime(start_date)
