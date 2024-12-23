@@ -27,6 +27,7 @@ connection = pymysql.connect(
 
 def get_latest_data(): # Function to extract current latest sensor data
     with connection.cursor() as cursor: # cursor object to interact with db
+        cursor.execute("SET time_zone = '-08:00';") # set timezone to PST
         # Query to get latest data for each sensor type
         cursor.execute(""" 
             SELECT sensor_type, value, timestamp
@@ -49,6 +50,7 @@ def update_data(): # Function to update sensor labels
             labels[sensor_type][2].set_text(f"Timestamp: {value['timestamp']}")
 
 def get_all_data(): # Function to extract all sensor data
+    cursor.execute("SET time_zone = '-08:00';") # set timezone to PST
     with connection.cursor() as cursor: # cursor object to interact with db
         # Query to get all data for each sensor type
         cursor.execute(""" 
