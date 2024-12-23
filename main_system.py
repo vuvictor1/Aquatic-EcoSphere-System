@@ -56,6 +56,7 @@ def update_data():  # Function to update sensor labels
 
 def get_all_data():  # Function to extract all sensor data
     with connection.cursor() as cursor:  # cursor object to interact with db
+        cursor.execute("SET time_zone = '-08:00';")  # set timezone to PST
         # Query to get all data for each sensor type
         cursor.execute(""" 
             SELECT sensor_type, value, timestamp
