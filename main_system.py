@@ -48,8 +48,35 @@ def update_data(): # Function to update sensor labels
             labels[sensor_type][1].set_text(f"Value: {value['value']:.2f}") # cut off to 2 decimal places (not rounded)
             labels[sensor_type][2].set_text(f"Timestamp: {value['timestamp']}")
 
+# Work in progress Top and Right Navigation Bar -----------------------------------------------------------
+# Inject CSS to change the background color of the entire page
+#ui.add_head_html("""
+#<style>
+#    body {
+#        background-color: #333330; /* Change to black */
+#    }
+#</style>
+#""")
+
+
+with ui.header(elevated=True).style('background-color: #3874c8').classes('items-center justify-between'):
+        ui.label('HEADER')
+        ui.button(on_click=lambda: right_drawer.toggle(), icon='menu').props('flat color=white')
+
+with ui.right_drawer(fixed=False).style('background-color: #ebf1fa').props('bordered') as right_drawer:
+        ui.label('RIGHT DRAWER')
+
+# Header elements
+with ui.row().style('display: flex; justify-content: center; align-items: center; width: 100%;'): # Center the row
+    ui.markdown('# Welcome to Aquatic EcoSphere System') # header
+
+with ui.footer().style('background-color: #3874c8'):
+        ui.label('FOOTER')
+#----------------------------------------------------------------------------------------------------------
+
 labels = {} # dictionary to store sensor labels
 
+#-Work in progress Dash Board------------------------------------------------------------------------------------
 # Create UI elements for each sensor type
 with ui.row().style('display: flex; justify-content: center; align-items: center; width: 100%;'): # Center the row
     for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']: 
@@ -58,6 +85,7 @@ with ui.row().style('display: flex; justify-content: center; align-items: center
             value_label = ui.label(f'{sensor_type} Value: Loading...') # create value label
             timestamp_label = ui.label(f'{sensor_type} Timestamp: Loading...') # create timestamp label
             labels[sensor_type] = (sensor_label, value_label, timestamp_label) # store labels in dictionary
+#----------------------------------------------------------------------------------------------------------
 
 ui.timer(600, update_data) # update data every 600ms
 ui.run() # run the UI
