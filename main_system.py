@@ -65,9 +65,10 @@ def generate_graphs(): # Function to generate graphs for each sensor type
         for sensor_type in desired_order: 
             if sensor_type in data: 
                 values = data[sensor_type] 
-                timestamps = [entry['timestamp'] for entry in values]
+                # Process timestamps to remove the year
+                timestamps = [entry['timestamp'].strftime('%m-%d %H:%M') for entry in values] # Extract month, day, and time
                 sensor_values = [entry['value'] for entry in values]
-                padding = .1 # 10% padding for the graph range 
+                padding = 0.2 # 20% padding for the graph range 
 
                 if sensor_values: 
                     min_sensor_value = min(sensor_values) # get the minimum sensor value
@@ -96,7 +97,7 @@ def generate_graphs(): # Function to generate graphs for each sensor type
                     },
                     'xAxis': {
                         'type': 'category',
-                        'data': timestamps,
+                        'data': timestamps, # Use the processed timestamps without year
                         'axisLabel': { # Add axis label style
                             'color': '#FFFFFF' # set x-axis label color to white
                         }
