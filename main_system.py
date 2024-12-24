@@ -127,10 +127,11 @@ def generate_graphs(): # Function to generate graphs for each sensor type
 # Header menu
 with ui.header().style('background-color: #3AAFA9;'): 
     ui.label('Homepage').style('color: #FFFFFF; font-size: 24px;')
-    ui.button(on_click=lambda: right_drawer.toggle(), icon='menu').props('flat color=white') # add menu button
+    ui.button(icon='account_circle') # add account button
+    ui.button(icon='menu') # add menu button
 
 # Right Drawer
-with ui.right_drawer(fixed=False).style('background-color: #6C757D; display: flex; align-items: center;').props('bordered') as right_drawer: 
+with ui.right_drawer().style('background-color: #6C757D; align-items: center;'): # center the drawer label
     ui.label('[Recommendations]').style('color: #FFFFFF; font-size: 18px;') # add recommendations label
 
 # Inject html with css inside for background of main page
@@ -142,9 +143,9 @@ ui.add_head_html("""
 </style>
 """)
 
-# Main Content
-with ui.row().style('display: flex; justify-content: center; align-items: center; width: 100%;'): # center the content
-    ui.label('Welcome to Aquatic EcoSphere System').style('color: #FFFFFF; font-size: 32px; text-align: center;') # add welcome label
+# Main title
+with ui.row().style('justify-content: center; width: 100%'):
+    ui.label('Aquatic EcoSphere System').style('color: #FFFFFF; font-size: 32px;') # add welcome label
 
 # Sensor Cards
 labels = {} # dictionary to store sensor labels
