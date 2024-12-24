@@ -149,21 +149,21 @@ with ui.row().style('justify-content: center; width: 100%'):
 
 # Sensor Cards
 labels = {} # dictionary to store sensor labels
-with ui.row().style('display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px; padding: 20px; width: 100%;'): # center the sensor cards
+with ui.row().style('justify-content: center; width: 100%;'): # center the sensor cards
     for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']: # iterate through each sensor type
-        with ui.column().style('background-color: #2C2C2C; padding: 20px; border-radius: 10px; text-align: center; color: #FFFFFF; width: 200px; margin: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center;'):
+        with ui.column().style('background-color: #2C2C2C; padding: 20px; border-radius: 10px; width: 200px; margin: 10px; align-items: center;'):
             sensor_label = ui.label(f'{sensor_type}').style('color: #FFFFFF; font-weight: bold; ') # add sensor label
             value_label = ui.label(f'{sensor_type} Value: Loading...').style('color: #FFFFFF;') # add value label
             timestamp_label = ui.label(f'{sensor_type} Timestamp: Loading...').style('color: #FFFFFF;') # add timestamp label
             labels[sensor_type] = (sensor_label, value_label, timestamp_label) # store labels in dictionary
 
 # Generate graphs
-with ui.row().style('display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px; padding: 20px; width: 100%;'):
+with ui.row().style('justify-content: center; width: 100%;'):
     generate_graphs()
 
 # Footer and copyright
-with ui.footer().style('background-color: #3AAFA9; display: flex; justify-content: center; align-items: center;'):
-    ui.label('Copyright (C) 2024 | Victor Vu & Jordan Morris').style('color: #FFFFFF; font-size: 16px;')
+with ui.footer().style('background-color: #3AAFA9; justify-content: center;'):
+    ui.label('Copyright (C) 2024 | Victor Vu & Jordan Morris').style('color: #FFFFFF; font-size: 18px;')
 
 ui.timer(10, update_data) # update data every 10s just for testing
 ui.run() # run the UI
