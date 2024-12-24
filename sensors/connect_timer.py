@@ -29,4 +29,4 @@ def create_connection(): # Establish MySQL connection
     )
 
 def control_timer(): # Set timer to control the frequency 
-    return time.sleep(10) # wait 10sec before reading again
+    time.sleep(10) # wait 10sec before reading again
