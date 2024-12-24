@@ -18,20 +18,25 @@ def get_latest_data(): # Function to extract current latest sensor data
             WHERE (sensor_type, timestamp) IN (
                 SELECT sensor_type, MAX(timestamp)
                 FROM sensor_data
-                GROUP BY sensor_type
-            )
+                GROUP BY sensor_type)
         """)
         results = cursor.fetchall() # store all results 
-        sensor_data = {row[0]: {'value': row[1], 'timestamp': row[2]} # sensor type, value, and timestamp
-                       for row in results} # store results in dictionary 
+        sensor_data = {row[0]: {'value': row[1], 'timestamp': row[2]} for row in results} # store results in dictionary 
         return sensor_data
 
+# Define units for each sensor type
+sensor_units = {
+    'total dissolved solids': 'ppm',
+    'turbidity': 'NTU',
+    'temperature': '°F'
+}
 def update_data(): # Function to update sensor labels
     data = get_latest_data() # update to the latest data
     if data: # If data is not empty
         for sensor_type, value in data.items(): # Iterate through each sensor to update
-            labels[sensor_type][1].set_text(f"Value: {value['value']:.2f}") # cut off at 2 decimal (not rounded)
-            labels[sensor_type][2].set_text(f"Timestamp: {value['timestamp']}")
+            unit = sensor_units.get(sensor_type, '') # get the unit for the sensor type
+            labels[sensor_type][1].set_text(f"{value['value']:.2f} {unit}") # cut off at 2 decimal (not rounded)
+            labels[sensor_type][2].set_text(f"{value['timestamp']}")
 
 def get_all_data(): # Function to extract all sensor data
     with connection.cursor() as cursor: 
@@ -43,136 +48,120 @@ def get_all_data(): # Function to extract all sensor data
         """)
         results = cursor.fetchall() # store all results
         sensor_data = {} 
-        
+
         for row in results: # Add data to sensor_data dictionary
             sensor_type = row[0] 
             if sensor_type not in sensor_data: 
                 sensor_data[sensor_type] = [] 
-            sensor_data[sensor_type].append( 
-                {'value': row[1], 'timestamp': row[2]}) 
+            sensor_data[sensor_type].append({'value': row[1], 'timestamp': row[2]}) 
         return sensor_data
 
 def generate_graphs(): # Function to generate graphs for each sensor type
     data = get_all_data() # get all data
     if data: # If data is not empty
+
         # Define the desired order of sensor types
         desired_order = ['total dissolved solids', 'turbidity', 'temperature']
-        for sensor_type in desired_order:  # Iterate through each sensor in the desired order
-            if sensor_type in data:
-                values = data[sensor_type]
+        for sensor_type in desired_order: 
+            if sensor_type in data: 
+                values = data[sensor_type] 
                 timestamps = [entry['timestamp'] for entry in values]
                 sensor_values = [entry['value'] for entry in values]
+                padding = .1 # 10% padding for the graph range 
 
-                # Define padding as a percentage of the range
-                padding = 0.1
-                if sensor_values:
-                    # Calculate the minimum value for the graph
-                    # Subtract padding from the minimum sensor value to ensure the graph has some space
-                    min_sensor_value = min(sensor_values)
-                    max_sensor_value = max(sensor_values)
-                    # Calculate the range of sensor values
-                    range_value = max_sensor_value - min_sensor_value
-
+                if sensor_values: 
+                    min_sensor_value = min(sensor_values) # get the minimum sensor value
+                    max_sensor_value = max(sensor_values) # get the maximum sensor value
+                    range_value = max_sensor_value - min_sensor_value # range of sensor values
                     # Calculate the minimum value with padding, ensuring it does not go below 0
-                    min_value = round(
-                        max(min_sensor_value - (range_value * padding), 0), 1)
-
+                    min_value = round(max(min_sensor_value - (range_value * padding), 0), 1) 
                     # Calculate the maximum value with padding
-                    max_value = round(max_sensor_value +
-                                      (range_value * padding), 1)
-                else:
+                    max_value = round(max_sensor_value + (range_value * padding), 1)   
+                else: # If no data available set default value
                     min_value = 0
                     max_value = 100
 
-                ui.echart({
+                ui.echart({ # Create the graphs
                     'title': {
                         'text': sensor_type,
-                        'textStyle': {  # Add text style for title
-                            'color': '#FFFFFF'  # Set title text color to white
+                        'textStyle': { 
+                            'color': '#FFFFFF' # set text color to white
                         }
                     },
                     'tooltip': {
                         'trigger': 'axis',
-                        'textStyle': {  # Add text style for tooltip
-                            # Set tooltip text color to white
-                            'color': '#rgb(16, 15, 109)'
+                        'textStyle': { 
+                            'color': '#rgb(16, 15, 109)' # set tooltip text color to white
                         }
                     },
                     'xAxis': {
                         'type': 'category',
                         'data': timestamps,
-                        'axisLabel': {  # Add axis label style
-                            'color': '#FFFFFF'  # Set x-axis label color to white
+                        'axisLabel': { # Add axis label style
+                            'color': '#FFFFFF' # set x-axis label color to white
                         }
                     },
                     'yAxis': {
                         'type': 'value',
-                        'min': min_value,  # Set minimum value for y-axis
-                        'max': max_value,  # Set maximum value for y-axis
-                        'axisLabel': {  # Add axis label style
-                            'color': '#FFFFFF'  # Set y-axis label color to white
+                        'min': min_value, # set min value for y-axis
+                        'max': max_value, # set max value for y-axis
+                        'axisLabel': { 
+                            'color': '#FFFFFF' 
                         }
                     },
-                    'series': [{
+                    'series': [{ # Add series to the graph
                         'data': sensor_values,
                         'type': 'line',
                         'name': sensor_type,
                         'smooth': True,
                         'areaStyle': {}
                     }],
-                    'toolbox': {
+                    'toolbox': { # Add toolbox to the graph
                         'feature': {
-                            'saveAsImage': {}
+                            'saveAsImage': {} # add save as image feature
                         }
                     }
-                }).style('width: 400px; height: 300px;')
+                }).style('width: 400px; height: 300px;') # set graph size
 
+# Header menu
+with ui.header().style('background-color: #3AAFA9;'): 
+    ui.label('Homepage').style('color: #FFFFFF; font-size: 24px;')
+    ui.button(on_click=lambda: right_drawer.toggle(), icon='menu').props('flat color=white') # add menu button
 
-# Inject CSS to change the background color of the entire page
+# Right Drawer
+with ui.right_drawer(fixed=False).style('background-color: #6C757D; display: flex; align-items: center;').props('bordered') as right_drawer: 
+    ui.label('[Recommendations]').style('color: #FFFFFF; font-size: 18px;') # add recommendations label
+
+# Inject html with css inside for background of main page
 ui.add_head_html("""
 <style>
     body {
-        background-color: #3B3B3B; /* Change to black */
+        background-color: #3B3B3B; /* change to gray */
     }
 </style>
 """)
 
-# Header
-with ui.header().style('background-color: #3AAFA9;'):
-    ui.label('Homepage').style('color: #FFFFFF; font-size: 24px;')
-    ui.button(on_click=lambda: right_drawer.toggle(),
-              icon='menu').props('flat color=white')
-
-# Right Drawer
-with ui.right_drawer(fixed=False).style('background-color: #6C757D; display: flex; align-items: center;').props('bordered') as right_drawer:
-    ui.label('[Recommendations]').style('color: #FFFFFF; font-size: 18px;')
-
 # Main Content
-with ui.row().style('display: flex; justify-content: center; align-items: center; width: 100%;'):
-    ui.label('Welcome to Aquatic EcoSphere System').style(
-        'color: #FFFFFF; font-size: 32px; text-align: center;')
+with ui.row().style('display: flex; justify-content: center; align-items: center; width: 100%;'): # center the content
+    ui.label('Welcome to Aquatic EcoSphere System').style('color: #FFFFFF; font-size: 32px; text-align: center;') # add welcome label
 
 # Sensor Cards
-labels = {}  # dictionary to store sensor labels
-with ui.row().style('display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px; padding: 20px; width: 100%;'):
-    for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']:
+labels = {} # dictionary to store sensor labels
+with ui.row().style('display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px; padding: 20px; width: 100%;'): # center the sensor cards
+    for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']: # iterate through each sensor type
         with ui.column().style('background-color: #2C2C2C; padding: 20px; border-radius: 10px; text-align: center; color: #FFFFFF; width: 200px; margin: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center;'):
-            sensor_label = ui.label(f'{sensor_type}').style(
-                'color: #FFFFFF; font-weight: bold; ')
-            value_label = ui.label(
-                f'{sensor_type} Value: Loading...').style('color: #FFFFFF;')
-            timestamp_label = ui.label(
-                f'{sensor_type} Timestamp: Loading...').style('color: #FFFFFF;')
-            labels[sensor_type] = (sensor_label, value_label, timestamp_label)
+            sensor_label = ui.label(f'{sensor_type}').style('color: #FFFFFF; font-weight: bold; ') # add sensor label
+            value_label = ui.label(f'{sensor_type} Value: Loading...').style('color: #FFFFFF;') # add value label
+            timestamp_label = ui.label(f'{sensor_type} Timestamp: Loading...').style('color: #FFFFFF;') # add timestamp label
+            labels[sensor_type] = (sensor_label, value_label, timestamp_label) # store labels in dictionary
 
-# Generate Graphs below the sensor cards
+# Generate graphs
 with ui.row().style('display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px; padding: 20px; width: 100%;'):
     generate_graphs()
 
-# Footer
+# Footer and copyright
 with ui.footer().style('background-color: #3AAFA9; display: flex; justify-content: center; align-items: center;'):
-    ui.label('Copyright (C) 2024 | Victor Vu & Jordan Morris').style(
-        'color: #FFFFFF; font-size: 16px;')
+    ui.label('Copyright (C) 2024 | Victor Vu & Jordan Morris').style('color: #FFFFFF; font-size: 16px;')
 
-ui.timer(10, update_data)  # update data every 10s just for testing
-ui.run()  # run the UI
+ui.timer(10, update_data) # update data every 10s just for testing
+ui.run() # run the UI
