@@ -1,5 +1,5 @@
 # Author: Jordan Morris
-# File: connect_timer.py
+# File: db_connection.py
 # Description: Adds a connection to MySQL for all local server files
 #Copyright (C) 2024 Victor V. Vu and Jordan Morris
 #License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
