@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import os
 from urllib.parse import urlparse
 
-load_dotenv() # Load environment variables from .env
+load_dotenv() # Load environment variables from .env (not uploaded here)
 
 # Parse database URL from .env file
 db_url = os.getenv('DATABASE_URL')
