@@ -126,7 +126,7 @@ def generate_graphs(): # Function to generate graphs for each sensor type
 
 # Header menu
 with ui.header().style('background-color: #3AAFA9;'): 
-    ui.label('Homepage').style('color: #FFFFFF; font-size: 24px;')
+    ui.label('🌊 Homepage').style('color: #FFFFFF; font-size: 24px;')
     ui.button(icon='account_circle') # add account button
     ui.button(icon='menu') # add menu button
 
@@ -166,4 +166,4 @@ with ui.footer().style('background-color: #3AAFA9; justify-content: center;'):
     ui.label('Copyright (C) 2024 | Victor Vu & Jordan Morris').style('color: #FFFFFF; font-size: 18px;')
 
 ui.timer(10, update_data) # update data every 10s just for testing
-ui.run() # run the UI
+ui.run(title="Aquatic EcoSphere", favicon="🌊") # run the UI with tab name and logo
