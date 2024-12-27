@@ -114,10 +114,12 @@ def generate_graphs(): # Function to generate graphs for each sensor type
                     }).style('width: 400px; height: 300px;') # set graph size
 
 # Header menu
-with ui.header().style('background-color: #3AAFA9;'): 
-    ui.label('🌊 Homepage').style('color: #FFFFFF; font-size: 24px;')
-    ui.button(icon='account_circle') # add account button
-    ui.button(icon='menu') # add menu button
+with ui.header().style('background-color: #3AAFA9; padding: 10px 300px;'): # Adjusted padding to maintain space around content
+    with ui.row().style('justify-content: space-between; width: 100%;'): # Right-aligned buttons with spacing between them
+        ui.label('🌊 Homepage').style('color: #FFFFFF; font-size: 24px;') 
+        with ui.row().style('gap: 10px;'): # Add gaps between buttons
+            ui.button(icon='account_circle') # add account button
+            ui.button(icon='menu') # add menu button
 
 # Right Drawer
 with ui.right_drawer().style('background-color: #6C757D; align-items: center;'): # center the drawer label
