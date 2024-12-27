@@ -166,6 +166,13 @@ ui.add_head_html("""
     body {
         background-color: #3B3B3B; /* change to gray */
     }
+    .q-field__native {
+        color: #FFFFFF; /* Set text color to white */
+        background-color: #2C2C2C; /* Optional: Set background color for better visibility */
+    }
+    .q-field__label {
+        color: #FFFFFF; /* Set label color to white */
+    }
 </style>  
 """)
 
@@ -204,7 +211,8 @@ ui.button('Select Date Range', on_click=lambda: date_dialog.open()).style(
 
 # Create a dialog for the date range input
 with ui.dialog() as date_dialog:
-    ui.label('Select Date Range:').style('color: #FFFFFF; font-size: 18px;')
+    ui.label('Select Date Range:').style(
+        'color: #FFFFFF; font-size: 18px;')
 
     # Date Range Input
     date_input = ui.input('Date range').classes('w-40')
