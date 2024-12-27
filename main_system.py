@@ -7,6 +7,7 @@ from nicegui import ui
 from db_connection import create_connection 
 
 connection = create_connection() # Connection to MySQL database
+graph_container = None # Container to store graphs
 
 def get_latest_data(): # Function to extract current latest sensor data
     with connection.cursor() as cursor: # cursor object to interact with db
@@ -57,6 +58,8 @@ def get_all_data(): # Function to extract all sensor data
         return sensor_data
 
 def generate_graphs(): # Function to generate graphs for each sensor type
+    global graph_container
+    graph_container.clear() # Clear existing graphs
     data = get_all_data() # get all data
     if data: # If data is not empty
 
@@ -69,45 +72,46 @@ def generate_graphs(): # Function to generate graphs for each sensor type
                 timestamps = [entry['timestamp'].strftime('%m-%d %H:%M') for entry in values] # extract month, day, and time
                 sensor_values = [entry['value'] for entry in values] 
 
-                ui.echart({ # Create the graphs
-                    'title': {
-                        'text': sensor_type, # set graph title
-                        'textStyle': { 
-                            'color': '#FFFFFF' # set text color to white
+                with graph_container: # Add graphs to the container
+                    ui.echart({ # Create the graphs
+                        'title': {
+                            'text': sensor_type, # set graph title
+                            'textStyle': { 
+                                'color': '#FFFFFF' # set text color to white
+                            }
+                        },
+                        'tooltip': { # Create tooltip text 
+                            'trigger': 'axis',
+                            'textStyle': { 
+                                'color': '#rgb(16, 15, 109)' 
+                            }
+                        },
+                        'xAxis': { # Create x-axis
+                            'type': 'category',
+                            'data': timestamps, # use the processed timestamps without year
+                            'axisLabel': { # add axis label style
+                                'color': '#FFFFFF' # set x-axis label color to white
+                            }
+                        },
+                        'yAxis': { # Create y-axis
+                            'type': 'value',
+                            'axisLabel': { 
+                                'color': '#FFFFFF' 
+                            }
+                        },
+                        'series': [{ # Add series to the graph
+                            'data': sensor_values,
+                            'type': 'line',
+                            'name': sensor_type,
+                            'smooth': True,
+                            'areaStyle': {}
+                        }],
+                        'toolbox': { # Add toolbox to the graph
+                            'feature': {
+                                'saveAsImage': {} # add save as image feature
+                            }
                         }
-                    },
-                    'tooltip': { # Create tooltip text 
-                        'trigger': 'axis',
-                        'textStyle': { 
-                            'color': '#rgb(16, 15, 109)' 
-                        }
-                    },
-                    'xAxis': { # Create x-axis
-                        'type': 'category',
-                        'data': timestamps, # use the processed timestamps without year
-                        'axisLabel': { # add axis label style
-                            'color': '#FFFFFF' # set x-axis label color to white
-                        }
-                    },
-                    'yAxis': { # Create y-axis
-                        'type': 'value',
-                        'axisLabel': { 
-                            'color': '#FFFFFF' 
-                        }
-                    },
-                    'series': [{ # Add series to the graph
-                        'data': sensor_values,
-                        'type': 'line',
-                        'name': sensor_type,
-                        'smooth': True,
-                        'areaStyle': {}
-                    }],
-                    'toolbox': { # Add toolbox to the graph
-                        'feature': {
-                            'saveAsImage': {} # add save as image feature
-                        }
-                    }
-                }).style('width: 400px; height: 300px;') # set graph size
+                    }).style('width: 400px; height: 300px;') # set graph size
 
 # Header menu
 with ui.header().style('background-color: #3AAFA9;'): 
@@ -117,7 +121,12 @@ with ui.header().style('background-color: #3AAFA9;'):
 
 # Right Drawer
 with ui.right_drawer().style('background-color: #6C757D; align-items: center;'): # center the drawer label
-    ui.label('[Recommendations]').style('color: #FFFFFF; font-size: 18px;') # add recommendations label
+    ui.label('[Notice and Disclaimer]').style('color: #FFFFFF; font-size: 18px;') # add recommendations label
+    ui.label('1. Timers update periodically in intervals of 10mins. (Set to 10secs for debugging and testing only)').style('color: #FFFFFF; font-size: 14px;')
+    ui.label('2. Recommendations are suggestions, not mandatory.').style('color: #FFFFFF; font-size: 14px;')
+    ui.label('3. Specifiy species before proceeding, overwise default values will be used.').style('color: #FFFFFF; font-size: 14px;')
+    ui.label('4. Graphs update only a startup but can be refreshed with the button').style('color: #FFFFFF; font-size: 14px;')
+    ui.label('TBA...').style('color: #FFFFFF; font-size: 14px;')
 
 # Inject html with css inside for background of main page
 ui.add_head_html("""
@@ -125,7 +134,7 @@ ui.add_head_html("""
     body {
         background-color: #3B3B3B; /* change to gray */
     }
-</style>
+</style>  
 """)
 
 # Main title
@@ -142,9 +151,19 @@ with ui.row().style('justify-content: center; width: 100%;'): # center the senso
             timestamp_label = ui.label(f'{sensor_type} Timestamp: Loading...').style('color: #FFFFFF;') # add timestamp label
             labels[sensor_type] = (sensor_label, value_label, timestamp_label) # store labels in dictionary
 
-# Generate graphs
-with ui.row().style('justify-content: center; width: 100%;'):
-    generate_graphs()
+# Additional Cards for Alert, Reminder, Recommendation
+with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):
+    for card_type in ['Alerts', 'Reminders', 'Recommendations']:
+        with ui.column().style('background-color: #2C2C2C; padding: 20px; border-radius: 10px; width: 200px; margin: 10px; align-items: center;'):
+            ui.label(card_type).style('color: #FFFFFF; font-weight: bold;')
+            ui.label(f'{card_type} Content: Loading...').style('color: #FFFFFF;')
+
+graph_container = ui.row().style('justify-content: center; width: 100%;') # container for graphs
+generate_graphs() # generate graphs
+
+# Refresh graphs button
+with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):
+    ui.button('Refresh Graphs', on_click=generate_graphs).style('background-color: #3AAFA9; color: #FFFFFF;')
 
 # Footer and copyright
 with ui.footer().style('background-color: #3AAFA9; justify-content: center;'):
