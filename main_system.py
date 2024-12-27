@@ -76,11 +76,8 @@ def generate_graphs(): # Function to generate graphs for each sensor type
                     range_value = max_sensor_value - min_sensor_value # range of sensor values
                     # Calculate the minimum value with padding, ensuring it does not go below 0
                     min_value = round(max(min_sensor_value - (range_value * padding), 0), 1) 
-                    # Calculate the maximum value with padding
-                    max_value = round(max_sensor_value + (range_value * padding), 1)   
                 else: # If no data available set default value
                     min_value = 0
-                    max_value = 100
 
                 ui.echart({ # Create the graphs
                     'title': {
@@ -105,7 +102,6 @@ def generate_graphs(): # Function to generate graphs for each sensor type
                     'yAxis': {
                         'type': 'value',
                         'min': min_value, # set min value for y-axis
-                        'max': max_value, # set max value for y-axis
                         'axisLabel': { 
                             'color': '#FFFFFF' 
                         }
