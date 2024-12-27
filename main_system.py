@@ -197,6 +197,34 @@ with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):
             ui.label(f'{card_type} Content: Loading...').style(
                 'color: #FFFFFF;')
 
+# Button to open the date range selection dialog
+ui.button('Select Date Range', on_click=lambda: date_dialog.open()).style(
+    'background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;'
+)
+
+# Create a dialog for the date range input
+with ui.dialog() as date_dialog:
+    ui.label('Select Date Range:').style('color: #FFFFFF; font-size: 18px;')
+
+    # Date Range Input
+    date_input = ui.input('Date range').classes('w-40')
+    ui.date().props('range').bind_value(
+        date_input,
+        forward=lambda x: f'{x["from"]} - {x["to"]}' if x else None,
+        backward=lambda x: {
+            'from': x.split(' - ')[0],
+            'to': x.split(' - ')[1],
+        } if ' - ' in (x or '') else None,
+    )
+
+    # Button to filter data based on selected date range
+    ui.button('Filter Data', on_click=lambda: (
+        generate_graphs(get_all_data(
+            date_input.value['from'], date_input.value['to'])),
+        date_dialog.close()  # Close the dialog after filtering
+    )).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
+
+# Container for graphs
 graph_container = ui.row().style(
     'justify-content: center; width: 100%;')  # container for graphs
 generate_graphs()  # generate graphs
