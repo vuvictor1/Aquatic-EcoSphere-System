@@ -66,42 +66,31 @@ def generate_graphs(): # Function to generate graphs for each sensor type
             if sensor_type in data: 
                 values = data[sensor_type] 
                 # Process timestamps to remove the year
-                timestamps = [entry['timestamp'].strftime('%m-%d %H:%M') for entry in values] # Extract month, day, and time
-                sensor_values = [entry['value'] for entry in values]
-                padding = 0.2 # 20% padding for the graph range 
-
-                if sensor_values: 
-                    min_sensor_value = min(sensor_values) # get the minimum sensor value
-                    max_sensor_value = max(sensor_values) # get the maximum sensor value
-                    range_value = max_sensor_value - min_sensor_value # range of sensor values
-                    # Calculate the minimum value with padding, ensuring it does not go below 0
-                    min_value = round(max(min_sensor_value - (range_value * padding), 0), 1) 
-                else: # If no data available set default value
-                    min_value = 0
+                timestamps = [entry['timestamp'].strftime('%m-%d %H:%M') for entry in values] # extract month, day, and time
+                sensor_values = [entry['value'] for entry in values] 
 
                 ui.echart({ # Create the graphs
                     'title': {
-                        'text': sensor_type,
+                        'text': sensor_type, # set graph title
                         'textStyle': { 
                             'color': '#FFFFFF' # set text color to white
                         }
                     },
-                    'tooltip': {
+                    'tooltip': { # Create tooltip text 
                         'trigger': 'axis',
                         'textStyle': { 
-                            'color': '#rgb(16, 15, 109)' # set tooltip text color to white
+                            'color': '#rgb(16, 15, 109)' 
                         }
                     },
-                    'xAxis': {
+                    'xAxis': { # Create x-axis
                         'type': 'category',
-                        'data': timestamps, # Use the processed timestamps without year
-                        'axisLabel': { # Add axis label style
+                        'data': timestamps, # use the processed timestamps without year
+                        'axisLabel': { # add axis label style
                             'color': '#FFFFFF' # set x-axis label color to white
                         }
                     },
-                    'yAxis': {
+                    'yAxis': { # Create y-axis
                         'type': 'value',
-                        'min': min_value, # set min value for y-axis
                         'axisLabel': { 
                             'color': '#FFFFFF' 
                         }
