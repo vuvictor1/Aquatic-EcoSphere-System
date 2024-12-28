@@ -8,6 +8,7 @@ from db_connection import create_connection
 
 connection = create_connection() # Connection to MySQL database
 graph_container = None # Container to store graphs
+labels = {} # Dictionary to store sensor labels
 
 def get_latest_data(): # Function to extract current latest sensor data
     with connection.cursor() as cursor: # cursor object to interact with db
@@ -113,63 +114,71 @@ def generate_graphs(): # Function to generate graphs for each sensor type
                         }
                     }).style('width: 400px; height: 300px;') # set graph size
 
-# Header menu
-with ui.header().style('background-color: #3AAFA9; padding: 10px 300px;'): # Adjusted padding to maintain space around content
-    with ui.row().style('justify-content: space-between; width: 100%;'): # Right-aligned buttons with spacing between them
-        ui.label('🌊 Homepage').style('color: #FFFFFF; font-size: 24px;') 
-        with ui.row().style('gap: 10px;'): # Add gaps between buttons
-            ui.button(icon='account_circle') # add account button
-            ui.button(icon='menu') # add menu button
+def home_page(): # Define the homepage layout
+    # Header menu
+    with ui.header().style('background-color: #3AAFA9; padding: 10px 300px;'): # Adjusted padding to maintain space around content
+        with ui.row().style('justify-content: space-between; width: 100%;'): # Right-aligned buttons with spacing between them
+            ui.link('🌊 Home', '/').style('color: #FFFFFF; font-size: 24px; text-decoration: none;') # make home a link
+            with ui.row().style('gap: 10px;'): # Add gaps between buttons
+                ui.button(icon='account_circle') # add account button
+                ui.button(icon='menu') # add menu button
 
-# Right Drawer
-with ui.right_drawer().style('background-color: #6C757D; align-items: center;'): # center the drawer label
-    ui.label('[Notice and Disclaimer]').style('color: #FFFFFF; font-size: 18px;') # add recommendations label
-    ui.label('1. Timers update periodically in intervals of 10mins. (Set to 10secs for debugging and testing only)').style('color: #FFFFFF; font-size: 14px;')
-    ui.label('2. Recommendations are suggestions, not mandatory.').style('color: #FFFFFF; font-size: 14px;')
-    ui.label('3. Specifiy species before proceeding, overwise default values will be used.').style('color: #FFFFFF; font-size: 14px;')
-    ui.label('4. Graphs update only a startup but can be refreshed with the button').style('color: #FFFFFF; font-size: 14px;')
-    ui.label('TBA...').style('color: #FFFFFF; font-size: 14px;')
+    # Right Drawer
+    with ui.right_drawer().style('background-color: #6C757D; align-items: center;'): # center the drawer label
+        ui.label('[Notice and Disclaimer]').style('color: #FFFFFF; font-size: 18px;') # add recommendations label
+        ui.label('1. Timers update periodically in intervals of 10mins. (Set to 10secs for debugging and testing only)').style('color: #FFFFFF; font-size: 14px;')
+        ui.label('2. Recommendations are suggestions, not mandatory.').style('color: #FFFFFF; font-size: 14px;')
+        ui.label('3. Specifiy species before proceeding, overwise default values will be used.').style('color: #FFFFFF; font-size: 14px;')
+        ui.label('4. Graphs update only a startup but can be refreshed with the button').style('color: #FFFFFF; font-size: 14px;')
+        ui.label('TBA...').style('color: #FFFFFF; font-size: 14px;')
 
-# Inject html with css inside for background of main page
-ui.add_head_html("""
-<style>
-    body {
-        background-color: #3B3B3B; /* change to gray */
-    }
-</style>  
-""")
+    # Inject html with css inside for background of main page
+    ui.add_head_html("""
+    <style>
+        body {
+            background-color: #3B3B3B; /* change to gray */
+        }
+    </style>  
+    """)
 
-# Main title
-with ui.row().style('justify-content: center; width: 100%'):
-    ui.label('Aquatic EcoSphere System').style('color: #FFFFFF; font-size: 32px;') # add welcome label
+    # Main title
+    with ui.row().style('justify-content: center; width: 100%'):
+        ui.label('Aquatic EcoSphere System').style('color: #FFFFFF; font-size: 32px;') # add welcome label
 
-# Sensor Cards
-labels = {} # dictionary to store sensor labels
-with ui.row().style('justify-content: center; width: 100%;'): # center the sensor cards
-    for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']: # iterate through each sensor type
-        with ui.column().style('background-color: #2C2C2C; padding: 20px; border-radius: 10px; width: 200px; margin: 10px; align-items: center;'):
-            sensor_label = ui.label(f'{sensor_type}').style('color: #FFFFFF; font-weight: bold; ') # add sensor label
-            value_label = ui.label(f'{sensor_type} Value: Loading...').style('color: #FFFFFF;') # add value label
-            timestamp_label = ui.label(f'{sensor_type} Timestamp: Loading...').style('color: #FFFFFF;') # add timestamp label
-            labels[sensor_type] = (sensor_label, value_label, timestamp_label) # store labels in dictionary
+    # Sensor Cards
+    global labels # global variable 
+    labels = {} # dictionary to store sensor labels
+    with ui.row().style('justify-content: center; width: 100%;'): # center the sensor cards
+        for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']: # iterate through each sensor type
+            with ui.column().style('background-color: #2C2C2C; padding: 20px; border-radius: 10px; width: 200px; margin: 10px; align-items: center;'):
+                sensor_label = ui.label(f'{sensor_type}').style('color: #FFFFFF; font-weight: bold; ') # add sensor label
+                value_label = ui.label(f'{sensor_type} Value: Loading...').style('color: #FFFFFF;') # add value label
+                timestamp_label = ui.label(f'{sensor_type} Timestamp: Loading...').style('color: #FFFFFF;') # add timestamp label
+                labels[sensor_type] = (sensor_label, value_label, timestamp_label) # store labels in dictionary
 
-# Additional Cards for Alert, Reminder, Recommendation
-with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):
-    for card_type in ['Alerts', 'Reminders', 'Recommendations']:
-        with ui.column().style('background-color: #2C2C2C; padding: 20px; border-radius: 10px; width: 200px; margin: 10px; align-items: center;'):
-            ui.label(card_type).style('color: #FFFFFF; font-weight: bold;')
-            ui.label(f'{card_type} Content: Loading...').style('color: #FFFFFF;')
+    # Additional Cards for Alert, Reminder, Recommendation
+    with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):
+        for card_type in ['Alerts', 'Reminders', 'Recommendations']:
+            with ui.column().style('background-color: #2C2C2C; padding: 20px; border-radius: 10px; width: 200px; margin: 10px; align-items: center;'):
+                ui.label(card_type).style('color: #FFFFFF; font-weight: bold;')
+                ui.label(f'{card_type} Content: WIP...').style('color: #FFFFFF;')
 
-graph_container = ui.row().style('justify-content: center; width: 100%;') # container for graphs
-generate_graphs() # generate graphs
+    global graph_container 
+    graph_container = ui.row().style('justify-content: center; width: 100%;') # container for graphs
+    generate_graphs() # generate graphs
 
-# Refresh graphs button
-with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):
-    ui.button('Refresh Graphs', on_click=generate_graphs).style('background-color: #3AAFA9; color: #FFFFFF;')
+    # Refresh graphs button
+    with ui.row().style('justify-content: center; width: 100%;'): 
+        ui.button('Refresh Graphs', on_click=generate_graphs).style('background-color: #3AAFA9; color: #FFFFFF;')
 
-# Footer and copyright
-with ui.footer().style('background-color: #3AAFA9; justify-content: center;'):
-    ui.label('Copyright (C) 2024 | Victor Vu & Jordan Morris').style('color: #FFFFFF; font-size: 18px;')
+    # Footer and copyright
+    with ui.footer().style('background-color: #3AAFA9; justify-content: center;'):
+        ui.label('Copyright (C) 2024 | Victor Vu & Jordan Morris').style('color: #FFFFFF; font-size: 18px;')
 
-ui.timer(10, update_data) # update data every 10s just for testing
+    ui.timer(10, update_data) # update data every 10s just for testing
+
+@ui.page('/') # Set homepage route
+def home(): 
+    home_page() # call home_page function
+
 ui.run(title="Aquatic EcoSphere", favicon="🌊") # run the UI with tab name and logo
