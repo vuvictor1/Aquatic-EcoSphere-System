@@ -4,7 +4,7 @@
 # Copyright (C) 2024 Victor V. Vu and Jordan Morris
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from nicegui import ui
-from db_connection import create_connection 
+from db_connection import *
 
 connection = create_connection() # Connection to MySQL database
 graph_container = None # Container to store graphs

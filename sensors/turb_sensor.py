@@ -10,8 +10,7 @@ import board
 import busio
 from adafruit_ads1x15.analog_in import AnalogIn
 import adafruit_ads1x15.ads1115 as ADS
-from connect_timer import create_connection
-from connect_timer import control_timer
+from connect_timer import *
 
 connection = create_connection() # Create a connection to the database
 i2c = busio.I2C(board.SCL, board.SDA) # I2C interface that reads from GPIO pins SCL and SDA
