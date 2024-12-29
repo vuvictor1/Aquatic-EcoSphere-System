@@ -7,8 +7,7 @@ Copyright (C) 2024 Victor V. Vu and Jordan Morris
 License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 """
 from w1thermsensor import W1ThermSensor
-from connect_timer import create_connection
-from connect_timer import control_timer
+from connect_timer import *
 
 connection = create_connection() # Create a connection to the database
 sensor = W1ThermSensor() # Create a sensor object
