@@ -52,8 +52,6 @@ def update_data():  # Function to update sensor labels
 def get_all_data(start_date=None, end_date=None):
     with connection.cursor() as cursor:
         cursor.execute("SET time_zone = '-08:00';")
-
-        # If start_date or end_date is None, retrieve the first and last timestamps
         if start_date is None or end_date is None:
             cursor.execute("""
                 SELECT MIN(timestamp), MAX(timestamp)
@@ -78,66 +76,33 @@ def get_all_data(start_date=None, end_date=None):
                 sensor_data[sensor_type] = []
             sensor_data[sensor_type].append(
                 {'value': row[1], 'timestamp': row[2]})
+        print(sensor_data)  # Debug: Print the fetched data
         return sensor_data
 
 
-def generate_graphs():  # Function to generate graphs for each sensor type
+def generate_graphs(data=None):
     global graph_container
-    graph_container.clear()  # Clear existing graphs
-    data = get_all_data()  # get all data
-    if data:  # If data is not empty
-
-        # Define the desired order of sensor types
+    print("Generating graphs...")  # Debug: Confirm function is called
+    graph_container.clear()
+    if data is None:
+        data = get_all_data()
+    if data:
         desired_order = ['total dissolved solids', 'turbidity', 'temperature']
         for sensor_type in desired_order:
             if sensor_type in data:
                 values = data[sensor_type]
-                # Process timestamps to remove the year
-                # extract month, day, and time
                 timestamps = [entry['timestamp'].strftime(
                     '%m-%d %H:%M') for entry in values]
                 sensor_values = [entry['value'] for entry in values]
-
-                with graph_container:  # Add graphs to the container
-                    ui.echart({  # Create the graphs
-                        'title': {
-                            'text': sensor_type,  # set graph title
-                            'textStyle': {
-                                'color': '#FFFFFF'  # set text color to white
-                            }
-                        },
-                        'tooltip': {  # Create tooltip text
-                            'trigger': 'axis',
-                            'textStyle': {
-                                'color': '#rgb(16, 15, 109)'
-                            }
-                        },
-                        'xAxis': {  # Create x-axis
-                            'type': 'category',
-                            'data': timestamps,  # use the processed timestamps without year
-                            'axisLabel': {  # add axis label style
-                                'color': '#FFFFFF'  # set x-axis label color to white
-                            }
-                        },
-                        'yAxis': {  # Create y-axis
-                            'type': 'value',
-                            'axisLabel': {
-                                'color': '#FFFFFF'
-                            }
-                        },
-                        'series': [{  # Add series to the graph
-                            'data': sensor_values,
-                            'type': 'line',
-                            'name': sensor_type,
-                            'smooth': True,
-                            'areaStyle': {}
-                        }],
-                        'toolbox': {  # Add toolbox to the graph
-                            'feature': {
-                                'saveAsImage': {}  # add save as image feature
-                            }
-                        }
-                    }).style('width: 400px; height: 300px;')  # set graph size
+                with graph_container:
+                    ui.echart({
+                        'title': {'text': sensor_type, 'textStyle': {'color': '#FFFFFF'}},
+                        'tooltip': {'trigger': 'axis', 'textStyle': {'color': '#rgb(16, 15, 109)'}},
+                        'xAxis': {'type': 'category', 'data': timestamps, 'axisLabel': {'color': '#FFFFFF'}},
+                        'yAxis': {'type': 'value', 'axisLabel': {'color': '#FFFFFF'}},
+                        'series': [{'data': sensor_values, 'type': 'line', 'name': sensor_type, 'smooth': True, 'areaStyle': {}}],
+                        'toolbox': {'feature': {'saveAsImage': {}}}
+                    }).style('width: 400px; height: 300px;')
 
 
 # Header menu
@@ -216,21 +181,26 @@ with ui.dialog() as date_dialog:
 
     # Date Range Input
     date_input = ui.input('Date range').classes('w-40')
-    ui.date().props('range').bind_value(
-        date_input,
-        forward=lambda x: f'{x["from"]} - {x["to"]}' if x else None,
-        backward=lambda x: {
-            'from': x.split(' - ')[0],
-            'to': x.split(' - ')[1],
-        } if ' - ' in (x or '') else None,
-    )
+    date_picker = ui.date().props('range')
 
-    # Button to filter data based on selected date range
-    ui.button('Filter Data', on_click=lambda: (
-        generate_graphs(get_all_data(
-            date_input.value['from'], date_input.value['to'])),
-        date_dialog.close()  # Close the dialog after filtering
-    )).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
+    # Bind the date picker's value to date_input
+    def update_date_input():
+        selected_range = date_picker.value
+        if selected_range and 'from' in selected_range and 'to' in selected_range:
+            date_input.value = f"{
+                selected_range['from']} - {selected_range['to']}"
+        else:
+            date_input.value = None
+
+    date_picker.on('update:model-value', update_date_input)
+
+# Button to filter data based on selected date range
+ui.button('Filter Data', on_click=lambda: (
+    print(date_input.value),  # Debug: Print the selected date range
+    generate_graphs(get_all_data(
+        *date_input.value.split(' - ')) if date_input.value else get_all_data()),
+    date_dialog.close()
+)).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
 
 # Container for graphs
 graph_container = ui.row().style(
