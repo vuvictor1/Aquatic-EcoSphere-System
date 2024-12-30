@@ -5,6 +5,7 @@
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from nicegui import ui
 from db_connection import *
+from web_functions import *
 
 connection = create_connection() # Connection to MySQL database
 graph_container = None # Container to store graphs
@@ -115,13 +116,7 @@ def generate_graphs(): # Function to generate graphs for each sensor type
                     }).style('width: 400px; height: 300px;') # set graph size
 
 def home_page(): # Define the homepage layout
-    # Header menu
-    with ui.header().style('background-color: #3AAFA9; padding: 10px 300px;'): # Adjusted padding to maintain space around content
-        with ui.row().style('justify-content: space-between; width: 100%;'): # Right-aligned buttons with spacing between them
-            ui.link('🌊 Home', '/').style('color: #FFFFFF; font-size: 24px; text-decoration: none;') # make home a link
-            with ui.row().style('gap: 10px;'): # Add gaps between buttons
-                ui.button(icon='account_circle') # add account button
-                ui.button(icon='menu') # add menu button
+    eco_header() # call eco_header function
 
     # Right Drawer
     with ui.right_drawer().style('background-color: #6C757D; align-items: center;'): # center the drawer label
@@ -132,14 +127,7 @@ def home_page(): # Define the homepage layout
         ui.label('4. Graphs update only a startup but can be refreshed with the button').style('color: #FFFFFF; font-size: 14px;')
         ui.label('TBA...').style('color: #FFFFFF; font-size: 14px;')
 
-    # Inject html with css inside for background of main page
-    ui.add_head_html("""
-    <style>
-        body {
-            background-color: #3B3B3B; /* change to gray */
-        }
-    </style>  
-    """)
+    inject_style() # call inject_style function
 
     # Main title
     with ui.row().style('justify-content: center; width: 100%'):
@@ -171,9 +159,7 @@ def home_page(): # Define the homepage layout
     with ui.row().style('justify-content: center; width: 100%;'): 
         ui.button('Refresh Graphs', on_click=generate_graphs).style('background-color: #3AAFA9; color: #FFFFFF;')
 
-    # Footer and copyright
-    with ui.footer().style('background-color: #3AAFA9; justify-content: center;'):
-        ui.label('Copyright (C) 2024 | Victor Vu & Jordan Morris').style('color: #FFFFFF; font-size: 18px;')
+    eco_footer() # call eco_footer function    
 
     ui.timer(10, update_data) # update data every 10s just for testing
 
