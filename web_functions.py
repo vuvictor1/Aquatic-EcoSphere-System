@@ -8,8 +8,8 @@ from nicegui import ui
 def eco_header(): # Header menu
     with ui.header().style('background-color: #3AAFA9; padding: 10px 300px;'): # Adjusted padding to maintain space around content
         ui.link('🌊 Home', '/').style('color: #FFFFFF; font-size: 24px; text-decoration: none;') # make home a link
-        ui.link('Contacts', '/contacts').style('color: #FFFFFF; font-size: 24px; text-decoration: none;') # make contacts a link
         ui.label('|').style('color: #FFFFFF; font-size: 24px; ') # add separator
+        ui.link('Contacts', '/contacts').style('color: #FFFFFF; font-size: 24px; text-decoration: none;') # make contacts a link
         with ui.row().style('gap: 10px;'): # add gaps between buttons
             ui.button(icon='account_circle') # add account button
             ui.button(icon='menu') # add menu button
