@@ -6,6 +6,7 @@
 from nicegui import ui
 from db_connection import *
 from web_functions import *
+from pages.contacts import contacts_page
 
 connection = create_connection() # Connection to MySQL database
 graph_container = None # Container to store graphs
