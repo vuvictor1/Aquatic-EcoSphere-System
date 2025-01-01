@@ -6,106 +6,32 @@
 from nicegui import ui
 from db_connection import *
 from web_functions import *
-from pages.contacts import contacts_page
+from data_functions import *
 
 connection = create_connection()  # Connection to MySQL database
 graph_container = None  # Container to store graphs
 labels = {}  # Dictionary to store sensor labels
 
 
-def get_latest_data():  # Function to extract current latest sensor data
-    with connection.cursor() as cursor:  # cursor object to interact with db
-        cursor.execute("SET time_zone = '-08:00';")  # set timezone to PST
-        # Query to get latest data for each sensor type
-        cursor.execute("""
-            SELECT sensor_type, value, timestamp
-            FROM sensor_data
-            WHERE (sensor_type, timestamp) IN (
-                SELECT sensor_type, MAX(timestamp)
-                FROM sensor_data
-                GROUP BY sensor_type)
-        """)
-        results = cursor.fetchall()  # store all results
-        sensor_data = {row[0]: {'value': row[1], 'timestamp': row[2]}
-                       for row in results}  # store results in dictionary
-        return sensor_data
+# Header menu
+with ui.header().style('background-color: #3AAFA9;'):
+    ui.label('🌊 Homepage').style('color: #FFFFFF; font-size: 24px;')
+    ui.button(icon='account_circle')  # add account button
+    ui.button(icon='menu')  # add menu button
 
-
-# Define units for each sensor type
-sensor_units = {
-    'total dissolved solids': 'ppm',
-    'turbidity': 'NTU',
-    'temperature': '°F'
-}
-
-
-def update_data():  # Function to update sensor labels
-    data = get_latest_data()  # update to the latest data
-    if data:  # If data is not empty
-        for sensor_type, value in data.items():  # Iterate through each sensor to update
-            # get the unit for the sensor type
-            unit = sensor_units.get(sensor_type, '')
-            # cut off at 2 decimal (not rounded)
-            labels[sensor_type][1].set_text(f"{value['value']:.2f} {unit}")
-            labels[sensor_type][2].set_text(f"{value['timestamp']}")
-
-# Function to extract all sensor data within a specific date range
-
-
-def get_all_data(start_date=None, end_date=None):
-    with connection.cursor() as cursor:
-        cursor.execute("SET time_zone = '-08:00';")
-        if start_date is None or end_date is None:
-            cursor.execute("""
-                SELECT MIN(timestamp), MAX(timestamp)
-                FROM sensor_data
-            """)
-            min_timestamp, max_timestamp = cursor.fetchone()
-            start_date = start_date or min_timestamp
-            end_date = end_date or max_timestamp
-
-        cursor.execute("""
-            SELECT sensor_type, value, timestamp
-            FROM sensor_data
-            WHERE timestamp BETWEEN %s AND %s
-            ORDER BY timestamp
-        """, (start_date, end_date))
-
-        results = cursor.fetchall()
-        sensor_data = {}
-        for row in results:
-            sensor_type = row[0]
-            if sensor_type not in sensor_data:
-                sensor_data[sensor_type] = []
-            sensor_data[sensor_type].append(
-                {'value': row[1], 'timestamp': row[2]})
-        print(sensor_data)  # Debug: Print the fetched data
-        return sensor_data
-
-
-def generate_graphs(data=None):
-    global graph_container
-    print("Generating graphs...")  # Debug: Confirm function is called
-    graph_container.clear()
-    if data is None:
-        data = get_all_data()
-    if data:
-        desired_order = ['total dissolved solids', 'turbidity', 'temperature']
-        for sensor_type in desired_order:
-            if sensor_type in data:
-                values = data[sensor_type]
-                timestamps = [entry['timestamp'].strftime(
-                    '%m-%d %H:%M') for entry in values]
-                sensor_values = [entry['value'] for entry in values]
-                with graph_container:
-                    ui.echart({
-                        'title': {'text': sensor_type, 'textStyle': {'color': '#FFFFFF'}},
-                        'tooltip': {'trigger': 'axis', 'textStyle': {'color': '#rgb(16, 15, 109)'}},
-                        'xAxis': {'type': 'category', 'data': timestamps, 'axisLabel': {'color': '#FFFFFF'}},
-                        'yAxis': {'type': 'value', 'axisLabel': {'color': '#FFFFFF'}},
-                        'series': [{'data': sensor_values, 'type': 'line', 'name': sensor_type, 'smooth': True, 'areaStyle': {}}],
-                        'toolbox': {'feature': {'saveAsImage': {}}}
-                    }).style('width: 400px; height: 300px;')
+# Right Drawer
+with ui.right_drawer().style('background-color: #6C757D; align-items: center;'):
+    ui.label('[Notice and Disclaimer]').style(
+        'color: #FFFFFF; font-size: 18px;')
+    ui.label('1. Timers update periodically in intervals of 10mins. (Set to 10secs for debugging and testing only)').style(
+        'color: #FFFFFF; font-size: 14px;')
+    ui.label('2. Recommendations are suggestions, not mandatory.').style(
+        'color: #FFFFFF; font-size: 14px;')
+    ui.label('3. Specify species before proceeding, otherwise default values will be used.').style(
+        'color: #FFFFFF; font-size: 14px;')
+    ui.label('4. Graphs update only at startup but can be refreshed with the button').style(
+        'color: #FFFFFF; font-size: 14px;')
+    ui.label('TBA...').style('color: #FFFFFF; font-size: 14px;')
 
 
 def home_page():  # Define the homepage layout
@@ -140,7 +66,7 @@ def home_page():  # Define the homepage layout
         for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']:
             with ui.column().style('background-color: #2C2C2C; padding: 20px; border-radius: 10px; width: 200px; margin: 10px; align-items: center;'):
                 sensor_label = ui.label(f'{sensor_type}').style(
-                    'color: #FFFFFF; font-weight: bold; ')  # add sensor label
+                    'color: #FFFFFF; font-weight: bold;')  # add sensor label
                 value_label = ui.label(f'{sensor_type} Value: Loading...').style(
                     'color: #FFFFFF;')  # add value label
                 timestamp_label = ui.label(f'{sensor_type} Timestamp: Loading...').style(
@@ -157,24 +83,57 @@ def home_page():  # Define the homepage layout
                 ui.label(f'{card_type} Content: WIP...').style(
                     'color: #FFFFFF;')
 
+    # Create a dialog for the date range input
+    with ui.dialog() as date_dialog:
+        ui.label('Select Date Range:').style(
+            'color: #FFFFFF; font-size: 18px;')
+        date_input = ui.input('Date range').classes('w-40')
+        date_picker = ui.date().props('range')
+
+        def update_date_input():
+            selected_range = date_picker.value
+            if selected_range and 'from' in selected_range and 'to' in selected_range:
+                date_input.value = f"{
+                    selected_range['from']} - {selected_range['to']}"
+            else:
+                date_input.value = None
+
+        date_picker.on('update:model-value', update_date_input)
+
+    # Button to open the date range selection dialog
+    with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):
+        ui.button('Select Date Range', on_click=lambda: date_dialog.open()).style(
+            'background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
+
+    # Button to filter data based on selected date range
+    with ui.row().style('justify-content: center; width: 100%; margin-top: 10px;'):
+        ui.button('Filter Data', on_click=lambda: (
+            print(date_input.value),  # Debug: Print the selected date range
+            generate_graphs(graph_container, get_all_data(
+                *date_input.value.split(' - ')) if date_input.value else get_all_data()),
+            date_dialog.close()
+        )).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
+
     global graph_container
     graph_container = ui.row().style(
         'justify-content: center; width: 100%;')  # container for graphs
-    generate_graphs()  # generate graphs
+    generate_graphs(graph_container)  # Pass graph_container to generate_graphs
 
     # Refresh graphs button
     with ui.row().style('justify-content: center; width: 100%;'):
-        ui.button('Refresh Graphs', on_click=generate_graphs).style(
+        ui.button('Refresh Graphs', on_click=lambda: generate_graphs(graph_container)).style(
             'background-color: #3AAFA9; color: #FFFFFF;')
 
     eco_footer()  # call eco_footer function
 
-    ui.timer(10, update_data)  # update data every 10s just for testing
+    # Pass the `labels` argument to `update_data`
+    # update data every 10s just for testing
+    ui.timer(10, lambda: update_data(labels))
 
 
 @ui.page('/')  # Set homepage route
 def home():
-    home_page()  # call home_page function
+    home_page()
 
 
 # run the UI with tab name and logo
