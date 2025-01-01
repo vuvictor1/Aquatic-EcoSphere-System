@@ -7,7 +7,7 @@ from nicegui import ui
 from db_connection import *
 from web_functions import *
 from data_functions import *
-from pages.contacts import contacts_page # Note: DO NOT DELETE THIS LINE we need it for routing
+from pages.contacts import contacts_page 
 
 connection = create_connection()  # Connection to MySQL database
 graph_container = None  # Container to store graphs
@@ -106,7 +106,6 @@ def home_page():  # Define the homepage layout
     # Button to filter data based on selected date range
     with ui.row().style('justify-content: center; width: 100%; margin-top: 10px;'):
         ui.button('Filter Data', on_click=lambda: (
-            print(date_input.value),  # Debug: Print the selected date range
             generate_graphs(graph_container, get_all_data(
                 *date_input.value.split(' - ')) if date_input.value else get_all_data()),
             date_dialog.close()
@@ -124,7 +123,6 @@ def home_page():  # Define the homepage layout
 
     eco_footer()  # call eco_footer function
 
-    # Pass the `labels` argument to `update_data`
     # update data every 10s just for testing
     ui.timer(10, lambda: update_data(labels))
 
