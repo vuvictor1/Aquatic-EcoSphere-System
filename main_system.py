@@ -7,11 +7,11 @@ from nicegui import ui
 from db_connection import *
 from web_functions import *
 from data_functions import *
+from pages.contacts import contacts_page # Note: DO NOT DELETE THIS LINE we need it for routing
 
 connection = create_connection()  # Connection to MySQL database
 graph_container = None  # Container to store graphs
 labels = {}  # Dictionary to store sensor labels
-
 
 # Header menu
 with ui.header().style('background-color: #3AAFA9;'):
@@ -92,9 +92,7 @@ def home_page():  # Define the homepage layout
 
         def update_date_input():
             selected_range = date_picker.value
-            if selected_range and 'from' in selected_range and 'to' in selected_range:
-                date_input.value = f"{
-                    selected_range['from']} - {selected_range['to']}"
+            if selected_range and 'from' in selected_range and 'to' in selected_range:date_input.value = f"{selected_range['from']} - {selected_range['to']}"
             else:
                 date_input.value = None
 
