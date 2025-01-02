@@ -3,7 +3,6 @@
 # Description: Contains functions for fetching and updating sensor data, and generating graphs
 # Copyright (C) 2024 Victor V. Vu and Jordan Morris
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
-
 from db_connection import create_connection
 from nicegui import ui
 
@@ -65,7 +64,6 @@ def get_all_data(start_date=None, end_date=None):
                 {'value': row[1], 'timestamp': row[2]})
         return sensor_data
 
-
 def update_data(labels):
     """Function to update sensor labels with the latest data."""
     data = get_latest_data()
@@ -75,10 +73,8 @@ def update_data(labels):
             labels[sensor_type][1].set_text(f"{value['value']:.2f} {unit}")
             labels[sensor_type][2].set_text(f"{value['timestamp']}")
 
-
 def generate_graphs(graph_container, data=None):
     """Function to generate graphs based on sensor data."""
-    print("Generating graphs...")
     graph_container.clear()
     if data is None:
         data = get_all_data()
