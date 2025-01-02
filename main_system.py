@@ -9,30 +9,9 @@ from web_functions import *
 from data_functions import *
 from pages.contacts import contacts_page 
 
-connection = create_connection()  # Connection to MySQL database
-graph_container = None  # Container to store graphs
-labels = {}  # Dictionary to store sensor labels
-
-# Header menu
-with ui.header().style('background-color: #3AAFA9;'):
-    ui.label('🌊 Homepage').style('color: #FFFFFF; font-size: 24px;')
-    ui.button(icon='account_circle')  # add account button
-    ui.button(icon='menu')  # add menu button
-
-# Right Drawer
-with ui.right_drawer().style('background-color: #6C757D; align-items: center;'):
-    ui.label('[Notice and Disclaimer]').style(
-        'color: #FFFFFF; font-size: 18px;')
-    ui.label('1. Timers update periodically in intervals of 10mins. (Set to 10secs for debugging and testing only)').style(
-        'color: #FFFFFF; font-size: 14px;')
-    ui.label('2. Recommendations are suggestions, not mandatory.').style(
-        'color: #FFFFFF; font-size: 14px;')
-    ui.label('3. Specify species before proceeding, otherwise default values will be used.').style(
-        'color: #FFFFFF; font-size: 14px;')
-    ui.label('4. Graphs update only at startup but can be refreshed with the button').style(
-        'color: #FFFFFF; font-size: 14px;')
-    ui.label('TBA...').style('color: #FFFFFF; font-size: 14px;')
-
+connection = create_connection() # Connection to MySQL database
+graph_container = None # Container to store graphs
+labels = {} # Dictionary to store sensor labels
 
 def home_page():  # Define the homepage layout
     eco_header()  # call eco_header function
@@ -51,7 +30,7 @@ def home_page():  # Define the homepage layout
             'color: #FFFFFF; font-size: 14px;')
         ui.label('TBA...').style('color: #FFFFFF; font-size: 14px;')
 
-    inject_style()  # call inject_style function
+    inject_style() # call inject_style function
 
     # Main title
     with ui.row().style('justify-content: center; width: 100%'):
@@ -126,11 +105,9 @@ def home_page():  # Define the homepage layout
     # update data every 10s just for testing
     ui.timer(10, lambda: update_data(labels))
 
-
 @ui.page('/')  # Set homepage route
 def home():
     home_page()
-
 
 # run the UI with tab name and logo
 ui.run(title="Aquatic EcoSphere", favicon="🌊")
