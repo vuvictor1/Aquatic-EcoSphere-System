@@ -64,6 +64,7 @@ def get_all_data(start_date=None, end_date=None):
                 {'value': row[1], 'timestamp': row[2]})
         return sensor_data
 
+
 def update_data(labels):
     """Function to update sensor labels with the latest data."""
     data = get_latest_data()
@@ -73,8 +74,9 @@ def update_data(labels):
             labels[sensor_type][1].set_text(f"{value['value']:.2f} {unit}")
             labels[sensor_type][2].set_text(f"{value['timestamp']}")
 
+
 def generate_graphs(graph_container, data=None):
-    """Function to generate graphs based on sensor data."""
+    """Function to generate graphs based on sensor data with dynamic y-axis range, ignoring outliers."""
     graph_container.clear()
     if data is None:
         data = get_all_data()
@@ -86,12 +88,52 @@ def generate_graphs(graph_container, data=None):
                 timestamps = [entry['timestamp'].strftime(
                     '%m-%d %H:%M') for entry in values]
                 sensor_values = [entry['value'] for entry in values]
+
+                # Calculate quartiles and IQR to identify outliers
+                sorted_values = sorted(sensor_values)
+                # First quartile (25th percentile)
+                q1 = sorted_values[int(0.25 * len(sorted_values))]
+                # Third quartile (75th percentile)
+                q3 = sorted_values[int(0.75 * len(sorted_values))]
+                iqr = q3 - q1  # Interquartile range
+                lower_bound = q1 - 1.5 * iqr  # Lower bound for outliers
+                upper_bound = q3 + 1.5 * iqr  # Upper bound for outliers
+
+                # Filter out outliers
+                filtered_values = [
+                    value for value in sensor_values if lower_bound <= value <= upper_bound]
+
+                # Calculate the range for the y-axis using filtered values
+                max_value = max(sensor_values)
+                min_value = min(filtered_values) if filtered_values else min(
+                    sensor_values)
+                range_value = max_value - min_value
+                distance_padding = 0.10  # Multiplied against the range for scaling
+                y_min = max(0, min_value - distance_padding * range_value)
+                y_max = max_value + distance_padding * range_value
+
+                # Debugging: Print max and min values for each sensor type
+                """ print(f"Sensor Type: {sensor_type}")
+                print(f"Original Max Value: {max(sensor_values)}")
+                print(f"Original Min Value: {min(sensor_values)}")
+                # print(f"Filtered Max Value: {max_value}")
+                print(f"Filtered Min Value: {min_value}")
+                print(f"Range Value: {range_value}")
+                print(f"Y-Min: {y_min}")
+                print(f"Y-Max: {y_max}")
+                print("-" * 40) """
+
                 with graph_container:
                     ui.echart({
                         'title': {'text': sensor_type, 'textStyle': {'color': '#FFFFFF'}},
                         'tooltip': {'trigger': 'axis', 'textStyle': {'color': '#rgb(16, 15, 109)'}},
                         'xAxis': {'type': 'category', 'data': timestamps, 'axisLabel': {'color': '#FFFFFF'}},
-                        'yAxis': {'type': 'value', 'axisLabel': {'color': '#FFFFFF'}},
+                        'yAxis': {
+                            'type': 'value',
+                            'axisLabel': {'color': '#FFFFFF'},
+                            'min': y_min,
+                            'max': y_max
+                        },
                         'series': [{'data': sensor_values, 'type': 'line', 'name': sensor_type, 'smooth': True, 'areaStyle': {}}],
                         'toolbox': {'feature': {'saveAsImage': {}}}
                     }).style('width: 400px; height: 300px;')
