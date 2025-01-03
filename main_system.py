@@ -77,18 +77,18 @@ def home_page():  # Home page function
         # Update date input when date picker value changes
         date_picker.on('update:model-value', update_date_input)
 
+        # Button to filter data based on selected date range inside the dialog
+        with ui.row().style('justify-content: center; width: 100%; margin-top: 10px;'):
+            ui.button('Filter Data', on_click=lambda: (
+                generate_graphs(graph_container, get_all_data(
+                    *date_input.value.split(' - ')) if date_input.value else get_all_data()),
+                date_dialog.close()
+            )).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
+
     # Button to open the date range selection dialog
     with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):
         ui.button('Select Date Range', on_click=lambda: date_dialog.open()).style(
             'background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
-
-    # Button to filter data based on selected date range
-    with ui.row().style('justify-content: center; width: 100%; margin-top: 10px;'):
-        ui.button('Filter Data', on_click=lambda: (
-            generate_graphs(graph_container, get_all_data(
-                *date_input.value.split(' - ')) if date_input.value else get_all_data()),
-            date_dialog.close()
-        )).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
 
     # Container for graphs
     global graph_container
