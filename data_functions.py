@@ -131,8 +131,8 @@ def generate_graphs(graph_container, data=None):
                         'yAxis': {
                             'type': 'value',
                             'axisLabel': {'color': '#FFFFFF'},
-                            'min': y_min,
-                            'max': y_max
+                            'min': round(y_min, 0),
+                            'max': round(y_max, 0)
                         },
                         'series': [{'data': sensor_values, 'type': 'line', 'name': sensor_type, 'smooth': True, 'areaStyle': {}}],
                         'toolbox': {'feature': {'saveAsImage': {}}}
