@@ -18,9 +18,9 @@ Aquatic EcoSphere is a Python-based system designed to help aquarium owners moni
 - Firestore
 - NiceGUI
   
-***Run Instructions:***
+***Run Instructions:*** Type
 ```
-Run Python File: python3 main_system.py
+python3 main_system.py
 ```
 
 ***Requirements:***
