@@ -12,15 +12,14 @@ from pages.contacts import contacts_page
 # Initialize global variables
 connection = create_connection() # create a database connection
 graph_container = None # container for graphs
-labels = {}  # sensor labels
-LABEL_STYLE = 'color: #FFFFFF; font-size: 16px;'  # constant text
+labels = {} # sensor labels
+LABEL_STYLE = 'color: #FFFFFF; font-size: 16px;' # constant text
 
-def home_page():  # Home page function
-    eco_header()  # call eco_header function
+def home_page(): # Home page function
+    eco_header() # call eco_header function
 
-    with ui.right_drawer().style('background-color: #6C757D; align-items: center;'):  # Right drawer
-        ui.label('[Notice and Disclaimer]').style(
-            'color: #FFFFFF; font-size: 18px;')  # title
+    with ui.right_drawer().style('background-color: #6C757D; align-items: center;'): # Right drawer
+        ui.label('[Notice and Disclaimer]').style('color: #FFFFFF; font-size: 18px;') # title
         notices = [
             '1. Timers update periodically in intervals of 10mins. (Currently 10secs for testing only)',
             '2. Recommendations are suggestions only and up to user discretion.',
@@ -28,65 +27,54 @@ def home_page():  # Home page function
             '4. Graphs update only at startup but can be refreshed with the button',
             'More instructions TBA...'
         ]
-        for notice in notices:  # Loop through each notice
-            ui.label(notice).style(LABEL_STYLE)  # apply the label style
-    inject_style()  # call inject_style function
+        for notice in notices: 
+            ui.label(notice).style(LABEL_STYLE) # apply the label style
+    inject_style() # call inject_style function
 
-    inject_lottie()  # call inject_lottie function
-    # lottie file url
-    lottie_url = 'https://lottie.host/33548596-614d-4e89-a0a8-69126f02a92a/EmTPHrDT7l.json'
+    inject_lottie() # call inject_lottie function
+    lottie_url = 'https://lottie.host/33548596-614d-4e89-a0a8-69126f02a92a/EmTPHrDT7l.json' # lottie url
     with ui.row().style('justify-content: center; width: 100%; margin-top: -50px;'): # Lottie player
-        ui.html(f'''<lottie-player src="{lottie_url}
-                " loop autoplay style="height: 300px;"></lottie-player>''')
+        ui.html(f'''<lottie-player src="{lottie_url}" loop autoplay style="height: 300px;"></lottie-player>''') 
 
-    with ui.row().style('justify-content: center; width: 100%'):  # Main title
-        ui.label('Aquatic EcoSphere System').style(
-            'color: #FFFFFF; font-size: 32px; margin-top: -50px;')  # welcome label
+    with ui.row().style('justify-content: center; width: 100%'): # Main title
+        ui.label('Aquatic EcoSphere System').style('color: #FFFFFF; font-size: 32px; margin-top: -50px;') # welcome label
 
     # Sensor Cards
     global labels
     labels = {}
     with ui.row().style('justify-content: center; width: 100%;'): 
-        for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']: # loop through each sensor type
-            with ui.column().classes('card').style('align-items: center;'):  # Use css class
+        for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']: 
+            with ui.column().classes('card').style('align-items: center;'): # Use css class
                 sensor_label = ui.label(sensor_type).style(LABEL_STYLE)
-                value_label = ui.label(
-                    f'{sensor_type} Value: Loading...').style(LABEL_STYLE)
-                timestamp_label = ui.label(
-                    f'{sensor_type} Timestamp: Loading...').style(LABEL_STYLE)
-                labels[sensor_type] = (
-                    sensor_label, value_label, timestamp_label)
+                value_label = ui.label(f'{sensor_type} Value: Loading...').style(LABEL_STYLE)
+                timestamp_label = ui.label(f'{sensor_type} Timestamp: Loading...').style(LABEL_STYLE)
+                labels[sensor_type] = (sensor_label, value_label, timestamp_label)
 
-    # Additional Cards for Alert, Reminder, Recommendation
-    with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):
-        for card_type in ['Alerts', 'Reminders', 'Recommendations']:
-            with ui.column().classes('card').style('align-items: center;'):
+    with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'): # Additional cards
+        for card_type in ['Alerts', 'Reminders', 'Recommendations']: # Cards for alerts, reminders, and recommendations
+            with ui.column().classes('card').style('align-items: center;'): # Use css class
                 ui.label(card_type).style(LABEL_STYLE)
                 ui.label('No action required. WIP...').style(LABEL_STYLE)
 
-    # Create a dialog for the date range input
-    with ui.dialog() as date_dialog:
-        ui.label('Select Date Range:').style(
-            'color: #FFFFFF; font-size: 18px;')
-        date_input = ui.input('Date range').classes('w-40')
+    with ui.dialog() as date_dialog: # Date range selection dialog
+        date_dialog.classes('card').style('justify-content: center; width: 100%;') # use css class for background
+        ui.label('Select Date Range:').style('color: #FFFFFF; font-size: 18px;')
+        date_input = ui.input('Date range').classes() 
         date_picker = ui.date().props('range')
 
-        def update_date_input():  # Update date input based on selected range
-            selected_range = date_picker.value
+        def update_date_input(): # Update date input based on selected range
+            selected_range = date_picker.value # get selected range
             date_input.value = f"{selected_range['from']} - {selected_range['to']}" if selected_range and 'from' in selected_range and 'to' in selected_range else None
-        # Update date input when date picker value changes
-        date_picker.on('update:model-value', update_date_input)
+        date_picker.on('update:model-value', update_date_input) # update date input based on calendar selection
 
-        # Button to filter data based on selected date range inside the dialog
-        with ui.row().style('justify-content: center; width: 100%; margin-top: 10px;'):
+        with ui.row().style('justify-content: center; width: 100%; margin-top: 10px;'): # Filter data button
             ui.button('Filter Data', on_click=lambda: (
                 generate_graphs(graph_container, get_all_data(
                     *date_input.value.split(' - ')) if date_input.value else get_all_data()),
                 date_dialog.close()
             )).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
 
-    # Button to open the date range selection dialog
-    with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):
+    with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'): # Select date range button
         ui.button('Select Date Range', on_click=lambda: date_dialog.open()).style(
             'background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
 
@@ -95,16 +83,14 @@ def home_page():  # Home page function
     graph_container = ui.row().style('justify-content: center; width: 100%;')
     generate_graphs(graph_container)
 
-    with ui.row().style('justify-content: center; width: 100%;'):  # Refresh graphs button
+    with ui.row().style('justify-content: center; width: 100%;'): # Refresh graphs button
         ui.button('Refresh Graphs', on_click=lambda: generate_graphs(
             graph_container)).style('background-color: #3AAFA9; color: #FFFFFF;')
-    eco_footer()  # call eco_footer function
-    ui.timer(10, lambda: update_data(labels))  # update data every 10s
+    eco_footer() # call eco_footer function
+    ui.timer(10, lambda: update_data(labels)) # update data every 10s
 
-
-@ui.page('/')  # Set homepage route
+@ui.page('/') # Set homepage route
 def home():
     home_page()
 
-
-ui.run(title="Aquatic EcoSphere", favicon="🌊")  # run ui with logo
+ui.run(title="Aquatic EcoSphere", favicon="🌊") # run ui with logo
