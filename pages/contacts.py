@@ -4,7 +4,7 @@
 # Copyright (C) 2024 Victor V. Vu and Jordan Morris
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from nicegui import ui
-from web_functions import *
+from web_functions import inject_style, eco_header, eco_footer
 
 # Constants for styles
 input_style = 'width: 100%; padding: 10px; margin-bottom: 20px; color: #FFFFFF; background-color: #333333; border: 1px solid #555555; border-radius: 5px;'

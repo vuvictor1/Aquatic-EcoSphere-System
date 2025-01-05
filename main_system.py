@@ -6,8 +6,9 @@
 from nicegui import ui
 from db_connection import create_connection
 from web_functions import inject_style, eco_header, eco_footer, inject_lottie
-from data_functions import generate_graphs, get_all_data, update_data
+from data_functions import update_data
 from pages.contacts import contacts_page
+from pages.graphs import graphs_page
 
 # Initialize global variables
 connection = create_connection() # create a database connection
@@ -46,8 +47,8 @@ def home_page(): # Home page function
         for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']: 
             with ui.column().classes('card').style('align-items: center;'): # Use css class
                 sensor_label = ui.label(sensor_type).style(LABEL_STYLE)
-                value_label = ui.label(f'{sensor_type} Value: Loading...').style(LABEL_STYLE)
-                timestamp_label = ui.label(f'{sensor_type} Timestamp: Loading...').style(LABEL_STYLE)
+                value_label = ui.label('Value: Loading...').style(LABEL_STYLE)
+                timestamp_label = ui.label('Timestamp: Loading...').style(LABEL_STYLE)
                 labels[sensor_type] = (sensor_label, value_label, timestamp_label)
 
     with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'): # Additional cards
@@ -55,37 +56,6 @@ def home_page(): # Home page function
             with ui.column().classes('card').style('align-items: center;'): # Use css class
                 ui.label(card_type).style(LABEL_STYLE)
                 ui.label('No action required. WIP...').style(LABEL_STYLE)
-
-    with ui.dialog() as date_dialog: # Date range selection dialog
-        with ui.column().style('background-color: #2C2C2C; padding: 40px; border-radius: 10px;'): # Box container
-            ui.label('Select Date Range:').style('color: #FFFFFF; font-size: 20px; background-color: #333333; padding: 20px;')
-            date_input = ui.input('Date range').style('display: none;') # get date input but don't display to user
-            date_picker = ui.date().props('range')
-
-            def update_date_input(): # Update date input based on selected range
-                selected_range = date_picker.value # get selected range
-                date_input.value = f"{selected_range['from']} - {selected_range['to']}" if selected_range and 'from' in selected_range and 'to' in selected_range else None
-            date_picker.on('update:model-value', update_date_input) # update date input based on calendar selection
-
-            with ui.row().style('margin-top: 10px;'): # Filter data button
-                ui.button('Filter Data', on_click=lambda: (
-                    generate_graphs(graph_container, get_all_data(
-                        *date_input.value.split(' - ')) if date_input.value else get_all_data()),
-                    date_dialog.close()
-                )).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
-
-    with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'): # Select date range button
-        ui.button('Select Date Range', on_click=lambda: date_dialog.open()).style(
-            'background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
-
-    # Container for graphs
-    global graph_container
-    graph_container = ui.row().style('justify-content: center; width: 100%;')
-    generate_graphs(graph_container)
-
-    with ui.row().style('justify-content: center; width: 100%;'): # Refresh graphs button
-        ui.button('Refresh Graphs', on_click=lambda: generate_graphs(
-            graph_container)).style('background-color: #3AAFA9; color: #FFFFFF;')
     eco_footer() # call eco_footer function
     ui.timer(10, lambda: update_data(labels)) # update data every 10s
 
