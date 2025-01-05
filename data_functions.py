@@ -113,16 +113,28 @@ def generate_graphs(graph_container, data=None):
                 iqr = q3 - q1  # Interquartile range
                 lower_bound = q1 - 1.5 * iqr  # Lower bound for outliers
 
+                """ print(f"Sensor Type: {sensor_type}")
+                print(f"Original Min Value: {min(sensor_values)}")
+                print(f"Original Max Value: {max(sensor_values)}")
+                """
                 # Remove lower outliers
                 filtered_values = [
                     value for value in sensor_values if lower_bound <= value]
-                # Calculate y-axis range using filtered values
+                """ print(f"Filtered Min Value: {
+                      min(filtered_values) if filtered_values else 0}")
+                print(f"Filtered Max Value: {
+                      max(filtered_values) if filtered_values else 1}") """  # Calculate y-axis range using filtered values
                 min_value = min(filtered_values) if filtered_values else 0
                 max_value = max(filtered_values) if filtered_values else 1
                 distance_padding = 0.10  # Padding for y-axis
                 y_min = max(0, min_value - distance_padding *
                             (max_value - min_value))
                 y_max = max_value + distance_padding * (max_value - min_value)
+
+                """ print(f"Displayed before rounding Y-Min: {y_min}")
+                print(f"Displayed before rounding Y-Max: {y_max}")
+                print(f"Displayed after rounding Y-Max: {round(y_max, 0)}")
+                print("-" * 40) """
 
                 with graph_container:  # Create a graph for each sensor type
                     ui.echart({
