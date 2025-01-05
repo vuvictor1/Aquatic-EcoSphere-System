@@ -9,6 +9,7 @@ def eco_header(): # Header for the web interface
     with ui.header().style('background-color: #3AAFA9; padding: 10px 300px;'): # Header style
         ui.link('🌊 Home', '/').style('color: #FFFFFF; font-size: 24px; text-decoration: none;') 
         ui.label('|').style('color: #FFFFFF; font-size: 24px;')
+        ui.link('Graphs', '/graphs').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
         ui.link('Contacts', '/contacts').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
         with ui.row().style('gap: 10px;'): # Buttons style
             ui.button(icon='account_circle')
