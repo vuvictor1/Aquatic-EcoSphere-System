@@ -35,7 +35,7 @@ def home_page(): # Home page function
     inject_lottie() # call inject_lottie function
     lottie_url = 'https://lottie.host/33548596-614d-4e89-a0a8-69126f02a92a/EmTPHrDT7l.json' # lottie url
     with ui.row().style('justify-content: center; width: 100%; margin-top: -50px;'): # Lottie player
-        ui.html(f'''<lottie-player src="{lottie_url}" loop autoplay style="height: 300px;"></lottie-player>''') 
+        ui.html(f'''<lottie-player src="{lottie_url}" loop autoplay speed="0.25" style="height: 300px;"></lottie-player>''') 
 
     with ui.row().style('justify-content: center; width: 100%'): # Main title
         ui.label('Aquatic EcoSphere System').style('color: #FFFFFF; font-size: 32px; margin-top: -50px;') # welcome label
