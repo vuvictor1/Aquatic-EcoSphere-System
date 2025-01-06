@@ -19,7 +19,7 @@ def contacts_page(): # Contacts page
         inject_lottie() # inject lottie animation
         lottie_url = 'https://lottie.host/39c13f90-cf6a-48cd-9991-b7786de51bff/4fkeUtAhp9.json' # lottie animation
         with ui.column().classes('mail').style(f'align-items: center; background-color: #2C2C2C; padding: 20px; border-radius: 10px;'): # Column for the contacts
-            ui.html(f'''<lottie-player src="{lottie_url}" loop autoplay speed="0.5" style="height: 200px;"></lottie-player>''') # play file
+            ui.html(f'''<lottie-player src="{lottie_url}" loop autoplay speed="0.25" style="height: 150px;"></lottie-player>''') # play file
             ui.label('Contact Us').style(f'font-size: 32px; color: white;') # Mail title
             # Create input fields for the form
             ui.html(f'''
