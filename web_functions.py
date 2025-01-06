@@ -1,7 +1,7 @@
-# Authors: Victor Vu 
+# Author: Victor Vu 
 # File: web_functions.py
 # Description: Provides style and functions for the web interface
-# Copyright (C) 2024 Victor V. Vu and Jordan Morris
+# Copyright (C) 2025 Victor V. Vu and Jordan Morris
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from nicegui import ui
 
@@ -21,7 +21,7 @@ def inject_style(): # Injects CSS style in web interface
         body {
             background-color: #3B3B3B;
         }
-        .card {
+        .card, .mail {
             background-color: #2C2C2C;
             padding: 20px;
             border-radius: 10px;
@@ -32,7 +32,10 @@ def inject_style(): # Injects CSS style in web interface
         .card {
             width: 10%;
         }
-        .card:hover {
+        .mail {
+            width: 30%;
+        }
+        .card:hover, .mail:hover {
             border-color: #F5A623;
             transform: scale(1.05);
         }
@@ -44,4 +47,4 @@ def inject_lottie(): # Injects Lottie animation in web interface
 
 def eco_footer(): # Footer for the web interface
     with ui.footer().style('background-color: #3AAFA9; justify-content: center;'):
-        ui.label('Copyright (C) 2024 | Victor Vu & Jordan Morris').style('color: #FFFFFF; font-size: 18px;')
+        ui.label('Copyright (C) 2025 | Victor Vu & Jordan Morris').style('color: #FFFFFF; font-size: 18px;')
