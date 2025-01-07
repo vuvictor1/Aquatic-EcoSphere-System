@@ -5,7 +5,56 @@
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from nicegui import ui
 from web_functions import inject_style, eco_header, eco_footer
-from data_functions import generate_graphs, get_all_data
+from data_functions import get_all_data
+
+def generate_graphs(graph_container, data=None): # Generate graphs for sensor data
+    graph_container.clear() # reset the graph container
+    if data is None: # Fetch all data if none is provided
+        data = get_all_data() 
+
+    if data: # Generate graphs if data is available
+        desired_order = ['total dissolved solids', 'turbidity', 'temperature'] 
+        for sensor_type in desired_order: 
+            if sensor_type in data: # Check if sensor type is in the data
+                values = data[sensor_type] # get values for the sensor type
+                timestamps = [entry['timestamp'].strftime('%m-%d %H:%M') for entry in values] # extract timestamps
+                sensor_values = [entry['value'] for entry in values] # extract sensor values
+
+                # Calculate y-axis range
+                sorted_values = sorted(sensor_values) # sort values
+                q1 = sorted_values[int(0.25 * len(sorted_values))] # 25th percentile
+                q3 = sorted_values[int(0.75 * len(sorted_values))] # 75th percentile
+                iqr = q3 - q1 # interquartile range
+                lower_bound = q1 - 1.5 * iqr # lower bound for outliers
+                filtered_values = [value for value in sensor_values if lower_bound <= value] # filter out outliers
+
+                # Calculate y-axis range using filtered values
+                min_value = min(filtered_values) if filtered_values else 0 # minimum value
+                max_value = max(filtered_values) if filtered_values else 1 # maximum value
+                distance_padding = 0.10 # padding for y-axis
+                y_min = max(0, min_value - distance_padding *(max_value - min_value)) # minimum y-axis value
+                y_max = max_value + distance_padding * (max_value - min_value) # maximum y-axis value
+
+                with graph_container: # Create a graph for each sensor type
+                    ui.echart({ # Create an echart object
+                        'title': {'text': sensor_type, 'textStyle': {'color': '#FFFFFF'}},
+                        'tooltip': {'trigger': 'axis', 'textStyle': {'color': '#rgb(16, 15, 109)'}},
+                        'xAxis': {'type': 'category', 'data': timestamps, 'axisLabel': {'color': '#FFFFFF'}},
+                        'yAxis': { # Y-axis configuration
+                            'type': 'value',
+                            'axisLabel': {'color': '#FFFFFF'},
+                            'min': round(y_min, 0),
+                            'max': round(y_max, 0)
+                        },
+                        'series': [{ # Series configuration
+                            'data': sensor_values,
+                            'type': 'line',
+                            'name': sensor_type,
+                            'smooth': True,
+                            'areaStyle': {} 
+                        }], # create a line graph
+                        'toolbox': {'feature': {'saveAsImage': {}}} # save as image feature
+                    }).style('width: 400px; height: 300px;') # set width and height of the graph
 
 def graphs_page(graph_container, labels): # Graphs page function
     eco_header() # header menu

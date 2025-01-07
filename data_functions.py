@@ -1,29 +1,21 @@
 # Authors: Victor Vu and Jordan Morris
 # File: data_functions.py
 # Description: Contains functions for fetching and updating sensor data, and generating graphs
-# Copyright (C) 2024 Victor V. Vu and Jordan Morris
+# Copyright (C) 2025 Victor V. Vu and Jordan Morris
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from db_connection import create_connection
 from nicegui import ui
 
-# Connection to MySQL database
-connection = create_connection()
-
-# Define units for each sensor type
-sensor_units = {
+connection = create_connection() # connection to MySQL database
+sensor_units = { # sensor_type: unit
     'total dissolved solids': 'ppm',
     'turbidity': 'NTU',
     'temperature': '°F'
 }
-
-
-def get_latest_data():
-    """
-    Fetch the latest sensor data for each sensor type.
-    Optimized to use a single query with a composite index.
-    """
-    with connection.cursor() as cursor:
-        cursor.execute("SET time_zone = '-08:00';")  # Set timezone to PST
+def get_latest_data(): # Fetch latest sensor data for each type
+    with connection.cursor() as cursor: # Create a cursor object
+        cursor.execute("SET time_zone = '-08:00';") # set timezone to PST
+        # Execute a query to fetch data 
         cursor.execute("""
             SELECT sensor_type, value, timestamp
             FROM sensor_data
@@ -33,28 +25,21 @@ def get_latest_data():
                 GROUP BY sensor_type
             )
         """)
-        results = cursor.fetchall()
-        sensor_data = {row[0]: {'value': row[1],
-                                'timestamp': row[2]} for row in results}
+        results = cursor.fetchall() # fetch all rows
+        sensor_data = {row[0]: {'value': row[1],'timestamp': row[2]} for row in results} # store data in a dictionary
         return sensor_data
 
-
-def get_all_data(start_date=None, end_date=None):
-    """
-    Fetch all sensor data within a specified date range.
-    Optimized to use a composite index on (sensor_type, timestamp).
-    """
-    with connection.cursor() as cursor:
+def get_all_data(start_date=None, end_date=None): # Fetch all  data within a specified range
+    with connection.cursor() as cursor: 
         cursor.execute("SET time_zone = '-08:00';")
-        if start_date is None or end_date is None:
-            # Fetch the min and max timestamps if no date range is provided
+        if start_date is None or end_date is None: # Fetch min and max timestamps if no range provided
             cursor.execute("""
                 SELECT MIN(timestamp), MAX(timestamp)
                 FROM sensor_data
             """)
-            min_timestamp, max_timestamp = cursor.fetchone()
-            start_date = start_date or min_timestamp
-            end_date = end_date or max_timestamp
+            min_timestamp, max_timestamp = cursor.fetchone() 
+            start_date = start_date or min_timestamp # set start date to min timestamp if not provided
+            end_date = end_date or max_timestamp # set end date to max timestamp if not provided
 
         # Fetch data within the specified date range
         cursor.execute("""
@@ -62,87 +47,22 @@ def get_all_data(start_date=None, end_date=None):
             FROM sensor_data
             WHERE timestamp BETWEEN %s AND %s
             ORDER BY timestamp
-        """, (start_date, end_date))
+        """, (start_date, end_date)) # pass in the start and end date
+        results = cursor.fetchall() # fetch all rows
+        sensor_data = {} # empty dictionary to store data
 
-        results = cursor.fetchall()
-        sensor_data = {}
-        for row in results:
-            sensor_type = row[0]
-            if sensor_type not in sensor_data:
-                sensor_data[sensor_type] = []
-            sensor_data[sensor_type].append(
-                {'value': row[1], 'timestamp': row[2]})
+        for row in results: # Iterate each row and store in dictionary
+            sensor_type = row[0] # sensor type
+            if sensor_type not in sensor_data: # check if sensor type is in the dictionary
+                sensor_data[sensor_type] = [] # create a list for each sensor type
+            sensor_data[sensor_type].append({'value': row[1], 'timestamp': row[2]}) # append data to the list
         return sensor_data
 
-
-def update_data(labels):
-    """
-    Update sensor labels with the latest data.
-    """
-    data = get_latest_data()
-    if data:
-        for sensor_type, value in data.items():
-            unit = sensor_units.get(sensor_type, '')
+def update_data(labels): # Update sensor labels with the latest data
+    data = get_latest_data() 
+    if data: # Update labels if data is available
+        for sensor_type, value in data.items(): # Iterate through each type and value label
+            unit = sensor_units.get(sensor_type, '') # get unit for sensor type
             labels[sensor_type][1].set_text(f"{value['value']:.2f} {unit}")
             labels[sensor_type][2].set_text(f"{value['timestamp']}")
 
-
-def generate_graphs(graph_container, data=None):
-    """
-    Generate graphs for sensor data.
-    """
-    graph_container.clear()  # Reset the graph container
-    if data is None:
-        data = get_all_data()  # Fetch all data if none is provided
-
-    if data:
-        desired_order = ['total dissolved solids', 'turbidity', 'temperature']
-        for sensor_type in desired_order:
-            if sensor_type in data:
-                values = data[sensor_type]
-                timestamps = [entry['timestamp'].strftime(
-                    '%m-%d %H:%M') for entry in values]
-                sensor_values = [entry['value'] for entry in values]
-
-                # Calculate y-axis range
-                sorted_values = sorted(sensor_values)  # Sort values
-                # 25th percentile
-                q1 = sorted_values[int(0.25 * len(sorted_values))]
-                # 75th percentile
-                q3 = sorted_values[int(0.75 * len(sorted_values))]
-                iqr = q3 - q1  # Interquartile range
-                lower_bound = q1 - 1.5 * iqr  # Lower bound for outliers
-
-                # Remove lower outliers
-                filtered_values = [
-                    value for value in sensor_values if lower_bound <= value]
-                # Calculate y-axis range using filtered values
-                min_value = min(filtered_values) if filtered_values else 0
-                max_value = max(filtered_values) if filtered_values else 1
-                distance_padding = 0.10  # Padding for y-axis
-                y_min = max(0, min_value - distance_padding *
-                            (max_value - min_value))
-                y_max = max_value + distance_padding * (max_value - min_value)
-
-                with graph_container:  # Create a graph for each sensor type
-                    ui.echart({
-                        'title': {'text': sensor_type, 'textStyle': {'color': '#FFFFFF'}},
-                        'tooltip': {'trigger': 'axis', 'textStyle': {'color': '#rgb(16, 15, 109)'}},
-                        'xAxis': {'type': 'category', 'data': timestamps, 'axisLabel': {'color': '#FFFFFF'}},
-                        'yAxis': {
-                            'type': 'value',
-                            'axisLabel': {'color': '#FFFFFF'},
-                            'min': round(y_min, 0),
-                            'max': round(y_max, 0)
-                        },
-                        'series': [{
-                            'data': sensor_values,
-                            'type': 'line',
-                            'name': sensor_type,
-                            'smooth': True,
-                            'areaStyle': {}
-                        }],
-                        # Save as image feature
-                        'toolbox': {'feature': {'saveAsImage': {}}}
-                        # Set graph dimensions
-                    }).style('width: 400px; height: 300px;')
