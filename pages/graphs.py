@@ -4,6 +4,7 @@
 # Copyright (C) 2024 Victor V. Vu and Jordan Morris
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from nicegui import ui
+from datetime import datetime
 from web_functions import inject_style, eco_header, eco_footer
 from collect_database import get_all_data
 
@@ -54,7 +55,7 @@ def generate_graphs(graph_container, data=None): # Generate graphs for sensor da
                             'areaStyle': {} 
                         }], # create a line graph
                         'toolbox': {'feature': {'saveAsImage': {}}}, # save as image feature
-                        'dataZoom': [{ # Zoom feature for zooming
+                         'dataZoom': [{ # Zoom feature for zooming
                             'type': 'slider',
                             'start': 0,
                             'end': 100
@@ -72,7 +73,10 @@ def graphs_page(graph_container, labels): # Graphs page function
         with ui.column().style('background-color: #2C2C2C; padding: 40px; border-radius: 10px;'): # Box container
             ui.label('Select Date Range:').style('color: #FFFFFF; font-size: 20px; background-color: #333333; padding: 20px;')
             date_input = ui.input('Date range').style('display: none;') # get date input but don't display to user
-            date_picker = ui.date().props('range') # date picker menu
+            current_date = datetime.now().strftime('%Y/%m') # read current date
+            current_date_limit = datetime.now().strftime('%Y/%m/%d') # get current date max filter
+            start_date_limit = '2025/01/05' # minimum date limit for filter based on data collected
+            date_picker = ui.date().props(f'default-year-month={current_date} :options="date => date >= \'{start_date_limit}\' && date <= \'{current_date_limit}\'"') # date menu
 
             def update_date_input(): # Update date input based on selected range
                 selected_range = date_picker.value # get selected range
