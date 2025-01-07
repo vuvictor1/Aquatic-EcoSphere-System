@@ -5,7 +5,7 @@
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from nicegui import ui
 from web_functions import inject_style, eco_header, eco_footer
-from data_functions import get_all_data
+from collect_database import get_all_data
 
 def generate_graphs(graph_container, data=None): # Generate graphs for sensor data
     graph_container.clear() # reset the graph container
@@ -53,7 +53,12 @@ def generate_graphs(graph_container, data=None): # Generate graphs for sensor da
                             'smooth': True,
                             'areaStyle': {} 
                         }], # create a line graph
-                        'toolbox': {'feature': {'saveAsImage': {}}} # save as image feature
+                        'toolbox': {'feature': {'saveAsImage': {}}}, # save as image feature
+                        'dataZoom': [{ # Zoom feature for zooming
+                            'type': 'slider',
+                            'start': 0,
+                            'end': 100
+                        }]
                     }).style('width: 400px; height: 300px;') # set width and height of the graph
 
 def graphs_page(graph_container, labels): # Graphs page function

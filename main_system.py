@@ -4,9 +4,8 @@
 # Copyright (C) 2024 Victor V. Vu and Jordan Morris
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from nicegui import ui
-from db_connection import create_connection
+from collect_database import create_connection, get_latest_data
 from web_functions import inject_style, eco_header, eco_footer, inject_lottie
-from data_functions import update_ui
 from pages.contacts import contacts_page
 from pages.graphs import graphs_page
 
@@ -15,6 +14,11 @@ connection = create_connection() # create a database connection
 graph_container = None # container for graphs
 labels = {} # sensor labels
 LABEL_STYLE = 'color: #FFFFFF; font-size: 16px;' # constant text
+sensor_units = { # sensor_type: unit
+    'total dissolved solids': 'ppm',
+    'turbidity': 'NTU',
+    'temperature': '°F'
+}
 
 def home_page(): # Home page function
     eco_header() # call eco_header function
@@ -58,6 +62,14 @@ def home_page(): # Home page function
                 ui.label('No action required. WIP...').style(LABEL_STYLE)
     eco_footer() # call eco_footer function
     ui.timer(10, lambda: update_ui(labels)) # update ui every 10s
+
+def update_ui(labels): # Update sensor labels with the latest data
+    data = get_latest_data() 
+    if data: # Update labels if data is available
+        for sensor_type, value in data.items(): # Iterate through each type and value label
+            unit = sensor_units.get(sensor_type, '') # get unit for sensor type
+            labels[sensor_type][1].set_text(f"{value['value']:.2f} {unit}")
+            labels[sensor_type][2].set_text(f"{value['timestamp']}")
 
 @ui.page('/') # Set homepage route
 def home():
