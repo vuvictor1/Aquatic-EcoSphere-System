@@ -6,7 +6,7 @@
 from nicegui import ui
 from db_connection import create_connection
 from web_functions import inject_style, eco_header, eco_footer, inject_lottie
-from data_functions import update_data
+from data_functions import update_ui
 from pages.contacts import contacts_page
 from pages.graphs import graphs_page
 
@@ -57,7 +57,7 @@ def home_page(): # Home page function
                 ui.label(card_type).style(LABEL_STYLE)
                 ui.label('No action required. WIP...').style(LABEL_STYLE)
     eco_footer() # call eco_footer function
-    ui.timer(10, lambda: update_data(labels)) # update data every 10s
+    ui.timer(10, lambda: update_ui(labels)) # update ui every 10s
 
 @ui.page('/') # Set homepage route
 def home():

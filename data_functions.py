@@ -58,7 +58,7 @@ def get_all_data(start_date=None, end_date=None): # Fetch all  data within a spe
             sensor_data[sensor_type].append({'value': row[1], 'timestamp': row[2]}) # append data to the list
         return sensor_data
 
-def update_data(labels): # Update sensor labels with the latest data
+def update_ui(labels): # Update sensor labels with the latest data
     data = get_latest_data() 
     if data: # Update labels if data is available
         for sensor_type, value in data.items(): # Iterate through each type and value label
