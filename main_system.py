@@ -3,12 +3,15 @@
 # Description: Main system file that connects to the MySQL database for sensor data. Aimed at mobile app users.
 # Copyright (C) 2024 Victor V. Vu and Jordan Morris
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
+from dotenv import load_dotenv
+import os
 from nicegui import ui
 from collect_database import create_connection, get_latest_data
 from web_functions import inject_style, eco_header, eco_footer, inject_lottie
 from pages.contacts import contacts_page
 from pages.graphs import graphs_page
 from pages.encyclopedia import encyclopedia_page
+from pages.login import AuthMiddleware
 
 # Initialize global variables
 connection = create_connection()  # create a database connection
@@ -87,4 +90,7 @@ def home():
     home_page()
 
 
-ui.run(title="Aquatic EcoSphere", favicon="🌊")  # run ui with logo
+load_dotenv()  # Load environment variables from .env file
+
+storage_secret = os.getenv('STORAGE_SECRET')
+ui.run(title="Aquatic EcoSphere", favicon="🌊", storage_secret=storage_secret)
