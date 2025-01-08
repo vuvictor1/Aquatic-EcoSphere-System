@@ -55,11 +55,6 @@ def generate_graphs(graph_container, data=None): # Generate graphs for sensor da
                             'areaStyle': {}
                         }],
                         'toolbox': {'feature': {'saveAsImage': {}}},
-                        'dataZoom': [{
-                            'type': 'slider',
-                            'start': 0,
-                            'end': 100
-                        }]
                     }).style('width: 400px; height: 300px;')
 
 def graphs_page(graph_container, labels): # Graphs page for the web interface
