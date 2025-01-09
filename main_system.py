@@ -71,7 +71,6 @@ def home_page(): # Home page function
     eco_footer() # call eco_footer function
     ui.timer(10, lambda: update_ui(labels)) # update ui every 10s
 
-
 def update_ui(labels): # Update sensor labels with the latest data
     data = get_latest_data()
     if data: # Update labels if data is available
