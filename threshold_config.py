@@ -14,8 +14,11 @@ DEFAULT_TEMPERATURE_THRESHOLDS = {
 # User-defined thresholds (initially set to default)
 temperature_thresholds = DEFAULT_TEMPERATURE_THRESHOLDS.copy()
 
+# Maximum color intensity value
+MAX_COLOR_INTENSITY = 255
 
-def set_temperature_thresholds(new_thresholds):
+
+def set_temperature_thresholds(new_thresholds: dict) -> None:
     """
     Update the temperature thresholds with user-defined values.
     :param new_thresholds: A dictionary containing new thresholds and colors.
@@ -24,7 +27,7 @@ def set_temperature_thresholds(new_thresholds):
     temperature_thresholds = new_thresholds
 
 
-def get_temperature_thresholds():
+def get_temperature_thresholds() -> dict:
     """
     Get the current temperature thresholds.
     :return: A dictionary containing the current thresholds and colors.
@@ -32,7 +35,7 @@ def get_temperature_thresholds():
     return temperature_thresholds
 
 
-def interpolate_color(current_temp, thresholds):
+def interpolate_color(current_temp: float, thresholds: dict) -> str:
     """
     Interpolate the color based on the current temperature and thresholds.
     The color intensity increases or decreases based on the percentile within the threshold range.
@@ -40,70 +43,61 @@ def interpolate_color(current_temp, thresholds):
     :param thresholds: A dictionary containing thresholds and colors.
     :return: A hex color code.
     """
-    sorted_thresholds = sorted(thresholds.items(), key=lambda x: x[1]['value'])
+    try:
+        sorted_thresholds = sorted(
+            thresholds.items(), key=lambda x: x[1]['value'])
 
-    # Find the threshold range the current temperature falls into
-    for i in range(len(sorted_thresholds) - 1):
-        lower_threshold = sorted_thresholds[i]
-        upper_threshold = sorted_thresholds[i + 1]
+        # Find the threshold range the current temperature falls into
+        for i in range(len(sorted_thresholds) - 1):
+            lower_threshold = sorted_thresholds[i]
+            upper_threshold = sorted_thresholds[i + 1]
 
-        if lower_threshold[1]['value'] <= current_temp <= upper_threshold[1]['value']:
-            # Calculate the percentile within this range
-            range_min = lower_threshold[1]['value']
-            range_max = upper_threshold[1]['value']
-            percentile = (current_temp - range_min) / (range_max - range_min)
+            if lower_threshold[1]['value'] <= current_temp <= upper_threshold[1]['value']:
+                # Calculate the percentile within this range
+                range_min = lower_threshold[1]['value']
+                range_max = upper_threshold[1]['value']
+                percentile = (current_temp - range_min) / \
+                    (range_max - range_min)
 
-            # Interpolate the color intensity based on the percentile
-            base_color = lower_threshold[1]['color']
-            intense_color = get_intense_color(base_color, percentile)
-            return intense_color
+                # Interpolate the color intensity based on the percentile
+                base_color = lower_threshold[1]['color']
+                intense_color = get_intense_color(base_color, percentile)
+                return intense_color
 
-    # If temperature is outside the defined range, return the closest color
-    if current_temp < sorted_thresholds[0][1]['value']:
-        return sorted_thresholds[0][1]['color']
-    else:
-        return sorted_thresholds[-1][1]['color']
+        # If temperature is outside the defined range, return the closest color
+        if current_temp < sorted_thresholds[0][1]['value']:
+            return sorted_thresholds[0][1]['color']
+        else:
+            return sorted_thresholds[-1][1]['color']
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
 
-def get_intense_color(base_color, intensity):
+def get_intense_color(base_color: str, intensity: float) -> str:
     """
     Adjust the intensity of a base color based on a percentile value.
     :param base_color: The base hex color code.
     :param intensity: A value between 0 and 1 representing the percentile.
     :return: A more intense version of the base color.
     """
-    # Convert hex color to RGB
-    r = int(base_color[1:3], 16)
-    g = int(base_color[3:5], 16)
-    b = int(base_color[5:7], 16)
+    try:
+        # Convert hex color to RGB
+        r = int(base_color[1:3], 16)
+        g = int(base_color[3:5], 16)
+        b = int(base_color[5:7], 16)
 
-    # Increase intensity for red, decrease for green and blue (for hotter colors)
-    r = min(255, r + int(255 * intensity))
-    g = max(0, g - int(255 * intensity))
-    b = max(0, b - int(255 * intensity))
+        # Increase intensity for red, decrease for green and blue (for hotter colors)
+        r = min(MAX_COLOR_INTENSITY, r + int(MAX_COLOR_INTENSITY * intensity))
+        g = max(0, g - int(MAX_COLOR_INTENSITY * intensity))
+        b = max(0, b - int(MAX_COLOR_INTENSITY * intensity))
 
-    # Convert back to hex
-    return f'#{r:02x}{g:02x}{b:02x}'
+        # Convert back to hex
+        return f'#{r:02x}{g:02x}{b:02x}'
+    except Exception as e:
+        print(f"An error occurred while adjusting color intensity: {e}")
+        return base_color
 
 
-def interpolate_hex_color(color1, color2, ratio):
-    """
-    Interpolate between two hex colors.
-    :param color1: The starting hex color.
-    :param color2: The ending hex color.
-    :param ratio: The interpolation ratio (0 to 1).
-    :return: A hex color code.
-    """
-    # Convert hex colors to RGB
-    r1, g1, b1 = int(color1[1:3], 16), int(
-        color1[3:5], 16), int(color1[5:7], 16)
-    r2, g2, b2 = int(color2[1:3], 16), int(
-        color2[3:5], 16), int(color2[5:7], 16)
-
-    # Interpolate RGB values
-    r = int(r1 + (r2 - r1) * ratio)
-    g = int(g1 + (g2 - g1) * ratio)
-    b = int(b1 + (b2 - b1) * ratio)
-
-    # Convert back to hex
-    return f'#{r:02x}{g:02x}{b:02x}'
+# The interpolate_hex_color function is not used in the current implementation.
+# If not needed, consider removing it to keep the code clean.
