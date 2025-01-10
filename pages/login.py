@@ -8,10 +8,7 @@ from fastapi.responses import RedirectResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from nicegui import app, ui
 from web_functions import inject_style
-from pages.register import register_page
-
-# Dummy user database -------------------------------------------------
-passwords = {'user1': 'pass1', 'user2': 'pass2'} # dummy user database
+from pages.register import register_page, passwords
 
 unrestricted_routes = {'/login'} # unrestricted routes without authentication
 
@@ -47,4 +44,4 @@ def login_page():
             password_input = ui.input('Pass', password=True, password_toggle_button=True).style('background-color: #FFFFFF;').on('keydown.enter', authenticate) # pass & toggle
             ui.button('Login', on_click=authenticate).style('margin-top: 20px;') # create a login button
             ui.button('Proceed as Guest', on_click=proceed_as_guest).style('margin-top: 20px; margin-left: 20px;') # create a button to proceed as a guest
-            ui.button('Register', on_click=lambda: ui.navigate.to('/register')).style('margin-top: 20px; margin-left: 20px;') # create a button to navigate to the registration page
+            ui.button('No account? Register here', on_click=lambda: ui.navigate.to('/register')).style('margin-top: 20px; margin-left: 20px;') # create a button to navigate to the registration page
