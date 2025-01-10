@@ -8,6 +8,7 @@ from fastapi.responses import RedirectResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from nicegui import app, ui
 from web_functions import inject_style
+from pages.register import register_page
 
 # Dummy user database -------------------------------------------------
 passwords = {'user1': 'pass1', 'user2': 'pass2'} # dummy user database
@@ -40,9 +41,10 @@ def login_page():
         ui.navigate.to('/')
 
     with ui.column().style('justify-content: center; align-items: center; width: 100%; height: 75vh;'): # Login page layout
-        ui.label('Please login or make an account.').style('color: #FFFFFF; font-size: 32px;') #
+        ui.label('Please login or make an account.').style('color: #FFFFFF; font-size: 32px;') 
         with ui.element('div').classes('mail').style('padding: 50px'): # Login form
             username_input = ui.input('User').style('background-color: #FFFFFF;').on('keydown.enter', authenticate) # input user
             password_input = ui.input('Pass', password=True, password_toggle_button=True).style('background-color: #FFFFFF;').on('keydown.enter', authenticate) # pass & toggle
             ui.button('Login', on_click=authenticate).style('margin-top: 20px;') # create a login button
             ui.button('Proceed as Guest', on_click=proceed_as_guest).style('margin-top: 20px; margin-left: 20px;') # create a button to proceed as a guest
+            ui.button('Register', on_click=lambda: ui.navigate.to('/register')).style('margin-top: 20px; margin-left: 20px;') # create a button to navigate to the registration page
