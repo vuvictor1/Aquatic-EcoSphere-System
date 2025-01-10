@@ -30,26 +30,20 @@ sensor_units = {  # sensor_type: unit
 def home_page():  # Home page function
     eco_header()  # call eco_header function
 
-    with ui.right_drawer().style('background-color: #6C757D; align-items: center;'):  # Right drawer
-        ui.label('[Notices]').style(
-            'color: #FFFFFF; font-size: 24px;')  # notice title
-        notices = [  # list of notices
+    with ui.right_drawer().style('background-color: #6C757D; align-items: center;'): # Right drawer
+        ui.label('[Notices]').style('color: #FFFFFF; font-size: 24px;') # notice title
+        notices = [ # list of notices
             '1. Timers update periodically in intervals of 10mins. (Currently 10secs for testing only)',
             '2. Set species before proceeding, otherwise default tolerances will be used in alerts/recommendations.',
             '3. Graphs update only at startup but can be refreshed with the button',
             '4. More instructions TBA...'
         ]
-        for notice in notices:  # Iterate through each notice
-            # chat message
-            ui.chat_message(notice, name='Robot',
-                            avatar='https://robohash.org/ui').style(LABEL_STYLE)
+        for notice in notices: # Iterate through each notice
+            ui.chat_message(notice, name='Advisor Robot', avatar='https://robohash.org/iamexpertfishadvisor').style(LABEL_STYLE) # chat message
 
-        ui.label('[Disclaimer]').style(
-            'color: #FFFFFF; font-size: 24px;')  # disclaimer title
+        ui.label('[Disclaimer]').style('color: #FFFFFF; font-size: 24px;') # disclaimer title
         disclaimer = 'Recommendations are suggestions only and up to user discretion.'
-        ui.chat_message(disclaimer, name='Robot',
-                        # chat message
-                        avatar='https://robohash.org/ui').style(LABEL_STYLE)
+        ui.chat_message(disclaimer, name='Warning Robot', avatar='https://robohash.org/alarm?set=set2').style(LABEL_STYLE) # chat message
 
     inject_style()  # call inject_style function
     inject_lottie()  # call inject_lottie function
