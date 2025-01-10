@@ -12,7 +12,9 @@ def register_page():
 
     def register():
         username, password = username_input.value, password_input.value # get username & password from input
-        if username in passwords: # If username already exists
+        if not username or not password: # Check if fields are empty
+            ui.notify("Username and password cannot be empty!", color='negative', position='center')
+        elif username in passwords: # If username already exists
             ui.notify("Username already exists!", color='negative', position='center')
         else:
             passwords[username] = password # Add new user to the database
@@ -20,7 +22,7 @@ def register_page():
             ui.navigate.to('/login') # navigate to login page
 
     with ui.column().style('justify-content: center; align-items: center; width: 100%; height: 75vh;'): # Register page layout
-        ui.label('Create a new account').style('color: #FFFFFF; font-size: 32px;')
+        ui.label('Create a new account or return to login page.').style('color: #FFFFFF; font-size: 32px;')
         with ui.element('div').classes('mail').style('padding: 50px'): # Register form
             username_input = ui.input('User').style('background-color: #FFFFFF;') # input user
             password_input = ui.input('Pass', password=True, password_toggle_button=True).style('background-color: #FFFFFF;') # pass & toggle
