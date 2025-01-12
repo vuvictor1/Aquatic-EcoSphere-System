@@ -72,7 +72,7 @@ def graphs_page(graph_container, labels): # Graphs page for the web interface
             # Create a date picker with a range of dates
             current_date = datetime.now().strftime('%Y/%m') 
             current_date_limit = datetime.now().strftime('%Y/%m/%d') 
-            start_date_limit = '2025/01/05' 
+            start_date_limit = '2025/01/11' 
             date_picker = ui.date().props(f'range default-year-month={current_date} :options="date => date >= \'{start_date_limit}\' && date <= \'{current_date_limit}\'"') 
 
             def update_date_input(): # Update the date input with the selected range
