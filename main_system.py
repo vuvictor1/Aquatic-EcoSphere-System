@@ -31,7 +31,7 @@ def home_page(): # Home page function
     with ui.right_drawer().style('background-color: #6C757D; align-items: center;') as right_drawer: # Right drawer
         ui.label('[Notices]').style('color: #FFFFFF; font-size: 24px;') # notice title
         notices = [ # list of notices
-            '1. Timers update periodically in intervals of 10mins. (Currently 10secs for testing only)',
+            '1. Timers update periodically in intervals of 5mins.',
             '2. Set species before proceeding, otherwise default tolerances will be used in alerts/recommendations.',
             '3. Graphs update only at startup but can be refreshed with the button',
             '4. More instructions TBA...'
@@ -70,7 +70,7 @@ def home_page(): # Home page function
                 ui.label(card_type).style(LABEL_STYLE)
                 ui.label('No action required. WIP...').style(LABEL_STYLE)
     eco_footer() # call eco_footer function
-    ui.timer(10, lambda: update_ui(labels)) # update ui every 10s
+    ui.timer(290, lambda: update_ui(labels)) # update ui every 290s
 
 def update_ui(labels): # Update sensor labels with the latest data
     data = get_latest_data()
