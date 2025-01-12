@@ -87,16 +87,16 @@ def graphs_page(graph_container, labels): # Graphs page for the web interface
                     date_dialog.close() # close the dialog
                 )).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
 
-    with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'): # Create a row for the date picker button
+    with ui.row().style('justify-content: center; width: 100%;'): # Create a row for the refresh/date button
+        ui.button('Generate/Refresh', on_click=lambda: generate_graphs(
+            graph_container)).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px; margin-bottom: 50px;')
         ui.button('Select Date Range', on_click=lambda: date_dialog.open()).style(
-            'background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
+            'background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px; margin-bottom: 50px;')
 
-    graph_container = ui.row().style('justify-content: center; width: 100%;') # Create a row for the graph container
-    generate_graphs(graph_container) 
-
-    with ui.row().style('justify-content: center; width: 100%;'): # Create a row for the refresh button
-        ui.button('Refresh Graphs', on_click=lambda: generate_graphs(
-            graph_container)).style('background-color: #3AAFA9; color: #FFFFFF;')
+    # Generate graph with style 
+    graph_container = ui.row().style('justify-content: center; min-width: 1250px; height: 300px; background-color: #2C2C2C; padding: 20px; margin: 20px auto;')
+    with graph_container:
+        ui.label('Please press generate to see data.').style('color: #FFFFFF; font-size: 32px; text-align: center;')
     eco_footer() # display the footer
 
 @ui.page('/graphs') # Route to graphs page
