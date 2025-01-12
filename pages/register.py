@@ -1,16 +1,19 @@
+# Authors: Victor Vu 
+# File: register.py
+# Description: Register using authentication middleware if not authenticated.
+# Copyright (C) 2025 Victor V. Vu and Jordan Morris
+# License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from fastapi import Request
 from fastapi.responses import RedirectResponse
 from nicegui import app, ui
 from web_functions import inject_style
 
-# Dummy user database -------------------------------------------------
-passwords = {'user1': 'pass1', 'user2': 'pass2'} # dummy user database
-
+passwords = {'user1': 'pass1'} # user database with dummy 
 @ui.page('/register') # Register page route
 def register_page():
     inject_style() # inject the CSS styles
 
-    def register():
+    def register(): # Register in users function
         username, password = username_input.value, password_input.value # get username & password from input
         if not username or not password: # Check if fields are empty
             ui.notify("Username and password cannot be empty!", color='negative', position='center')
