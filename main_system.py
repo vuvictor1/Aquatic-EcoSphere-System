@@ -42,7 +42,7 @@ def home_page(): # Home page function
         ui.label('[Disclaimer]').style('color: #FFFFFF; font-size: 24px;') # disclaimer title
         disclaimer = 'Recommendations are suggestions only and up to user discretion.'
         ui.chat_message(disclaimer, name='Warning Robot', avatar='https://robohash.org/alarm?set=set2').style(LABEL_STYLE) # chat message
-        ui.switch('Close Menu', on_change=lambda: right_drawer.toggle()) # switch to toggle advisor
+        ui.switch('Close Menu', on_change=lambda: right_drawer.toggle()).style(LABEL_STYLE) # switch to toggle advisor
 
     inject_style() # call inject_style function
     inject_lottie() # call inject_lottie function
