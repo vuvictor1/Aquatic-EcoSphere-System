@@ -21,7 +21,6 @@ def register_page():
             ui.notify("Username already exists!", color='negative', position='center')
         else:
             passwords[username] = password # Add new user to the database
-            ui.notify("Registration successful!", color='positive', position='center')
             ui.navigate.to('/login') # navigate to login page
 
     with ui.column().style('justify-content: center; align-items: center; width: 100%; height: 75vh;'): # Register page layout
