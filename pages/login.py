@@ -43,5 +43,5 @@ def login_page():
             username_input = ui.input('User').style('background-color: #FFFFFF;').on('keydown.enter', authenticate) # input user
             password_input = ui.input('Pass', password=True, password_toggle_button=True).style('background-color: #FFFFFF;').on('keydown.enter', authenticate) # pass & toggle
             ui.button('Login', on_click=authenticate).style('margin-top: 20px;') # create a login button
-            ui.button('Proceed as Guest', on_click=proceed_as_guest).style('margin-top: 20px; margin-left: 20px;') # create a button to proceed as a guest
-            ui.button('No account? Register here', on_click=lambda: ui.navigate.to('/register')).style('margin-top: 20px; margin-left: 20px;') # create a button to navigate to the registration page
+            ui.button('Proceed as Guest', on_click=proceed_as_guest).style('margin-top: 20px; margin-left: 10px;') # create a button to proceed as a guest
+            ui.button('No account? Register here', on_click=lambda: ui.navigate.to('/register')).style('margin-top: 20px; margin-left: 10px;') # create a button to navigate to the registration page
