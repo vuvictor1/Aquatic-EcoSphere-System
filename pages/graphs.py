@@ -65,14 +65,14 @@ def graphs_page(graph_container, labels): # Graphs page for the web interface
         ui.label('Graphing').style('font-size: 32px; color: white;') 
 
     with ui.dialog() as date_dialog: # Create a dialog for selecting date range
-        with ui.column().style('background-color: #2C2C2C; padding: 40px; border-radius: 10px;'): 
-            ui.label('Select Date Range:').style('color: #FFFFFF; font-size: 20px; background-color: #333333; padding: 20px;') 
-            date_input = ui.input('Date range').classes('w-40').style('display: none;') # hidden input for date range 
+        with ui.column().style('background-color: #2C2C2C; padding: 2em; border-radius: 10px;'): 
+            ui.label('Select Date Range:').style('color: #FFFFFF; font-size: 1.25em; background-color: #333333; padding: 1em;') 
+            date_input = ui.input('Date range').classes('w-100').style('display: none;') # hidden input for date range 
 
             # Create a date picker with a range of dates
             current_date = datetime.now().strftime('%Y/%m') 
             current_date_limit = datetime.now().strftime('%Y/%m/%d') 
-            start_date_limit = '2025/01/11' 
+            start_date_limit = '2025/01/12' 
             date_picker = ui.date().props(f'range default-year-month={current_date} :options="date => date >= \'{start_date_limit}\' && date <= \'{current_date_limit}\'"') 
 
             def update_date_input(): # Update the date input with the selected range
@@ -80,26 +80,45 @@ def graphs_page(graph_container, labels): # Graphs page for the web interface
                 date_input.value = f"{selected_range['from']} - {selected_range['to']}" if selected_range and 'from' in selected_range and 'to' in selected_range else None
             date_picker.on('update:model-value', update_date_input) # on value change, update the date input
 
-            with ui.row().style('margin-top: 10px;'): # Create a row for the filter button
+            with ui.row().style('margin-top: 1em;'): # Create a row for the filter button
                 ui.button('Filter Data', on_click=lambda: (
                     generate_graphs(graph_container, get_all_data(
                         *date_input.value.split(' - ')) if date_input.value else get_all_data()),
                     date_dialog.close() # close the dialog
-                )).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px;')
+                )).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 1em;')
 
     with ui.row().style('justify-content: center; width: 100%;'): # Create a row for the refresh/date button
         ui.button('Generate/Refresh', on_click=lambda: generate_graphs(
-            graph_container)).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px; margin-bottom: 50px;')
+            graph_container)).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 1em; margin-bottom: 3em;')
         ui.button('Select Date Range', on_click=lambda: date_dialog.open()).style(
-            'background-color: #3AAFA9; color: #FFFFFF; margin-top: 10px; margin-bottom: 50px;')
+            'background-color: #3AAFA9; color: #FFFFFF; margin-top: 1em; margin-bottom: 3em;')
 
     # Generate graph with style 
-    graph_container = ui.row().style('justify-content: center; min-width: 1250px; height: 300px; background-color: #2C2C2C; padding: 20px; margin: 20px auto;')
+    graph_container = ui.row().classes('graph-container').style('justify-content: center; background-color: #2C2C2C; padding: 1em; margin: 1em auto;')
     with graph_container:
-        ui.label('Please press generate to see data.').style('color: #FFFFFF; font-size: 32px; text-align: center;')
+        ui.label('Please press generate to see data.').style('color: #FFFFFF; font-size: 2em; text-align: center;')
     eco_footer() # display the footer
 
 @ui.page('/graphs') # Route to graphs page
 def graphs(): 
     from main_system import graph_container, labels 
     graphs_page(graph_container, labels)
+
+# Add CSS for responsiveness
+ui.add_css('''
+    .graph-container {
+        width: 80%;
+        max-width: 1200px;
+        height: 300px;
+    }
+
+    @media (max-width: 600px) {
+        .graph-container {
+            width: 100%;
+            height: 200px;
+        }
+        .ui-label {
+            font-size: 1.5em;
+        }
+    }
+''')
