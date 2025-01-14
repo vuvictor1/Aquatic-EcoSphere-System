@@ -7,6 +7,18 @@ def settings_page():
     eco_header()
     inject_style()
 
+    # Inject custom CSS styles
+    ui.html("""
+        <style>
+            .q-field__native {
+                color: white;
+            }
+            .q-field__label {
+                color: white;
+            }
+        </style>
+    """)
+
     # Title for the page
     with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):
         ui.label('Settings').style('font-size: 32px; color: white;')
@@ -28,7 +40,7 @@ def settings_page():
         with ui.row().style('justify-content: center;'):
             ui.label(label).style('font-size: 18px; color: white;')
             input_field = ui.input(label, value=value).style(
-                'width: 100px; color: white; background-color: #333333;')
+                'width: 100px; background-color: #333333;')
             ui.label('°F').style('font-size: 18px; color: white;')
 
     # Save Button
@@ -43,8 +55,7 @@ def settings_page():
 
 def save_settings(min_temp, low_temp, mid_temp, max_temp):
     """Saves the settings to the database or a file."""
-    print(f'Saving settings: Min Temperature={min_temp}, Low Temperature={
-          low_temp}, Mid Temperature={mid_temp}, Max Temperature={max_temp}')
+    print(f'Saving settings: Min Temperature={min_temp}, Low Temperature={low_temp}, Mid Temperature={mid_temp}, Max Temperature={max_temp}')
 
 
 @ui.page('/settings')
