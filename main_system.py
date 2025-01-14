@@ -13,7 +13,7 @@ from pages.graphs import graphs_page
 from pages.encyclopedia import encyclopedia_page
 from pages.login import AuthMiddleware
 from threshold_config import get_temperature_thresholds, interpolate_color
-
+from pages.settings import settings_page
 
 # Initialize global variables
 connection = create_connection()  # create a database connection
