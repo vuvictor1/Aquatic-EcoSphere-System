@@ -51,12 +51,6 @@ def inject_style():  # Injects CSS style in web interface
             border-color: #F5A623;
             transform: scale(1.05);
         }
-        .q-field__native {
-            color: white;
-        }
-        .q-field__label {
-            color: white;
-        }
     </style>
     """)
 
