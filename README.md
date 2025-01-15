@@ -1,5 +1,5 @@
 # Aquatic EcoSphere System
-Monitoring tool for managing optimal conditions in aquatic ecosystems through real-time sensor data, educational insights, and algorithm analysis.
+Monitoring tool for managing optimal conditions in aquatic ecosystems through real-time sensor data, educational insights, and algorithm-driven analysis.
 
 Deployment: [aquatic-eco.up.railway.app ](https://aquatic-eco.up.railway.app/login)
 
@@ -12,9 +12,9 @@ Aquatic EcoSphere is a Python-based system designed to help aquarium owners moni
 - **Push Notifications**: Get alerts when critical water conditions are detected.
 - **Educational Insights**: Learn about the biological and chemical factors affecting aquariums.
 - **Algorithm Analysis**: Utilize algorithms for interpreting data and providing recommendations.
-- **Account Management**: Securely sync tank specific data across remote locations.
-- **Graph Generation**: Visualize collected all data for user insights.
-- **Mobile Support**: Complemntary android application to convient access the ecosphere system.
+- **Account Management**: Securely sync tank-specific data across remote locations.
+- **Graph Generation**: Visualize collected data for user insights.
+- **Mobile Support**: Complementary Android application for convenient access to the EcoSphere system.
 
 **Technologies Used:**
 - Python
