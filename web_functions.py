@@ -20,7 +20,6 @@ def eco_header():  # Header for the web interface
         with ui.row().style('gap: 10px;'):  # Buttons style
             ui.button('account', icon='account_circle', on_click=lambda: ui.navigate.to(
                 '/login'))  # account redirect
-            ui.button(icon='menu')
             ui.button(icon='settings', on_click=lambda: ui.navigate.to(
                 '/settings'))  # settings redirect
 
@@ -50,12 +49,6 @@ def inject_style():  # Injects CSS style in web interface
         .card:hover, .mail:hover {
             border-color: #F5A623;
             transform: scale(1.05);
-        }
-        .q-field__native {
-            color: white;
-        }
-        .q-field__label {
-            color: white;
         }
     </style>
     """)
