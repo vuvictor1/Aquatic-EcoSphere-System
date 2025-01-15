@@ -7,7 +7,7 @@ from nicegui import ui
 
 
 def eco_header():  # Header for the web interface
-    with ui.header().style('background-color: #3AAFA9; padding: 10px 300px;'):  # Header style
+    with ui.header().style('background-color: #3AAFA9; padding: 10px 20px; position: static;'):  # Header style
         ui.link(
             '🌊 Home', '/').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
         ui.link(
@@ -50,6 +50,18 @@ def inject_style():  # Injects CSS style in web interface
             border-color: #F5A623;
             transform: scale(1.05);
         }
+        @media (max-width: 600px) {
+            .card, .mail {
+                width: 100%;
+                margin: 5px;
+            }
+            .card {
+                max-width: none;
+            }
+            .mail {
+                max-width: none;
+            }
+        }
     </style>
     """)
 
@@ -60,6 +72,6 @@ def inject_lottie():  # Injects Lottie animation in web interface
 
 
 def eco_footer():  # Footer for the web interface
-    with ui.footer().style('background-color: #3AAFA9; justify-content: center;'):
+    with ui.footer().style('background-color: #3AAFA9; justify-content: center; padding: 10px; position: static;'):
         ui.label('Copyright (C) 2025 | Victor Vu & Jordan Morris').style(
             'color: #FFFFFF; font-size: 18px;')
