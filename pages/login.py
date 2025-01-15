@@ -49,8 +49,8 @@ def login_page():
     ui.add_css('''
     @media (max-width: 600px) {
         .mail button {
-            padding: 15px 30px !important;
-            font-size: 18px !important;
+            padding: 10px 20px !important;
+            font-size: 16px !important;
         }
     }
     ''')
