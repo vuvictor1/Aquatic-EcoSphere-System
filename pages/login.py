@@ -45,3 +45,12 @@ def login_page():
             ui.button('Login', on_click=authenticate).style('margin-top: 20px;') # create a login button
             ui.button('Proceed as Guest', on_click=proceed_as_guest).style('margin-top: 20px; margin-left: 10px;') # create a button to proceed as a guest
             ui.button('No account? Register here', on_click=lambda: ui.navigate.to('/register')).style('margin-top: 20px; margin-left: 10px;') # create a button to navigate to the registration page
+    
+    ui.add_css('''
+    @media (max-width: 600px) {
+        .mail button {
+            padding: 15px 30px !important;
+            font-size: 18px !important;
+        }
+    }
+    ''')
