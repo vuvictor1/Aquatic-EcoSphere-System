@@ -51,6 +51,7 @@ def login_page():
         .mail button {
             padding: 10px 20px !important;
             font-size: 16px !important;
+            width: 100% !important;
         }
     }
     ''')
