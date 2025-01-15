@@ -6,16 +6,95 @@
 from nicegui import ui
 from web_functions import inject_style, eco_header, eco_footer
 
-column_style = 'background-color: #2C2C2C; padding: 50px; border-radius: 10px; width: 100%; max-width: 600px;' # style for column
+# Sample data for aquatic species
+species_data = [
+    {
+        'name': 'Clownfish',
+        'description': 'Clownfish are small, brightly colored fish found in warm waters.',
+        'tolerance_levels': 'Temperature: 24-27°C, pH: 7.8-8.4, Salinity: 1.020-1.025'
+    },
+    {
+        'name': 'Neon Tetra',
+        'description': 'Neon Tetras are small, colorful fish that are popular in home aquariums.',
+        'tolerance_levels': 'Temperature: 20-26°C, pH: 6.0-7.0'
+    },
+    {
+        'name': 'Guppy',
+        'description': 'Guppies are small, colorful fish that are easy to care for and breed.',
+        'tolerance_levels': 'Temperature: 22-28°C, pH: 7.0-8.0'
+    },
+    {
+        'name': 'Betta Fish',
+        'description': 'Betta Fish are known for their vibrant colors and long, flowing fins.',
+        'tolerance_levels': 'Temperature: 24-30°C, pH: 6.5-7.5'
+    },
+    {
+        'name': 'Angelfish',
+        'description': 'Angelfish are elegant fish with long fins and a distinctive shape.',
+        'tolerance_levels': 'Temperature: 24-28°C, pH: 6.8-7.8'
+    },
+    {
+        'name': 'Goldfish',
+        'description': 'Goldfish are hardy fish that come in a variety of colors and shapes.',
+        'tolerance_levels': 'Temperature: 10-24°C, pH: 6.0-8.0'
+    },
+    {
+        'name': 'Molly Fish',
+        'description': 'Molly Fish are versatile fish that can live in both freshwater and saltwater.',
+        'tolerance_levels': 'Temperature: 24-28°C, pH: 7.5-8.5'
+    },
+    {
+        'name': 'Zebra Danio',
+        'description': 'Zebra Danios are small, active fish with distinctive horizontal stripes.',
+        'tolerance_levels': 'Temperature: 18-24°C, pH: 6.5-7.5'
+    },
+    {
+        'name': 'Corydoras Catfish',
+        'description': 'Corydoras Catfish are small, bottom-dwelling fish that are great for cleaning the tank.',
+        'tolerance_levels': 'Temperature: 22-26°C, pH: 6.0-7.5'
+    },
+    {
+        'name': 'Cherry Shrimp',
+        'description': 'Cherry Shrimp are small, colorful shrimp that are great for planted tanks.',
+        'tolerance_levels': 'Temperature: 22-28°C, pH: 6.5-8.0'
+    },
+    # Add more species as needed
+]
+
+def filter_species(query):
+    """Filter species based on the search query."""
+    query = query.lower()
+    return [species for species in species_data if query in species['name'].lower()]
+
+def display_species(species_list):
+    """Display the list of species."""
+    results.clear()
+    with results:
+        for species in species_list:
+            with ui.column().classes('w-full sm:w-1/2 md:w-1/4 lg:w-1/6 p-1'):
+                with ui.card().classes('w-full mb-2').style('background-color: #2C2C2C; color: white;'):
+                    ui.label(species['name']).classes('text-base font-bold')
+                    ui.label(species['description']).classes('text-xs')
+                    ui.label(f'Tolerance Levels: {species["tolerance_levels"]}').classes('text-xs text-gray-500')
+
+def search(e):
+    """Search for species based on user input."""
+    filtered_species = filter_species(e.value)
+    display_species(filtered_species)
 
 def encyclopedia_page(): # Encyclopedia page
     eco_header() # header menu
     inject_style() # inject CSS for background
 
     with ui.row().style(f'justify-content: center; width: 100%; margin-top: 20px; background-color: #3B3B3B;'): # Center the encyclopedia title
-        with ui.column().classes('mail').style(f'align-items: center; background-color: #2C2C2C; padding: 20px; border-radius: 10px;'): # Column for the encyclopedia
-            ui.label('Encyclopedia').style(f'font-size: 32px; color: white;') 
-            ui.label('This is a placeholder for the Encyclopedia page. Content will be added soon.').style(f'font-size: 20px; color: white;') # placeholder text
+        with ui.column().style(f'align-items: center; background-color: #2C2C2C; padding: 20px; border-radius: 10px; width: 100%; max-width: 800px;'):
+            ui.label('Aquatic Species Encyclopedia').style(f'font-size: 32px; color: white; font-weight: bold;') 
+            global search_field
+            search_field = ui.input(placeholder='Search for species...').props('autofocus outlined rounded item-aligned input-class="ml-3"').classes('w-96 self-center mt-24 transition-all').on('change', search).style(f'width: 100%; margin-bottom: 20px; padding: 10px; border-radius: 25px; border: 1px solid #ccc; font-size: 16px; background-color: #e0e0e0;') # Search bar
+    global results
+    results = ui.row().classes('w-full mt-4 flex flex-wrap justify-center')
+    display_species(species_data)  # Display all species initially
+            
     eco_footer() # footer function
 
 @ui.page('/encyclopedia') # Route to encyclopedia page
