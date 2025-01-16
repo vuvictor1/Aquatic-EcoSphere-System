@@ -1,9 +1,6 @@
 # Aquatic EcoSphere System
-Monitoring tool for managing optimal conditions in aquatic ecosystems through real-time sensor data, educational insights, and algorithm-driven analysis.
 
-Deployment: [aquatic-eco.up.railway.app ](https://aquatic-eco.up.railway.app/login)
-
-**Overview:**
+**Overview:** (Deployment: [aquatic-eco.up.railway.app ](https://aquatic-eco.up.railway.app/login))
 
 Aquatic EcoSphere is a Python-based system designed to help aquarium owners monitor and manage the health of their aquatic ecosystems. Using underwater sensors connected to a Raspberry Pi, the system collects key water parameters such as temperature, total dissolved solids, and turbidity levels. This data is sent to a local web server, processed in a MySQL database, and displayed through a user interface on both desktop and mobile devices. The system provides real-time notifications and educational insights to help users maintain a healthy and sustainable environment for their aquatic life.
 
@@ -17,17 +14,12 @@ Aquatic EcoSphere is a Python-based system designed to help aquarium owners moni
 - **Mobile Support**: Complementary Android application for convenient access to the EcoSphere system.
 
 **Technologies Used:**
-- Python
-- JavaScript
-- Raspberry Pi 5
-- MySQL
-- Firestore
-- Firebase
-- NiceGUI
-- React Native
-- Expo
+- Langauges: Python, JavaScript
+- Hardware: Raspberry Pi 5
+- Data: MySQL, Firestore, Firebase
+- Framework: NiceGUI, React Native, Expo
   
-***Run Instructions:*** Type
+***Run Instructions:***
 ```
 python3 main_system.py
 ```
@@ -42,6 +34,7 @@ python3 main_system.py
 - starlette==0.41.3
 - w1thermsensor==2.3.0
 
+***Mobile Packages:***
 - "expo": "~52.0.25",
 - "expo-status-bar": "~2.0.1",
 - "react": "18.3.1",
