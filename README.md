@@ -10,21 +10,21 @@ Aquatic EcoSphere is a Python-based system designed to help aquarium owners moni
 - **Educational Insights**: Learn about the biological and chemical factors affecting aquariums.
 - **Algorithm Analysis**: Utilize algorithms for interpreting data and providing recommendations.
 - **Account Management**: Securely sync tank-specific data across remote locations.
-- **Graph Generation**: Visualize collected data for user insights.
+- **Graph Generation**: Visualize collected data for detailed observation.
 - **Mobile Support**: Complementary Android application for convenient access to the EcoSphere system.
 
 **Technologies Used:**
 - Langauges: Python, JavaScript
 - Hardware: Raspberry Pi 5
-- Data: MySQL, Firestore, Firebase
-- Framework: NiceGUI, React Native, Expo
+- Databases: MySQL, Firestore, Firebase
+- Frameworks: NiceGUI, React Native, Expo
   
-***Run Instructions:***
+**Run Instructions:**
 ```
 python3 main_system.py
 ```
 
-***Requirements:***
+**Requirements:**
 - adafruit_ads1x15==1.0.2
 - board==1.0
 - fastapi==0.115.6
@@ -34,7 +34,7 @@ python3 main_system.py
 - starlette==0.41.3
 - w1thermsensor==2.3.0
 
-***Mobile Packages:***
+**Mobile Packages:**
 - "expo": "~52.0.25",
 - "expo-status-bar": "~2.0.1",
 - "react": "18.3.1",
