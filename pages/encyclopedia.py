@@ -3,11 +3,10 @@
 # Description: Encyclopedia page for the web interface 
 # Copyright (C) 2025 Victor V. Vu and Jordan Morris
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
-from nicegui import ui
+from nicegui import ui, html
 from web_functions import inject_style, eco_header, eco_footer
 
-# Sample data for aquatic species
-species_data = [
+species_data = [ # Sample data for aquatic species
     {
         'name': 'Clownfish',
         'description': 'Clownfish are small, brightly colored fish found in warm waters.',
@@ -57,29 +56,27 @@ species_data = [
         'name': 'Cherry Shrimp',
         'description': 'Cherry Shrimp are small, colorful shrimp that are great for planted tanks.',
         'tolerance_levels': 'Temperature: 22-28°C, pH: 6.5-8.0'
-    },
-    # Add more species as needed
+    }
 ]
 
-def filter_species(query):
-    """Filter species based on the search query."""
-    query = query.lower()
-    return [species for species in species_data if query in species['name'].lower()]
+def filter_species(query): # Filter species based on search query
+    query = query.lower() # convert query to lowercase
+    return [species for species in species_data if query in species['name'].lower()] 
 
-def display_species(species_list):
-    """Display the list of species."""
-    results.clear()
-    with results:
-        for species in species_list:
-            with ui.column().classes('w-full sm:w-1/2 md:w-1/4 lg:w-1/6 p-1'):
-                with ui.card().classes('w-full mb-2').style('background-color: #2C2C2C; color: white;'):
+def display_species(species_list): # Display species based on search query
+    results.clear() # clear previous results
+    with results: #
+        for species in species_list: # loop through species
+            with ui.column().classes('w-full sm:w-1/2 md:w-1/4 lg:w-1/6 p-1'): 
+                with ui.card().classes('w-full mb-2').style('background-color: #2C2C2C; color: white;'): # Card for each species
+                    with ui.row(): # Row for species information
+                        html.img(src='https://placehold.co/120') # placeholder image
                     ui.label(species['name']).classes('text-base font-bold')
                     ui.label(species['description']).classes('text-xs')
                     ui.label(f'Tolerance Levels: {species["tolerance_levels"]}').classes('text-xs text-gray-500')
 
-def search(e):
-    """Search for species based on user input."""
-    filtered_species = filter_species(e.value)
+def search(e): # Search for species based on user input
+    filtered_species = filter_species(e.value) 
     display_species(filtered_species)
 
 def encyclopedia_page(): # Encyclopedia page
@@ -89,12 +86,23 @@ def encyclopedia_page(): # Encyclopedia page
     with ui.row().style(f'justify-content: center; width: 100%; margin-top: 20px; background-color: #3B3B3B;'): # Center the encyclopedia title
         with ui.column().style(f'align-items: center; background-color: #2C2C2C; padding: 20px; border-radius: 10px; width: 100%; max-width: 800px;'):
             ui.label('Aquatic Species Encyclopedia').style(f'font-size: 32px; color: white; font-weight: bold;') 
-            global search_field
-            search_field = ui.input(placeholder='Search for species...').props('autofocus outlined rounded item-aligned input-class="ml-3"').classes('w-96 self-center mt-24 transition-all').on('change', search).style(f'width: 100%; margin-bottom: 20px; padding: 10px; border-radius: 25px; border: 1px solid #ccc; font-size: 16px; background-color: #e0e0e0;') # Search bar
-    global results
-    results = ui.row().classes('w-full mt-4 flex flex-wrap justify-center')
-    display_species(species_data)  # Display all species initially
+
+            global search_field # search bar
+            search_field = ui.input(
+                placeholder='Search for species...'
+            ).props(
+                'autofocus outlined rounded item-aligned input-class="ml-3"'
+            ).classes(
+                'w-96 self-center mt-24 transition-all'
+            ).on(
+                'change', search
+            ).style(
+                'width: 100%; margin-bottom: 20px; padding: 10px; border-radius: 25px; border: 1px solid #ccc; font-size: 16px; background-color: #e0e0e0;'
+            ) # search bar
             
+    global results # results container
+    results = ui.row().classes('w-full mt-4 flex flex-wrap justify-center') # results container
+    display_species(species_data) # display all species initially
     eco_footer() # footer function
 
 @ui.page('/encyclopedia') # Route to encyclopedia page
