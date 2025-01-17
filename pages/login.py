@@ -10,7 +10,7 @@ from nicegui import app, ui
 from web_functions import inject_style
 from pages.register import register_page, passwords
 
-unrestricted_routes = {'/login'} # unrestricted routes without authentication
+unrestricted_routes = {'/login', '/register'} # unrestricted routes without authentication
 
 class AuthMiddleware(BaseHTTPMiddleware): # Authentication middleware
     async def dispatch(self, request: Request, call_next): # Async dispatch function
