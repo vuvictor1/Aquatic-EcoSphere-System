@@ -23,6 +23,10 @@ Aquatic EcoSphere is a Python-based system designed to help aquarium owners moni
 ```
 python3 main_system.py
 ```
+**For Mobile Run:** 
+```
+npx expo start
+```
 
 **Requirements:**
 - adafruit_ads1x15==1.0.2
@@ -35,8 +39,8 @@ python3 main_system.py
 - w1thermsensor==2.3.0
 
 **Mobile Packages:**
-- "expo": "~52.0.25",
-- "expo-status-bar": "~2.0.1",
-- "react": "18.3.1",
-- "react-native": "0.76.6",
-- "react-native-webview": "^13.13.1"
+- expo: ~52.0.25
+- expo-status-bar: ~2.0.1
+- react: 18.3.1
+- react-native: 0.76.6
+- react-native-webview: ^13.13.1
