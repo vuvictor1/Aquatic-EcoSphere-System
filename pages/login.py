@@ -38,7 +38,7 @@ def login_page():
         ui.navigate.to('/')
 
     with ui.column().style('justify-content: center; align-items: center; width: 100%; height: 75vh;'): # Login page layout
-        with ui.element('div').style('padding: 50px'): # Login form
+        with ui.element('div').style('padding: 50px').classes('login-form'): # Login form
             ui.label('Please login or make an account.').style('color: #FFFFFF; font-size: 32px; margin-bottom: 20px;') 
             username_input = ui.input('Username').style('background-color: #FFFFFF; padding: 0px 20px;').on('keydown.enter', authenticate) # input user
             password_input = ui.input('Password', password=True, password_toggle_button=True
@@ -52,7 +52,7 @@ def login_page():
     # CSS for mobile responsiveness
     ui.add_css('''
     @media (max-width: 600px) {
-        .mail button {
+        .login-form button {
             padding: 10px 20px !important;
             font-size: 16px !important;
             width: 100% !important;
