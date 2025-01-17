@@ -1,3 +1,9 @@
+The files here are part of the source code for Aquatic Aco's mobile android application.
+
+Here is a installable compiled apk for android: https://drive.google.com/file/d/1dmjD0jPCN5wNeuN0vdfwAFw5_GDsrUUL/view?usp=sharing
+
+To build your own APKs type: npx eas build --platform android
+----------------------------------------------------------------------
 EcoSphere App - Expo Go Setup Guide
 This guide will walk you through the steps to run the EcoSphere app on your mobile device using Expo Go. Follow the instructions below to get started.
 
@@ -59,10 +65,3 @@ Additional Notes
 If you want to run the app on an emulator or simulator, let me know, and I can guide you through that process.
 For any questions or issues, feel free to reach out to me.
 Enjoy exploring the EcoSphere app! 🌊
-
-------------------
-Thanks for taking the time to write out these instructions!
-
-Here is a installable compiled apk for android: https://drive.google.com/file/d/1dmjD0jPCN5wNeuN0vdfwAFw5_GDsrUUL/view?usp=sharing
-
-To build your own APKs type: npx eas build --platform android
