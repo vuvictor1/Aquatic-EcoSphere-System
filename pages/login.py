@@ -15,19 +15,19 @@ unrestricted_routes = {'/login'} # unrestricted routes without authentication
 class AuthMiddleware(BaseHTTPMiddleware): # Authentication middleware
     async def dispatch(self, request: Request, call_next): # Async dispatch function
         if not app.storage.user.get('authenticated', False): # Check if the user is not authenticated
-            if not request.url.path.startswith('/_nicegui') and request.url.path not in unrestricted_routes: # If path not unrestricted 
+            if not request.url.path.startswith('/_nicegui') and request.url.path not in unrestricted_routes:
                 app.storage.user['/'] = request.url.path # store the original path the user was trying to access
-                return RedirectResponse('/login') # redirect to login page
+                return RedirectResponse('/login') 
         return await call_next(request) # proceed with the request
 app.add_middleware(AuthMiddleware) # add authentication middleware to the app
 
 @ui.page('/login') # Login page route
 def login_page():
-    inject_style() # inject the CSS styles
+    inject_style() 
 
     def authenticate(): 
         username, password = username_input.value, password_input.value # get username & password from input 
-        if passwords.get(username) == password: # If username exists and password matches
+        if passwords.get(username) == password: 
             app.storage.user.update({'authenticated': True, 'username': username}) # update user storage
             ui.navigate.to('/') # navigate to home page
         else: # If name or password is incorrect notify user
@@ -38,14 +38,18 @@ def login_page():
         ui.navigate.to('/')
 
     with ui.column().style('justify-content: center; align-items: center; width: 100%; height: 75vh;'): # Login page layout
-        ui.label('Please login or make an account.').style('color: #FFFFFF; font-size: 32px;') 
-        with ui.element('div').classes('mail').style('padding: 50px'): # Login form
-            username_input = ui.input('User').style('background-color: #FFFFFF;').on('keydown.enter', authenticate) # input user
-            password_input = ui.input('Pass', password=True, password_toggle_button=True).style('background-color: #FFFFFF;').on('keydown.enter', authenticate) # pass & toggle
+        with ui.element('div').style('padding: 50px'): # Login form
+            ui.label('Please login or make an account.').style('color: #FFFFFF; font-size: 32px; margin-bottom: 20px;') 
+            username_input = ui.input('Username').style('background-color: #FFFFFF; padding: 0px 20px;').on('keydown.enter', authenticate) # input user
+            password_input = ui.input('Password', password=True, password_toggle_button=True
+            ).style('background-color: #FFFFFF; padding: 0px 20px;').on('keydown.enter', authenticate) # pass & toggle
             ui.button('Login', on_click=authenticate).style('margin-top: 20px;') # create a login button
-            ui.button('Proceed as Guest', on_click=proceed_as_guest).style('margin-top: 20px; margin-left: 10px;') # create a button to proceed as a guest
-            ui.button('No account? Register here', on_click=lambda: ui.navigate.to('/register')).style('margin-top: 20px; margin-left: 10px;') # create a button to navigate to the registration page
+            ui.button('Proceed as Guest', on_click=proceed_as_guest
+            ).style('margin-top: 20px; margin-left: 5px;') # create a button to proceed as a guest
+            ui.button('No account? Register here', on_click=lambda: ui.navigate.to('/register')
+            ).style('margin-top: 20px; margin-left: 5px;') # create a button to navigate to the registration page
     
+    # CSS for mobile responsiveness
     ui.add_css('''
     @media (max-width: 600px) {
         .mail button {
