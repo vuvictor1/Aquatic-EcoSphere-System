@@ -15,8 +15,9 @@ def eco_header(): # Header for the web interface
 
         with ui.row().style('gap: 10px;'): # Buttons style
             ui.button('account', icon='account_circle', on_click=lambda: ui.navigate.to('/login')) # account redirect
-            ui.button(icon='settings', on_click=lambda: ui.navigate.to('/settings')) # settings redirect
-            ui.button(icon='phishing', on_click=lambda: ui.navigate.to('/species')) # species redirect
+            with ui.dropdown_button(icon='settings', auto_close=True): # settings dropdown 2 options
+                ui.item('Thresholds', on_click=lambda: ui.navigate.to('/settings')) # settings redirect
+                ui.item('Species', on_click=lambda: ui.navigate.to('/species')) # species redirect
 
 def inject_style(): # Injects CSS style in web interface
     ui.add_head_html("""
