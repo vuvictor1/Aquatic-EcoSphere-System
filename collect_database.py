@@ -7,7 +7,6 @@ import pymysql
 from dotenv import load_dotenv
 import os
 from urllib.parse import urlparse
-from nicegui import ui
 
 load_dotenv() # Load environment variables from .env (not uploaded here)
 

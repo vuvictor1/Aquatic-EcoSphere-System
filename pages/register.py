@@ -5,7 +5,7 @@
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from fastapi import Request
 from fastapi.responses import RedirectResponse
-from nicegui import app, ui
+from nicegui import ui
 from web_functions import inject_style
 
 passwords = {'user1': 'pass1'} # user database with dummy 
