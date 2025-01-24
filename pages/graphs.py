@@ -57,7 +57,7 @@ def generate_graphs(graph_container, data=None): # Generate graphs for sensor da
                         'toolbox': {'feature': {'saveAsImage': {}}},
                     }).style('width: 400px; height: 300px;')
 
-def graphs_page(graph_container, labels): # Graphs page for the web interface
+def graphs_page(graph_container): # Graphs page for the web interface
     eco_header() # display the header
     inject_style() # inject custom CSS styles
 
@@ -101,8 +101,8 @@ def graphs_page(graph_container, labels): # Graphs page for the web interface
 
 @ui.page('/graphs') # Route to graphs page
 def graphs(): 
-    from main_system import graph_container, labels 
-    graphs_page(graph_container, labels)
+    from main_system import graph_container
+    graphs_page(graph_container)
 
 # Add CSS for responsiveness
 ui.add_css('''

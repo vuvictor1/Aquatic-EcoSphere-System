@@ -2,12 +2,12 @@ from nicegui import ui
 from web_functions import inject_style, eco_header, eco_footer
 
 # Helper function to create a card for a species
-def card(species, container_id):
+def card(species):
     with ui.card().classes('p-2').props('draggable="true"') as card_container:
         ui.label(species['title']).classes('p-2').on('dragstart', lambda e: e.args['event'].dataTransfer.setData('species', species['title']))
 
 # Helper function to create a column with a title
-def column(title, container_id, species_list, on_drop):
+def column(title, species_list, on_drop):
     with ui.column().classes('p-2'):
         ui.label(title).classes('text-lg mb-2')
         # Create a droppable container using ui.element
@@ -15,7 +15,7 @@ def column(title, container_id, species_list, on_drop):
 
         for species in species_list:
             with droppable_area:
-                card(species, container_id)
+                card(species)
 
 # Drop handler for moving species between available and tank
 def on_drop(event, available_species, tank_species):
@@ -56,11 +56,11 @@ def species_page() -> None:
     # Create columns for available species and tank species
     with ui.row():
         # Column for available species
-        column('Available Species', 'available_species', available_species, 
+        column('Available Species', available_species, 
                lambda e: on_drop(e, available_species, tank_species))
 
         # Column for tank species
-        column('Tank Species', 'tank_species', tank_species, 
+        column('Tank Species', tank_species, 
                lambda e: on_drop(e, available_species, tank_species))
 
     eco_footer()
