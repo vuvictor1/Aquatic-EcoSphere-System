@@ -38,7 +38,7 @@ def generate_graphs(graph_container, data=None): # Generate graphs for sensor da
 
                 with graph_container: # Create a graph container
                     ui.echart({ # Create an ECharts graph
-                        'title': {'text': sensor_type, 'textStyle': {'color': '#FFFFFF'}},
+                        'title': {'text': sensor_type.title(), 'textStyle': {'color': '#FFFFFF'}},
                         'tooltip': {'trigger': 'axis', 'textStyle': {'color': '#rgb(16, 15, 109)'}},
                         'xAxis': {'type': 'category', 'data': timestamps, 'axisLabel': {'color': '#FFFFFF'}},
                         'yAxis': {
@@ -96,7 +96,7 @@ def graphs_page(graph_container, labels): # Graphs page for the web interface
     # Generate graph with style 
     graph_container = ui.row().classes('graph-container').style('justify-content: center; background-color: #2C2C2C; padding: 1em; margin: 1em auto;')
     with graph_container:
-        ui.label('Please press generate to see data.').style('color: #FFFFFF; font-size: 2em; text-align: center;')
+        ui.label('Press generate to see graphing data').style('color: #FFFFFF; font-size: 2em; text-align: center;')
     eco_footer() # display the footer
 
 @ui.page('/graphs') # Route to graphs page
