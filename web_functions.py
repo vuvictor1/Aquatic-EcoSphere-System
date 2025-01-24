@@ -8,8 +8,8 @@ from nicegui import ui
 def eco_header(): # Header for the web interface
     with ui.header().style('background-color: #3AAFA9; padding: 10px 20px; position: static;'): 
         ui.link('🌊 Home', '/').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
-        ui.link('Reminders', '/reminders').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
         ui.link('Graphs', '/graphs').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
+        ui.link('Reminders', '/reminders').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
         ui.link('Encyclopedia', '/encyclopedia').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
         ui.link('Contacts', '/contacts').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
 
@@ -41,7 +41,7 @@ def inject_style(): # Injects CSS style in web interface
             width: 100%;
             max-width: 600px;
         }
-        .card:hover, .mail:hover {
+        .card:hover {
             border-color: #F5A623;
             transform: scale(1.05);
         }
