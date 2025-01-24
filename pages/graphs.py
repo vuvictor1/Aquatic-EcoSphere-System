@@ -62,7 +62,7 @@ def graphs_page(graph_container, labels): # Graphs page for the web interface
     inject_style() # inject custom CSS styles
 
     with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'): # Title for the page
-        ui.label('Graphing').style('font-size: 32px; color: white;') 
+        ui.label('Generate Graphs').style('font-size: 32px; color: white;') 
 
     with ui.dialog() as date_dialog: # Create a dialog for selecting date range
         with ui.column().style('background-color: #2C2C2C; padding: 2em; border-radius: 10px;'): 
@@ -88,7 +88,7 @@ def graphs_page(graph_container, labels): # Graphs page for the web interface
                 )).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 1em;')
 
     with ui.row().style('justify-content: center; width: 100%;'): # Create a row for the refresh/date button
-        ui.button('Generate/Refresh', on_click=lambda: generate_graphs(
+        ui.button('Generate', on_click=lambda: generate_graphs(
             graph_container)).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 1em; margin-bottom: 3em;')
         ui.button('Select Date Range', on_click=lambda: date_dialog.open()).style(
             'background-color: #3AAFA9; color: #FFFFFF; margin-top: 1em; margin-bottom: 3em;')
