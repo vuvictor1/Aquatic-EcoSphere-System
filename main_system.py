@@ -35,10 +35,11 @@ def home_page(): # Home page function
         ui.label('[Notices]').style('color: #FFFFFF; font-size: 24px;') # notice title
 
         notices = [ # list of notices
-            '1. Timers update periodically in intervals of 5mins.',
-            '2. Set species before proceeding, otherwise default tolerances will be used in alerts/recommendations.',
-            '3. Graphs update only at startup but can be refreshed with the button',
-            '4. More instructions TBA...'
+            '1. Timers update periodically in intervals of 5 minutes.',
+            '2. You can configure sensor thresholds in the settings menu.',
+            '3. Add tank species before proceeding, otherwise default values apply in alerts.',
+            '4. Graph data only updates at startup but can be refreshed with new generation',
+            '5. Be sure you to set any reminders for regular maintenance tasks.'
         ]
         for notice in notices: # Iterate through each notice
             ui.chat_message(notice, name='Advisor Robot',
@@ -46,8 +47,12 @@ def home_page(): # Home page function
                             avatar='https://robohash.org/iamexpertfishadvisor').style(LABEL_STYLE)
 
         ui.label('[Disclaimer]').style('color: #FFFFFF; font-size: 24px;') # disclaimer title
-        disclaimer = 'Recommendations are suggestions only and up to user discretion.'
-        ui.chat_message(disclaimer, name='Warning Robot',
+        disclaimers = [
+            '1. Recommendations are suggestions only and up to user discretion.',
+            '2. This tool must be manually configured for salt-water setups.',
+        ]
+        for disclaimer in disclaimers:    
+            ui.chat_message(disclaimer, name='Warning Robot',
                         # chat message
                         avatar='https://robohash.org/alarm?set=set2').style(LABEL_STYLE)
         ui.button('Close', on_click=lambda: right_drawer.toggle()).style(LABEL_STYLE) # button to toggle advisor
