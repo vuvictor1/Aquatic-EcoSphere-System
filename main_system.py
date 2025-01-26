@@ -14,7 +14,7 @@ from pages.encyclopedia import encyclopedia_page
 from pages.login import AuthMiddleware
 from threshold_config import get_temperature_thresholds, interpolate_color
 from pages.settings import settings_page
-from pages.reminders import reminders_page
+from pages.reminders import reminders_page, upcoming_task
 from pages.species import species_page
 
 # Initialize global variables
@@ -72,6 +72,7 @@ def home_page(): # Home page function
     labels = {}
     with ui.row().style('justify-content: center; width: 100%;'):
         for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']:
+
             with ui.column().classes('card').style('align-items: center;'): # Use css class
                 sensor_label = ui.label(sensor_type).style(LABEL_STYLE)
                 value_label = ui.label('Value: Loading...').style(LABEL_STYLE)
@@ -79,14 +80,18 @@ def home_page(): # Home page function
                 labels[sensor_type] = (sensor_label, value_label, timestamp_label)
 
     with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'): # Additional cards
-        # Card for alerts, reminders, & recommendations
-        for card_type in ['Alerts', 'Reminders', 'Recommendations']:
-            with ui.column().classes('card').style('align-items: center;'): # Use css class
+        card_labels = { # Card for alerts, reminders, & recommendations
+            'Alerts': 'Coming soon... W.I.P.',
+            'Reminders': f"Upcoming Task: {upcoming_task['task']} ({upcoming_task['frequency']} days)" if upcoming_task else "No upcoming tasks",
+            'Recommendations': 'Coming soon... W.I.P.'
+        }
+
+        for card_type, card_label in card_labels.items(): # Use css class
+            with ui.column().classes('card').style('align-items: center;'): 
                 ui.label(card_type).style(LABEL_STYLE)
-                ui.label('No action required. WIP...').style(LABEL_STYLE)
+                ui.label(card_label).style('color: #FFFFFF; font-size: 16px;')
     eco_footer() # call eco_footer function
     ui.timer(290, lambda: update_ui(labels)) # update ui every 290s
-
 
 def update_ui(labels): # Update sensor labels with the latest data
     data = get_latest_data()
