@@ -4,10 +4,24 @@
 # Copyright (C) 2025 Victor V. Vu and Jordan Morris
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 
-# Note: Current implementation is of reminder data is not persistent, is missing notification and cannot update on the dashboard.
+# Note: Current implementation is of reminder data is missing notification and does not update on the dashboard.
 import time
+import json
 from nicegui import ui
 from web_functions import inject_style, eco_header, eco_footer
+
+DATA_FILE = 'reminders_data.json' # file to store reminders data locally
+
+def load_data(): # Load data from file
+    try:
+        with open(DATA_FILE, 'r') as file: # parse the data
+            return json.load(file) 
+    except FileNotFoundError: 
+        return []
+ 
+def save_data(rows): # Save data to file
+    with open(DATA_FILE, 'w') as file: # write the data
+        json.dump(rows, file) # dump the data into json file
 
 upcoming_task = None # global variable for the upcoming task
 def get_upcoming_task(rows): # Task with the least amount of days for dashboard
@@ -25,9 +39,7 @@ def reminders_page(): # Renders the reminders page
         {'name': 'task', 'label': 'Task', 'field': 'task', 'required': True}, 
         {'name': 'frequency', 'label': 'Frequency (Days)', 'field': 'frequency', 'sortable': True}, 
     ] 
-    rows = [ # Rows for the table to display task
-        {'id': 0, 'task': 'Example Task', 'frequency': '99'},
-    ]
+    rows = load_data() # Load data from file
 
     with ui.column().style('align-items: center; width: 100%;'): # Center the column
         # Create the table
@@ -43,7 +55,8 @@ def reminders_page(): # Renders the reminders page
                             table.add_row({'id': time.time(), 'task': new_task.value, 'frequency': new_frequency.value}), 
                             new_task.set_value(None), # default value none
                             new_frequency.set_value(None),
-                            update_task(rows) # update the least days label
+                            update_task(rows), # update the least days label
+                            save_data(rows) # save data to file
                         ), icon='add').props('flat fab-mini') 
                         
                     with table.cell(): # Input for new task
@@ -51,7 +64,11 @@ def reminders_page(): # Renders the reminders page
 
                     with table.cell(): # Input for new frequency
                         new_frequency = ui.input('Frequency')
-        ui.button('Remove', on_click=lambda: (table.remove_rows(table.selected), update_task(rows))) # take out items 
+        ui.button('Remove', on_click=lambda: (
+            table.remove_rows(table.selected), 
+            update_task(rows), 
+            save_data(rows) # save data to file
+        )) # take out items 
     eco_footer() # add footer
 
     def update_task(rows): # Function to update the label with the task with the least amount of days left
