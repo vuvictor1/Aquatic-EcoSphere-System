@@ -52,11 +52,7 @@ def reminders_page(): # Renders the reminders page
                 with table.row():
                     with table.cell(): # Button for new tasks
                         ui.button(on_click=lambda: (
-                            table.add_row({'id': time.time(), 'task': new_task.value, 'frequency': new_frequency.value}), 
-                            new_task.set_value(None), # default value none
-                            new_frequency.set_value(None),
-                            update_task(rows), # update the least days label
-                            save_data(rows) # save data to file
+                            add_new_task(table, rows, new_task.value, new_frequency.value)
                         ), icon='add').props('flat fab-mini') 
                         
                     with table.cell(): # Input for new task
@@ -70,6 +66,16 @@ def reminders_page(): # Renders the reminders page
             save_data(rows) # save data to file
         )) # take out items 
     eco_footer() # add footer
+
+    def add_new_task(table, rows, task, frequency):
+        if task and frequency: # Check if task and frequency are not empty
+            table.add_row({'id': time.time(), 'task': task, 'frequency': frequency})
+            new_task.set_value(None) # default value none
+            new_frequency.set_value(None)
+            update_task(rows) # update the least days label
+            save_data(rows) # save data to file
+        else: 
+            ui.notify('Error: Please use valid inputs.', type='negative', position='center')
 
     def update_task(rows): # Function to update the label with the task with the least amount of days left
         global upcoming_task 
