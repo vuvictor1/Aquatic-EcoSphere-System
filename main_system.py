@@ -14,7 +14,7 @@ from pages.encyclopedia import encyclopedia_page
 from pages.login import AuthMiddleware
 from threshold_config import get_temperature_thresholds, interpolate_color
 from pages.settings import settings_page
-from pages.reminders import reminders_page
+from pages.reminders import reminders_page, upcoming_task
 from pages.species import species_page
 
 # Initialize global variables
@@ -37,10 +37,11 @@ def home_page():  # Home page function
             'color: #FFFFFF; font-size: 24px;')  # notice title
 
         notices = [  # list of notices
-            '1. Timers update periodically in intervals of 5mins.',
-            '2. Set species before proceeding, otherwise default tolerances will be used in alerts/recommendations.',
-            '3. Graphs update only at startup but can be refreshed with the button',
-            '4. More instructions TBA...'
+            '1. Timers update periodically in intervals of 5 minutes.',
+            '2. You can configure sensor thresholds in the settings menu.',
+            '3. Add tank species before proceeding, otherwise default values apply in alerts.',
+            '4. Graph data only updates at startup but can be refreshed with new generation',
+            '5. Be sure you to set any reminders for regular maintenance tasks.'
         ]
         for notice in notices:  # Iterate through each notice
             ui.chat_message(notice, name='Advisor Robot',
@@ -49,10 +50,14 @@ def home_page():  # Home page function
 
         ui.label('[Disclaimer]').style(
             'color: #FFFFFF; font-size: 24px;')  # disclaimer title
-        disclaimer = 'Recommendations are suggestions only and up to user discretion.'
-        ui.chat_message(disclaimer, name='Warning Robot',
-                        # chat message
-                        avatar='https://robohash.org/alarm?set=set2').style(LABEL_STYLE)
+        disclaimers = [
+            '1. Recommendations are suggestions only and up to user discretion.',
+            '2. This tool must be manually configured for salt-water setups.',
+        ]
+        for disclaimer in disclaimers:
+            ui.chat_message(disclaimer, name='Warning Robot',
+                            # chat message
+                            avatar='https://robohash.org/alarm?set=set2').style(LABEL_STYLE)
         ui.button('Close', on_click=lambda: right_drawer.toggle()
                   ).style(LABEL_STYLE)  # button to toggle advisor
 
@@ -72,8 +77,9 @@ def home_page():  # Home page function
     labels = {}
     with ui.row().style('justify-content: center; width: 100%;'):
         for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']:
+
             with ui.column().classes('card').style('align-items: center;'):  # Use css class
-                sensor_label = ui.label(sensor_type.title()).style(LABEL_STYLE)
+                sensor_label = ui.label(sensor_type).style(LABEL_STYLE)
                 value_label = ui.label('Value: Loading...').style(LABEL_STYLE)
                 timestamp_label = ui.label(
                     'Timestamp: Loading...').style(LABEL_STYLE)
@@ -81,11 +87,16 @@ def home_page():  # Home page function
                     sensor_label, value_label, timestamp_label)
 
     with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):  # Additional cards
-        # Card for alerts, reminders, & recommendations
-        for card_type in ['Alerts', 'Reminders', 'Recommendations']:
-            with ui.column().classes('card').style('align-items: center;'):  # Use css class
+        card_labels = {  # Card for alerts, reminders, & recommendations
+            'Alerts': 'Coming soon... W.I.P.',
+            'Reminders': f"Upcoming Task: {upcoming_task['task']} ({upcoming_task['frequency']} days)" if upcoming_task else "No upcoming tasks",
+            'Recommendations': 'Coming soon... W.I.P.'
+        }
+
+        for card_type, card_label in card_labels.items():  # Use css class
+            with ui.column().classes('card').style('align-items: center;'):
                 ui.label(card_type).style(LABEL_STYLE)
-                ui.label('No action required. WIP...').style(LABEL_STYLE)
+                ui.label(card_label).style('color: #FFFFFF; font-size: 16px;')
     eco_footer()  # call eco_footer function
     ui.timer(290, lambda: update_ui(labels))  # update ui every 290s
 

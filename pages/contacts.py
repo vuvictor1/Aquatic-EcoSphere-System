@@ -6,10 +6,6 @@
 from nicegui import ui
 from web_functions import inject_style, eco_header, eco_footer, inject_lottie
 
-# Constants for styles
-input_style = 'width: 100%; padding: 10px; margin-bottom: 20px; color: #FFFFFF; background-color: #333333; border: 1px solid #555555; border-radius: 5px;'
-column_style = 'background-color: #2C2C2C; padding: 50px; border-radius: 10px; width: 100%; max-width: 600px;'
-
 def contacts_page(): # Contacts page
     eco_header() # header menu
     inject_style() # inject CSS for background

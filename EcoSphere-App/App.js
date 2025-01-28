@@ -17,7 +17,7 @@ const App = () => { // App component
         domStorageEnabled={true}
         startInLoadingState={true}
         allowsInlineMediaPlayback={true}
-        mediaPlaybackRequiresUser Action={false}
+        mediaPlaybackRequiresUserAction={false}
       />
     </SafeAreaView>
   );

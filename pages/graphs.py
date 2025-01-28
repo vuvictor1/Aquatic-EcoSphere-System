@@ -38,7 +38,7 @@ def generate_graphs(graph_container, data=None): # Generate graphs for sensor da
 
                 with graph_container: # Create a graph container
                     ui.echart({ # Create an ECharts graph
-                        'title': {'text': sensor_type, 'textStyle': {'color': '#FFFFFF'}},
+                        'title': {'text': sensor_type.title(), 'textStyle': {'color': '#FFFFFF'}},
                         'tooltip': {'trigger': 'axis', 'textStyle': {'color': '#rgb(16, 15, 109)'}},
                         'xAxis': {'type': 'category', 'data': timestamps, 'axisLabel': {'color': '#FFFFFF'}},
                         'yAxis': {
@@ -57,12 +57,12 @@ def generate_graphs(graph_container, data=None): # Generate graphs for sensor da
                         'toolbox': {'feature': {'saveAsImage': {}}},
                     }).style('width: 400px; height: 300px;')
 
-def graphs_page(graph_container, labels): # Graphs page for the web interface
+def graphs_page(graph_container): # Graphs page for the web interface
     eco_header() # display the header
     inject_style() # inject custom CSS styles
 
     with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'): # Title for the page
-        ui.label('Graphing').style('font-size: 32px; color: white;') 
+        ui.label('Generate Graphs').style('font-size: 32px; color: white;') 
 
     with ui.dialog() as date_dialog: # Create a dialog for selecting date range
         with ui.column().style('background-color: #2C2C2C; padding: 2em; border-radius: 10px;'): 
@@ -88,7 +88,7 @@ def graphs_page(graph_container, labels): # Graphs page for the web interface
                 )).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 1em;')
 
     with ui.row().style('justify-content: center; width: 100%;'): # Create a row for the refresh/date button
-        ui.button('Generate/Refresh', on_click=lambda: generate_graphs(
+        ui.button('Generate', on_click=lambda: generate_graphs(
             graph_container)).style('background-color: #3AAFA9; color: #FFFFFF; margin-top: 1em; margin-bottom: 3em;')
         ui.button('Select Date Range', on_click=lambda: date_dialog.open()).style(
             'background-color: #3AAFA9; color: #FFFFFF; margin-top: 1em; margin-bottom: 3em;')
@@ -96,13 +96,13 @@ def graphs_page(graph_container, labels): # Graphs page for the web interface
     # Generate graph with style 
     graph_container = ui.row().classes('graph-container').style('justify-content: center; background-color: #2C2C2C; padding: 1em; margin: 1em auto;')
     with graph_container:
-        ui.label('Please press generate to see data.').style('color: #FFFFFF; font-size: 2em; text-align: center;')
+        ui.label('Press generate to see graphing data').style('color: #FFFFFF; font-size: 2em; text-align: center;')
     eco_footer() # display the footer
 
 @ui.page('/graphs') # Route to graphs page
 def graphs(): 
-    from main_system import graph_container, labels 
-    graphs_page(graph_container, labels)
+    from main_system import graph_container
+    graphs_page(graph_container)
 
 # Add CSS for responsiveness
 ui.add_css('''
