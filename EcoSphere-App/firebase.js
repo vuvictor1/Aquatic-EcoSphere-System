@@ -24,21 +24,24 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
+import dotenv from 'dotenv';
+dotenv.config();
+
+const vapidKey = process.env.FIREBASE_VAPID_PUBLIC_KEY;
+
 export const requestForToken = async () => {
-    try {
-      const token = await getToken(messaging, {
-        vapidKey: "YOUR_WEB_PUSH_CERTIFICATE_KEY_PAIR"
-      });
-      if (token) {
-        console.log("FCM Token:", token);
-        return token;
-      } else {
-        console.log("No registration token available.");
-      }
-    } catch (err) {
-      console.error("Error getting token:", err);
+  try {
+    const token = await getToken(messaging, { vapidKey });
+    if (token) {
+      console.log("FCM Token:", token);
+      return token; // Send this token to the backend
+    } else {
+      console.error("No registration token available.");
     }
-  };
+  } catch (error) {
+    console.error("An error occurred while retrieving token:", error);
+  }
+};
   
   export const onMessageListener = () =>
     new Promise((resolve) => {
