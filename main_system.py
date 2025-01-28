@@ -79,7 +79,7 @@ def home_page():  # Home page function
         for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']:
 
             with ui.column().classes('card').style('align-items: center;'):  # Use css class
-                sensor_label = ui.label(sensor_type).style(LABEL_STYLE)
+                sensor_label = ui.label(sensor_type.title()).style(LABEL_STYLE)
                 value_label = ui.label('Value: Loading...').style(LABEL_STYLE)
                 timestamp_label = ui.label(
                     'Timestamp: Loading...').style(LABEL_STYLE)
