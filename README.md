@@ -1,4 +1,4 @@
-<div style="text-align: center;">
+<div align="center">
   <img src="https://github.com/user-attachments/assets/99fc8e51-f67f-48bd-ab13-1e6016b9be89" alt="output" width="150"/>
   <h1>Aquatic EcoSphere System</h1>
 </div>
