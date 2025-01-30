@@ -1,13 +1,12 @@
 <div align="center">
   <img src="https://github.com/user-attachments/assets/99fc8e51-f67f-48bd-ab13-1e6016b9be89" alt="output" width="150"/>
   <h1>Aquatic EcoSphere System</h1>
-   <p><strong>Overview:</strong> (Deployed on <a href="https://aquatic-eco.up.railway.app/login">aquatic-eco.up.railway.app</a>)</p>
+  <p><strong>Overview:</strong> (Deployed on <a href="https://aquatic-eco.up.railway.app/login">aquatic-eco.up.railway.app</a>)</p>
+  <p>Aquatic EcoSphere is a Python-based system designed to help aquarium owners monitor and manage the health of their aquatic ecosystems. 
+  Using underwater sensors connected to a Raspberry Pi, the system collects key water parameters such as total dissolved solids, turbidity levels, and temperature. 
+  This data is sent to a web server, processed in a MySQL database, and displayed through a user interface on both desktop and mobile devices. 
+  The system provides real-time notifications and educational insights to help users maintain a healthy and sustainable environment for their aquatic life.</p>
 </div>
-
-Aquatic EcoSphere is a Python-based system designed to help aquarium owners monitor and manage the health of their aquatic ecosystems. 
-Using underwater sensors connected to a Raspberry Pi, the system collects key water parameters such as total dissolved solids, turbidity levels, and temperature. 
-This data is sent to a web server, processed in a MySQL database, and displayed through a user interface on both desktop and mobile devices. 
-The system provides real-time notifications and educational insights to help users maintain a healthy and sustainable environment for their aquatic life.
 
 ## Features:
 - **Real-time Monitoring**: Collect and display water parameters for TDS, turbidity levels, and temperature.
