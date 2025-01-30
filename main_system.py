@@ -29,16 +29,21 @@ sensor_units = {  # sensor_type: unit
     'temperature': '°F'
 }
 
-try: # Will function even if file dosn't exist
-    with open('reminders_data.json', 'r') as file:  # Load reminders data from JSON file
-        reminders_data = json.load(file)
-except FileNotFoundError:
-    reminders_data = []
+def load_reminders_data():
+    global reminders_data, upcoming_task
+    try:
+        with open('reminders_data.json', 'r') as file:  # Load reminders data from JSON file
+            reminders_data = json.load(file)
+    except FileNotFoundError:
+        reminders_data = []
 
-# Find the upcoming task
-upcoming_task = None
-if reminders_data:
-    upcoming_task = reminders_data[0] # check the first task in the list
+    # Find the upcoming task
+    upcoming_task = None
+    if reminders_data:
+        upcoming_task = reminders_data[0]  # check the first task in the list
+
+# Initial load of reminders data
+load_reminders_data()
 
 def home_page():  # Home page function
     eco_header()  # call eco_header function
@@ -110,7 +115,6 @@ def home_page():  # Home page function
                 ui.label(card_label).style('color: #FFFFFF; font-size: 16px;')
     eco_footer()  # call eco_footer function
     ui.timer(290, lambda: update_ui(labels))  # update ui every 290s
-
 
 def update_ui(labels):  # Update sensor labels with the latest data
     data = get_latest_data()
