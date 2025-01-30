@@ -5,6 +5,7 @@
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from nicegui import ui
 import os
+import json
 from dotenv import load_dotenv
 from collect_database import create_connection, get_latest_data
 from web_functions import inject_style, eco_header, eco_footer, inject_lottie
@@ -14,7 +15,7 @@ from pages.encyclopedia import encyclopedia_page
 from pages.login import AuthMiddleware
 from threshold_config import get_temperature_thresholds, interpolate_color
 from pages.settings import settings_page
-from pages.reminders import reminders_page, upcoming_task
+from pages.reminders import reminders_page
 from pages.species import species_page
 
 # Initialize global variables
@@ -28,6 +29,14 @@ sensor_units = {  # sensor_type: unit
     'temperature': '°F'
 }
 
+# Load reminders data from JSON file
+with open('reminders_data.json', 'r') as file:
+    reminders_data = json.load(file)
+
+# Find the upcoming task
+upcoming_task = None
+if reminders_data:
+    upcoming_task = reminders_data[0]  # Assuming the first task is the upcoming task
 
 def home_page():  # Home page function
     eco_header()  # call eco_header function
