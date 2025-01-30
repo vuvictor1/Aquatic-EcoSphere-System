@@ -29,14 +29,16 @@ sensor_units = {  # sensor_type: unit
     'temperature': '°F'
 }
 
-# Load reminders data from JSON file
-with open('reminders_data.json', 'r') as file:
-    reminders_data = json.load(file)
+try: # Will function even if file dosn't exist
+    with open('reminders_data.json', 'r') as file:  # Load reminders data from JSON file
+        reminders_data = json.load(file)
+except FileNotFoundError:
+    reminders_data = []
 
 # Find the upcoming task
 upcoming_task = None
 if reminders_data:
-    upcoming_task = reminders_data[0]  # Assuming the first task is the upcoming task
+    upcoming_task = reminders_data[0] # check the first task in the list
 
 def home_page():  # Home page function
     eco_header()  # call eco_header function
