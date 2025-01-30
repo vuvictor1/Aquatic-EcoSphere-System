@@ -29,21 +29,13 @@ sensor_units = {  # sensor_type: unit
     'temperature': '°F'
 }
 
-def load_reminders_data():
-    global reminders_data, upcoming_task
-    try:
-        with open('reminders_data.json', 'r') as file:  # Load reminders data from JSON file
-            reminders_data = json.load(file)
-    except FileNotFoundError:
-        reminders_data = []
-
-    # Find the upcoming task
-    upcoming_task = None
-    if reminders_data:
-        upcoming_task = reminders_data[0]  # check the first task in the list
-
-# Initial load of reminders data
-load_reminders_data()
+# Function to read reminders from reminders.json
+def read_reminders():
+    reminders_file = 'reminders_data.json'
+    if os.path.exists(reminders_file):
+        with open(reminders_file, 'r') as file:
+            return json.load(file)
+    return None
 
 def home_page():  # Home page function
     eco_header()  # call eco_header function
@@ -101,6 +93,9 @@ def home_page():  # Home page function
                     'Timestamp: Loading...').style(LABEL_STYLE)
                 labels[sensor_type] = (
                     sensor_label, value_label, timestamp_label)
+
+    reminders = read_reminders()
+    upcoming_task = reminders[0] if reminders else None
 
     with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):  # Additional cards
         card_labels = {  # Card for alerts, reminders, & recommendations
