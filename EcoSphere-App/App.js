@@ -10,7 +10,12 @@ import { requestForToken, onMessageListener } from "./firebase";
 
 const App = () => { // App component
   useEffect(() => {
-    requestForToken();
+    requestForToken()
+      .then((token) => {
+        console.log("FCM Token:", token);
+        // Send the token to your server to store it
+      })
+      .catch((error) => console.error("Error requesting token:", error));
 
     onMessageListener()
       .then((payload) => {
