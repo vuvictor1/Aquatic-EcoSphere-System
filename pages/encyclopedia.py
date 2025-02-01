@@ -1,8 +1,5 @@
-# Authors: Jordan Morris and Victor Vu
 # File: encyclopedia.py
 # Description: Encyclopedia page for the web interface 
-# Copyright (C) 2025 Victor V. Vu and Jordan Morris
-# License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from nicegui import ui, html
 from web_functions import inject_style, eco_header, eco_footer
 
@@ -68,7 +65,9 @@ def display_species(species_list): # Display species based on search query
     with results: #
         for species in species_list: # loop through species
             with ui.column().classes('w-full sm:w-1/2 md:w-1/4 lg:w-1/6 p-1'): 
-                with ui.card().classes('w-full mb-2').style('background-color: #2C2C2C; color: white;'): # Card for each species
+
+                with ui.card().classes('w-full mb-2 bg-gray-700 text-white'): # Card for each species
+
                     with ui.row(): # Row for species information
                         html.img(src='https://placehold.co/120') # placeholder image
                     ui.label(species['name']).classes('text-base font-bold')
@@ -83,9 +82,9 @@ def encyclopedia_page(): # Encyclopedia page
     eco_header() # header menu
     inject_style() # inject CSS for background
 
-    with ui.row().style(f'justify-content: center; width: 100%; margin-top: 20px; background-color: #3B3B3B;'): # Center the encyclopedia title
-        with ui.column().style(f'align-items: center; background-color: #2C2C2C; padding: 20px; border-radius: 10px; width: 100%; max-width: 800px;'):
-            ui.label('Aquatic Species Encyclopedia').style(f'font-size: 32px; color: white; font-weight: bold;') 
+    with ui.row().classes('justify-center w-full mt-5'): # Center the encyclopedia title
+        with ui.column().classes('items-center bg-gray-800 p-5 rounded-lg w-full max-w-2xl'):
+            ui.label('Aquatic Species Encyclopedia').classes('text-4xl text-white font-bold') 
 
             global search_field # search bar
             search_field = ui.input(
@@ -93,12 +92,12 @@ def encyclopedia_page(): # Encyclopedia page
             ).props(
                 'autofocus outlined rounded item-aligned input-class="ml-3"'
             ).classes(
-                'w-96 self-center mt-24 transition-all'
+                'w-96 self-center mt-6 transition-all'
             ).on(
                 'change', search
             ).style(
                 'width: 100%; margin-bottom: 20px; padding: 10px; border-radius: 25px; border: 1px solid #ccc; font-size: 16px; background-color: #e0e0e0;'
-            ) # search bar
+            ) 
             
     global results # results container
     results = ui.row().classes('w-full mt-4 flex flex-wrap justify-center') # results container
