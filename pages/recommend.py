@@ -27,9 +27,8 @@ def main():
     user_id = str(uuid4())
     avatar = f'https://robohash.org/{user_id}?bgset=bg2'
 
-    ui.add_css(r'a:link, a:visited {color: inherit !important; text-decoration: none; font-weight: 500}')
     with ui.footer().classes('bg-white'), ui.column().classes('w-full max-w-3xl mx-auto my-6'):
-        with ui.row().classes('w-full no-wrap items-center'):
+        with ui.row().classes('w-full flex-nowrap items-center'):
             with ui.avatar().on('click', lambda: ui.navigate.to(main)):
                 ui.image(avatar)
             message_input = ui.input(placeholder='message').on('keydown.enter', send_message) \
