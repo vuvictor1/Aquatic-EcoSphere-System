@@ -5,64 +5,94 @@
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from nicegui import ui
 
-def eco_header(): # Header for the web interface
-    with ui.header().style('background-color: #3AAFA9; padding: 10px 20px; position: static;'): 
-        ui.link('🌊 Home', '/').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
-        ui.link('Graphs', '/graphs').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
-        ui.link('Reminders', '/reminders').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
-        ui.link('Encyclopedia', '/encyclopedia').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
-        ui.link('Contacts', '/contacts').style('color: #FFFFFF; font-size: 24px; text-decoration: none;')
+# Define constants for colors
+background_color = "#3B3B3B"
+header_footer_color = "#3AAFA9"
 
-        with ui.row().style('gap: 10px;'): # Buttons style
-            ui.button('account', icon='account_circle', on_click=lambda: ui.navigate.to('/login')) # account redirect
-            with ui.dropdown_button(icon='settings', auto_close=True): # settings dropdown 2 options
-                ui.item('Thresholds', on_click=lambda: ui.navigate.to('/settings')) # settings redirect
-                ui.item('Species', on_click=lambda: ui.navigate.to('/species')) # species redirect
 
-def inject_style(): # Injects CSS style in web interface
-    ui.add_head_html("""
+# Injects Tailwind CSS and custom styles
+def inject_style():
+    ui.add_head_html(f"""
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #3B3B3B;
-        }
-        .card, .mail {
-            background-color: #2C2C2C;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 10px;
-            border: 2px solid #2C2C2C;
-            transition: border-color 0.3s ease, transform 0.3s ease;
-        }
-        .card {
-            width: 100%;
-            max-width: 300px;
-        }
-        .mail {
-            width: 100%;
-            max-width: 600px;
-        }
-        .card:hover {
-            border-color: #F5A623;
+        body {{
+            background-color: {background_color};
+            min-height: 100vh; /* ensure body takes at least full viewport height */
+            display: flex;
+            flex-direction: column;
+        }}
+        main {{
+            flex: 1; /* allow main content to grow and take available space */
+            /* Reduce unnecessary margin space */
+            margin-top: -60px;
+            margin-bottom: -55px;
+        }}
+        .outline_label {{
+            border: 2px solid transparent;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }}
+        .outline_label:hover {{
             transform: scale(1.05);
-        }
-        @media (max-width: 600px) {
-            .card, .mail {
-                width: 100%;
-                margin: 5px;
-            }
-            .card {
-                max-width: none;
-            }
-            .mail {
-                max-width: none;
-            }
-        }
+            border-color: {header_footer_color};
+        }}
     </style>
     """)
 
-def inject_lottie(): # Injects Lottie animation in web interface
-    ui.add_body_html('<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>')
 
-def eco_footer(): # Footer for the web interface
-    with ui.footer().style('background-color: #3AAFA9; justify-content: center; padding: 10px; position: static;'):
-        ui.label('Copyright (C) 2025 | Victor Vu & Jordan Morris').style('color: #FFFFFF; font-size: 18px;')
+# Injects Lottie player script
+def inject_lottie():
+    ui.add_body_html(
+        '<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>'
+    )
+
+
+# Header for the web interface
+def eco_header():
+    with (
+        ui.header()
+        .classes("justify-center flex-wrap static p-4")
+        .style(f"background-color: {header_footer_color}")
+    ):
+        ui.link("🌊 Home", "/").classes(
+            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
+        )
+        ui.link("Graphs", "/graphs").classes(
+            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
+        )
+        ui.link("Reminders", "/reminders").classes(
+            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
+        )
+        ui.link("Encyclopedia", "/encyclopedia").classes(
+            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
+        )
+        ui.link("Contacts", "/contacts").classes(
+            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
+        )
+
+        with ui.row().classes("gap-2 mt-2 md:mt-0"):  # Buttons for account and settings
+            ui.button(  # account redirect
+                "account",
+                icon="account_circle",
+                on_click=lambda: ui.navigate.to("/login"),
+            )
+            with ui.dropdown_button(  # Settings dropdown 2 options
+                icon="settings", auto_close=True
+            ):
+                ui.item(  # settings redirect
+                    "Thresholds", on_click=lambda: ui.navigate.to("/settings")
+                )
+                ui.item(  # species redirect
+                    "Species", on_click=lambda: ui.navigate.to("/species")
+                )
+
+
+# Footer for the web interface
+def eco_footer():
+    with (
+        ui.footer()
+        .classes("justify-center flex-wrap static p-4")
+        .style(f"background-color: {header_footer_color}")
+    ):
+        ui.label("Copyright (C) 2025 | Victor Vu & Jordan Morris").classes(
+            "text-white text-xl"
+        )

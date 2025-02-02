@@ -22,7 +22,6 @@ from pages.species import species_page
 connection = create_connection()  # create a database connection
 graph_container = None  # container for graphs
 labels = {}  # sensor labels
-LABEL_STYLE = 'color: #FFFFFF; font-size: 16px;'  # constant text
 sensor_units = {  # sensor_type: unit
     'total dissolved solids': 'ppm',
     'turbidity': 'NTU',
@@ -40,9 +39,8 @@ def read_reminders():
 def home_page():  # Home page function
     eco_header()  # call eco_header function
 
-    with ui.right_drawer().style('background-color: #6C757D; align-items: center;') as right_drawer:  # Right drawer
-        ui.label('[Notices]').style(
-            'color: #FFFFFF; font-size: 24px;')  # notice title
+    with ui.right_drawer().classes('bg-gray-600 flex items-center') as right_drawer:  # Right drawer
+        ui.label('[Notices]').classes('text-white text-2xl')  # notice title
 
         notices = [  # list of notices
             '1. Timers update periodically in intervals of 5 minutes.',
@@ -53,51 +51,44 @@ def home_page():  # Home page function
         ]
         for notice in notices:  # Iterate through each notice
             ui.chat_message(notice, name='Advisor Robot',
-                            # chat message
-                            avatar='https://robohash.org/iamexpertfishadvisor').style(LABEL_STYLE)
+                            avatar='https://robohash.org/iamexpertfishadvisor').classes('text-white text-base')
 
-        ui.label('[Disclaimer]').style(
-            'color: #FFFFFF; font-size: 24px;')  # disclaimer title
+        ui.label('[Disclaimer]').classes('text-white text-2xl')  # disclaimer title
         disclaimers = [
             '1. Recommendations are suggestions only and up to user discretion.',
             '2. This tool must be manually configured for salt-water setups.',
         ]
         for disclaimer in disclaimers:
             ui.chat_message(disclaimer, name='Warning Robot',
-                            # chat message
-                            avatar='https://robohash.org/alarm?set=set2').style(LABEL_STYLE)
+                            avatar='https://robohash.org/alarm?set=set2').classes('text-white text-base')
         ui.button('Close', on_click=lambda: right_drawer.toggle()
-                  ).style(LABEL_STYLE)  # button to toggle advisor
+                  ).classes('text-white text-base')  # button to toggle advisor
 
     inject_style()  # call inject_style function
     inject_lottie()  # call inject_lottie function
     lottie_url = 'https://lottie.host/33548596-614d-4e89-a0a8-69126f02a92a/EmTPHrDT7l.json'  # lottie url
-    with ui.row().style('justify-content: center; width: 100%; margin-top: -50px;'):  # Lottie player
-        ui.html(f'''<lottie-player src="{lottie_url}
-                " loop autoplay speed="0.25" style="height: 300px;"></lottie-player>''')
+    with ui.row().classes('justify-center w-full mt-[-50px]'):  # Lottie player
+        ui.html(f'''<lottie-player src="{lottie_url}"
+                loop autoplay speed="0.25" style="height: 300px;"></lottie-player>''')
 
-    with ui.row().style('justify-content: center; width: 100%'):  # Main title
-        ui.label('Aquatic EcoSphere System').style(
-            'color: #FFFFFF; font-size: 32px; margin-top: -50px;')
+    with ui.row().classes('justify-center w-full'):  # Main title
+        ui.label('Aquatic EcoSphere System').classes('text-white text-4xl mt-[-50px]')
 
     # Sensor Cards
     global labels
     labels = {}
-    with ui.row().style('justify-content: center; width: 100%;'):
+    with ui.row().classes('justify-center w-full'):
         for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']:
-
-            with ui.column().classes('card').style('align-items: center;'):  # Use css class
-                sensor_label = ui.label(sensor_type.title()).style(LABEL_STYLE)
-                value_label = ui.label('Value: Loading...').style(LABEL_STYLE)
-                timestamp_label = ui.label(
-                    'Timestamp: Loading...').style(LABEL_STYLE)
-                labels[sensor_type] = (
-                    sensor_label, value_label, timestamp_label)
+            with ui.column().classes('items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm my-4 mx-2'):
+                sensor_label = ui.label(sensor_type.title()).classes('text-white text-base')
+                value_label = ui.label('Value: Loading...').classes('text-white text-base')
+                timestamp_label = ui.label('Timestamp: Loading...').classes('text-white text-base')
+                labels[sensor_type] = (sensor_label, value_label, timestamp_label)
 
     reminders = read_reminders()
     upcoming_task = reminders[0] if reminders else None
 
-    with ui.row().style('justify-content: center; width: 100%; margin-top: 20px;'):  # Additional cards
+    with ui.row().classes('justify-center w-full mt-5'):  # Additional cards
         card_labels = {  # Card for alerts, reminders, & recommendations
             'Alerts': 'Coming soon... W.I.P.',
             'Reminders': f"Upcoming Task: {upcoming_task['task']} ({upcoming_task['frequency']} days)" if upcoming_task else "No upcoming tasks",
@@ -105,9 +96,9 @@ def home_page():  # Home page function
         }
 
         for card_type, card_label in card_labels.items():  # Use css class
-            with ui.column().classes('card').style('align-items: center;'):
-                ui.label(card_type).style(LABEL_STYLE)
-                ui.label(card_label).style('color: #FFFFFF; font-size: 16px;')
+            with ui.column().classes('items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm my-4 mx-2'):
+                ui.label(card_type).classes('text-white text-base')
+                ui.label(card_label).classes('text-white text-base')
     eco_footer()  # call eco_footer function
     ui.timer(290, lambda: update_ui(labels))  # update ui every 290s
 
@@ -125,10 +116,9 @@ def update_ui(labels):  # Update sensor labels with the latest data
                 current_temp = value['value']
                 thresholds = get_temperature_thresholds()  # get current thresholds
                 color = interpolate_color(current_temp, thresholds)
-                labels[sensor_type][0].style(LABEL_STYLE)
-                labels[sensor_type][1].style(
-                    f'color: {color}; font-size: 16px;')
-                labels[sensor_type][2].style(LABEL_STYLE)
+                labels[sensor_type][0].classes('text-white text-base')
+                labels[sensor_type][1].classes(f'text-{color} text-base')
+                labels[sensor_type][2].classes('text-white text-base')
 
 
 @ui.page('/')  # Set homepage route
