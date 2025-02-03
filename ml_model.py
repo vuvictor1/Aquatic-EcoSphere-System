@@ -1,3 +1,4 @@
+# ml_model.py
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from collect_database import get_all_data
@@ -5,10 +6,10 @@ import numpy as np
 import pandas as pd
 
 # Constants
-WINDOW_SIZE = 50
-TEST_SIZE = 0.2
+WINDOW_SIZE = 20
+TEST_SIZE = 0.1
 RANDOM_STATE = 42
-N_ESTIMATORS = 50
+N_ESTIMATORS = 20
 
 # Prepare data function
 
@@ -69,6 +70,30 @@ def train_model(X_train: np.ndarray, y_train: np.ndarray) -> RandomForestRegress
         n_estimators=N_ESTIMATORS, random_state=RANDOM_STATE)
     model.fit(X_train, y_train)
     return model
+
+
+def get_predictions(sensor_types):
+    """
+    Returns the predictions and accuracy for each sensor type.
+
+    Args:
+        sensor_types (list): List of sensor types.
+
+    Returns:
+        dict: Dictionary with sensor types as keys and tuples of predictions, accuracy, and last reading as values.
+    """
+    predictions = {}
+    for sensor_type in sensor_types:
+        X_train, X_test, y_train, y_test, latest_data = prepare_data(
+            sensor_type)
+        if X_train is not None:
+            model = train_model(X_train, y_train)
+            latest_X, last_reading = latest_data
+            next_prediction = model.predict(latest_X)[0]
+            accuracy = calculate_accuracy(model, X_test, y_test)
+            predictions[sensor_type] = (
+                next_prediction, accuracy, last_reading)
+    return predictions
 
 # Evaluate accuracy
 
