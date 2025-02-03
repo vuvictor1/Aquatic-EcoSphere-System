@@ -17,6 +17,7 @@ from threshold_config import get_temperature_thresholds, interpolate_color
 from pages.settings import settings_page
 from pages.reminders import reminders_page
 from pages.species import species_page
+from pages.predictions import predictions_page
 
 # Initialize global variables
 connection = create_connection()  # create a database connection
@@ -29,12 +30,15 @@ sensor_units = {  # sensor_type: unit
 }
 
 # Function to read reminders from reminders.json
+
+
 def read_reminders():
     reminders_file = 'reminders_data.json'
     if os.path.exists(reminders_file):
         with open(reminders_file, 'r') as file:
             return json.load(file)
     return None
+
 
 def home_page():  # Home page function
     eco_header()  # call eco_header function
@@ -101,6 +105,7 @@ def home_page():  # Home page function
                 ui.label(card_label).classes('text-white text-base')
     eco_footer()  # call eco_footer function
     ui.timer(290, lambda: update_ui(labels))  # update ui every 290s
+
 
 def update_ui(labels):  # Update sensor labels with the latest data
     data = get_latest_data()
