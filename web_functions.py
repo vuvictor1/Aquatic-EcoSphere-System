@@ -65,6 +65,9 @@ def eco_header():
         ui.link("Encyclopedia", "/encyclopedia").classes(
             "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
         )
+        ui.link("Predictions", "/predictions").classes(
+            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
+        )
         ui.link("Contacts", "/contacts").classes(
             "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
         )
