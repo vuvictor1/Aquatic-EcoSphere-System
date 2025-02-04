@@ -66,7 +66,7 @@ def display_species(species_list): # Display species based on search query
         for species in species_list: # loop through species
             with ui.column().classes('w-full sm:w-1/2 md:w-1/4 lg:w-1/6 p-1'): 
 
-                with ui.card().classes('w-full mb-2 bg-gray-700 text-white'): # Card for each species
+                with ui.card().classes('outline_label w-full mb-2 bg-gray-700 text-white'): # Card for each species
 
                     with ui.row(): # Row for species information
                         html.img(src='https://placehold.co/120') # placeholder image
@@ -83,7 +83,7 @@ def encyclopedia_page(): # Encyclopedia page
     inject_style() # inject CSS for background
 
     with ui.row().classes('justify-center w-full mt-5'): # Center the encyclopedia title
-        with ui.column().classes('items-center bg-gray-800 p-5 rounded-lg w-full max-w-2xl'):
+        with ui.column().classes('outline_label items-center bg-gray-800 p-5 rounded-lg w-full max-w-2xl'):
             ui.label('Aquatic Species Encyclopedia').classes('text-4xl text-white font-bold') 
 
             global search_field # search bar

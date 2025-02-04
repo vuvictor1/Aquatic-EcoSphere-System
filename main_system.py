@@ -83,7 +83,7 @@ def home_page():  # Home page function
     labels = {}
     with ui.row().classes('justify-center w-full'):
         for sensor_type in ['total dissolved solids', 'turbidity', 'temperature']:
-            with ui.column().classes('items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm my-4 mx-2'):
+            with ui.column().classes('outline_label  items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm my-4 mx-2'):
                 sensor_label = ui.label(sensor_type.title()).classes('text-white text-base')
                 value_label = ui.label('Value: Loading...').classes('text-white text-base')
                 timestamp_label = ui.label('Timestamp: Loading...').classes('text-white text-base')
@@ -100,7 +100,7 @@ def home_page():  # Home page function
         }
 
         for card_type, card_label in card_labels.items():  # Use css class
-            with ui.column().classes('items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm my-4 mx-2'):
+            with ui.column().classes('outline_label items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm my-4 mx-2'):
                 ui.label(card_type).classes('text-white text-base')
                 ui.label(card_label).classes('text-white text-base')
     eco_footer()  # call eco_footer function

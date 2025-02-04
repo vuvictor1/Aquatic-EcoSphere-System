@@ -22,7 +22,7 @@ def settings_page():  # Renders the settings page
     with ui.row().classes('justify-center w-full mt-2'):  # Title for the page
             ui.label('Settings').classes('text-4xl text-white text-center')
 
-    with ui.card().classes('bg-gray-800 p-5 rounded-lg w-full max-w-2xl mx-auto'):  # Main card
+    with ui.card().classes('outline_label bg-gray-800 p-5 rounded-lg w-full max-w-2xl mx-auto'):  # Main card
 
         with ui.row().classes('justify-center w-full mt-5'):  # Temperature Thresholds
             ui.label('Temperature Thresholds').classes('text-2xl text-white text-center')

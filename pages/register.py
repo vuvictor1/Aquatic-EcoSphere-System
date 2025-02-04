@@ -30,7 +30,7 @@ def register_page():
             ui.navigate.to('/login')  # navigate to login page
 
     with ui.column().classes('flex justify-center items-center w-full h-screen p-4 md:h-3/4 md:mt-20'):  # Register page layout
-        with ui.element('div').classes('p-6 md:p-12 bg-gray-800 rounded-lg shadow-lg w-full max-w-md'):  
+        with ui.element('div').classes('outline_label p-6 md:p-12 bg-gray-800 rounded-lg shadow-lg w-full max-w-md'):  
             ui.label('Create an account or return to login.').classes(
                 'text-white text-2xl md:text-3xl mb-5 text-center')
             username_input = ui.input('Username').classes(
