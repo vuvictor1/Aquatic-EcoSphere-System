@@ -4,7 +4,7 @@ from nicegui import ui
 from web_functions import inject_style, eco_header, eco_footer
 
 def card(species): # Helper function to create a card for a species
-    with ui.element('div').classes('p-4 bg-white rounded-lg shadow-lg mb-4 cursor-pointer') as card_container:
+    with ui.element('div').classes('outline_label p-4 bg-white rounded-lg shadow-lg mb-4 cursor-pointer') as card_container:
         ui.label(species['title']).classes('text-xl font-semibold').on('dragstart',
                                                      lambda e: e.args['event'].dataTransfer.setData('species', species['title']))
 

@@ -11,7 +11,7 @@ def contacts_page():  # Contacts page
 
     with ui.row().classes('justify-center w-full my-4 px-4'):  # Center the contacts title and add padding for mobile
         inject_lottie()  # inject lottie animation
-        with ui.column().style('max-width: 90%;').classes('items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg'):
+        with ui.column().style('max-width: 90%;').classes('outline_label items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg'):
             ui.html(f'''<lottie-player src="{lottie_url}" loop autoplay speed="0.25"></lottie-player>''').classes('w-48 mx-auto')  # play file
             ui.label('Contact Us').classes('text-white text-4xl font-bold')  # mail title
             # Create input fields for the form

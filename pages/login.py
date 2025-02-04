@@ -51,7 +51,7 @@ def login_page():
         ui.navigate.to('/')
 
     with ui.column().classes('flex justify-center items-center w-full h-screen p-4 md:h-3/4 md:mt-20'):  # Login page layout
-        with ui.element('div').classes('p-6 md:p-12 bg-gray-800 rounded-lg shadow-lg w-full max-w-md'):  # Responsive container
+        with ui.element('div').classes('outline_label p-6 md:p-12 bg-gray-800 rounded-lg shadow-lg w-full max-w-md'):  # Responsive container
             ui.label('Please login or register.').classes(
                 'text-white text-2xl md:text-3xl mb-5 text-center')
             username_input = ui.input('Username').classes(

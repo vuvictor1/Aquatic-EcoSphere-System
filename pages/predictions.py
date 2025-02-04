@@ -46,7 +46,7 @@ def display_predictions(predictions):
     with ui.row().classes('justify-center w-full'):
         for sensor_type, (next_prediction, accuracy, last_reading) in predictions.items():
             unit = sensor_units.get(sensor_type, '')
-            with ui.column().classes('bg-gray-800 rounded-lg shadow-lg p-4').style('align-items: center; margin-bottom: 20px;'):
+            with ui.column().classes('outline_label bg-gray-800 rounded-lg shadow-lg p-4').style('align-items: center; margin-bottom: 20px;'):
                 ui.label(f'{sensor_type.title()}').classes(
                     'text-xl sm:text-2xl text-white')
                 ui.label(f'Last Reading: {last_reading:.2f} {unit}').classes(
