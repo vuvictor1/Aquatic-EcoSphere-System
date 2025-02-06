@@ -1,5 +1,7 @@
 # File: recommend.py
 # Description: Recommend algorithm for users based on their preferences.
+
+# Note: Placeholder for the recommend algorithm.
 from datetime import datetime
 from typing import List, Tuple
 from uuid import uuid4
@@ -17,7 +19,7 @@ def display_messages(user_id: str) -> None:
     else:
         ui.label('No messages yet').classes('mx-auto my-36')
 
-def main():
+def recommend_page():
     def send_message() -> None:
         timestamp = datetime.now().strftime('%X')
         messages.append((user_id, avatar, message_input.value, timestamp))
@@ -37,3 +39,7 @@ def main():
     global messages_container
     messages_container = ui.column()
     display_messages(user_id)
+
+@ui.page('/recommend')  # Route for recommend page
+def recommend():
+    recommend_page()
