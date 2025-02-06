@@ -24,17 +24,31 @@ def predictions_page():
     # Define sensor types
     sensor_types = ['turbidity', 'total dissolved solids', 'temperature']
 
-    # Get predictions and accuracy for each sensor type
-    predictions = get_predictions(sensor_types)
+    # Create a container to display predictions
+    predictions_container = ui.row().classes('justify-center w-full')
 
-    # Display the predictions and accuracy
-    display_predictions(predictions)
+    # loading_indicator
+    loading_indicator = ui.label('').classes(
+        'text-lg sm:text-xl text-gray-400 justify-center w-full')
+
+    # Create a button to trigger prediction calculation and display
+    with ui.row().classes('justify-center w-full'):
+        ui.button('Calculate Predictions', on_click=lambda: [
+            loading_indicator.set_text('Calculating predictions...'),
+            predictions_container.clear(),
+            ui.timer(0.5, lambda: [
+                display_predictions(get_predictions(
+                    sensor_types), predictions_container),
+                # Clear the loading indicator
+                loading_indicator.set_text('Placeholder text')
+            ])
+        ])
 
     # Display the footer
     eco_footer()
 
 
-def display_predictions(predictions):
+def display_predictions(predictions, container):
     """
     Display the predictions for the next sensor values.
     """
@@ -43,7 +57,8 @@ def display_predictions(predictions):
         'turbidity': 'NTU',
         'temperature': '°F'
     }
-    with ui.row().classes('justify-center w-full'):
+    container.clear()  # Clear the container before displaying predictions
+    with container:
         for sensor_type, (next_prediction, accuracy, last_reading) in predictions.items():
             unit = sensor_units.get(sensor_type, '')
             with ui.column().classes('outline_label bg-gray-800 rounded-lg shadow-lg p-4').style('align-items: center; margin-bottom: 20px;'):
