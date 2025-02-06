@@ -18,6 +18,7 @@ from pages.settings import settings_page
 from pages.reminders import reminders_page
 from pages.species import species_page
 from pages.predictions import predictions_page
+from pages.recommend import recommend_page
 
 # Initialize global variables
 connection = create_connection()  # create a database connection
