@@ -26,26 +26,17 @@ def predictions_page():
     # Define sensor types
     sensor_types = ['turbidity', 'total dissolved solids', 'temperature']
 
+    print("Predictions not calculated yet")
     # Create a container to display predictions
     predictions_container = ui.row().classes('justify-center w-full')
 
-    # loading_indicator
-    loading_indicator = ui.label('').classes(
-        'text-lg sm:text-xl text-gray-400 justify-center w-full')
-
+    print("Container made")
     # Create a button to trigger prediction calculation and display
     with ui.row().classes('justify-center w-full'):
-        ui.button('Calculate Predictions', on_click=lambda: [
-            loading_indicator.set_text('Calculating predictions...'),
-            predictions_container.clear(),
-            ui.timer(0.5, lambda: [
-                display_predictions(get_predictions(
-                    sensor_types), predictions_container),
-                # Clear the loading indicator
-                loading_indicator.set_text('Placeholder text')
-            ])
-        ])
+        ui.button('Calculate Predictions', on_click=lambda: display_predictions(
+            get_predictions(sensor_types), predictions_container))
 
+    print("Predictions printed.")
     # Display the footer
     eco_footer()
 
