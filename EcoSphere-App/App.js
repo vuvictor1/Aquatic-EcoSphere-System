@@ -6,24 +6,8 @@
 import React, { useEffect } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { requestForToken, onMessageListener } from "./firebase";
 
 const App = () => { // App component
-  useEffect(() => {
-    requestForToken()
-      .then((token) => {
-        console.log("FCM Token:", token);
-        // Send the token to your server to store it
-      })
-      .catch((error) => console.error("Error requesting token:", error));
-
-    onMessageListener()
-      .then((payload) => {
-        console.log("Message received: ", payload);
-        // Show a notification or update the UI
-      })
-      .catch((err) => console.error("Error receiving message:", err));
-  }, []);
 
   return ( 
     <SafeAreaView style={styles.container}> 
