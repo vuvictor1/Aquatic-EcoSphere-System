@@ -1,3 +1,5 @@
+# File: predictions.py
+# Description: Page for basic machine learning future predictions
 from sklearn.metrics import mean_squared_error
 from nicegui import ui
 from web_functions import inject_style, eco_footer, eco_header

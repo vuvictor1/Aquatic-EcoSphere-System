@@ -1,9 +1,10 @@
-# File: contacts.py
+# File: graphs.py
 # Description: Graphing page for the web interface
 from nicegui import ui
 from datetime import datetime
 from web_functions import inject_style, eco_header, eco_footer
 from collect_database import get_all_data
+
 
 def generate_graphs(graph_container, data=None):  # Generate graphs for sensor data
     graph_container.clear()  # reset the graph container
@@ -63,6 +64,7 @@ def generate_graphs(graph_container, data=None):  # Generate graphs for sensor d
                         'toolbox': {'feature': {'saveAsImage': {}}},
                     }).classes('w-full sm:w-96 h-72')
 
+
 def graphs_page(graph_container):  # Graphs page for the web interface
     eco_header()  # display the header
     inject_style()  # inject custom CSS styles
@@ -81,7 +83,8 @@ def graphs_page(graph_container):  # Graphs page for the web interface
             current_date = datetime.now().strftime('%Y/%m')
             current_date_limit = datetime.now().strftime('%Y/%m/%d')
             start_date_limit = '2025/01/12'
-            date_picker = ui.date().props(f'range default-year-month={current_date} :options="date => date >= \'{start_date_limit}\' && date <= \'{current_date_limit}\'"')
+            date_picker = ui.date().props(
+                f'range default-year-month={current_date} :options="date => date >= \'{start_date_limit}\' && date <= \'{current_date_limit}\'"')
 
             def update_date_input():  # Update the date input with the selected range
                 selected_range = date_picker.value
