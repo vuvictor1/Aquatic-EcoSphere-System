@@ -6,10 +6,10 @@ import numpy as np
 import pandas as pd
 
 # Constants
-WINDOW_SIZE = 20
-TEST_SIZE = 0.1
-RANDOM_STATE = 42
-N_ESTIMATORS = 20
+WINDOW_SIZE = 20  # 20
+TEST_SIZE = 0.1  # .2
+RANDOM_STATE = 42  # 42
+N_ESTIMATORS = 20  # 20
 
 # Prepare data function
 
