@@ -13,7 +13,8 @@ from ml_model import get_predictions
 
 # Constants
 SENSOR_TYPES = ['turbidity', 'total dissolved solids', 'temperature']
-PREDICTION_STEPS = 10
+END_TIMESTAMP = datetime.now() + timedelta(hours=1)
+INTERVAL_MINUTES = 10
 
 
 def predictions_page():
@@ -36,14 +37,14 @@ def predictions_page():
     with ui.row().classes('justify-center w-full'):
         ui.button('Calculate Predictions', on_click=lambda: (
             display_predictions(get_predictions(
-                SENSOR_TYPES, PREDICTION_STEPS), predictions_container)
+                SENSOR_TYPES, END_TIMESTAMP, INTERVAL_MINUTES), predictions_container, INTERVAL_MINUTES)
         ))
 
     # Display the footer
     eco_footer()
 
 
-def display_predictions(predictions, container):
+def display_predictions(predictions, container, interval_minutes):
     """
     Display the predictions for the next sensor values.
 
@@ -88,7 +89,8 @@ def display_predictions(predictions, container):
                     'text-lg sm:text-xl text-blue-500')
 
                 # Print the many predictions
-                print(f"Predictions for {sensor_type}:")
+                print(
+                    f"Predictions for {sensor_type} (every {interval_minutes} minutes):")
                 for i, (predicted_value, timestamp) in enumerate(zip(prediction_data['predictions'], prediction_data['timestamps'])):
                     print(
                         f"  {timestamp.strftime('%Y-%m-%d %H:%M')}: {predicted_value:.2f} {unit}")

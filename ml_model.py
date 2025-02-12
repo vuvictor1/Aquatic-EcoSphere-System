@@ -70,13 +70,14 @@ def train_model(X_train: np.ndarray, y_train: np.ndarray) -> RandomForestRegress
     return model
 
 
-def get_predictions(sensor_types, prediction_steps=10) -> dict:
+def get_predictions(sensor_types, end_timestamp, interval_minutes=10) -> dict:
     """
     Returns the predictions and accuracy for each sensor type.
 
     Args:
         sensor_types (list): List of sensor types.
-        prediction_steps (int): Number of steps to predict into the future.
+        end_timestamp (datetime): End timestamp for predictions.
+        interval_minutes (int): Interval between predictions in minutes.
 
     Returns:
         dict: Dictionary with sensor types as keys and lists of predictions, accuracy, and last reading as values.
@@ -95,13 +96,13 @@ def get_predictions(sensor_types, prediction_steps=10) -> dict:
             predicted_timestamps = []
             current_timestamp = pd.to_datetime(
                 get_all_data()[sensor_type][-1]['timestamp'])
-            for i in range(prediction_steps):
+            while current_timestamp < end_timestamp:
                 next_prediction = model.predict(latest_X)[0]
                 predicted_values.append(next_prediction)
-                predicted_timestamps.append(
-                    current_timestamp + pd.Timedelta(minutes=i))
+                predicted_timestamps.append(current_timestamp)
                 latest_X = np.roll(latest_X, -1)  # Shift the input values
                 latest_X[-1] = next_prediction  # Update the last input value
+                current_timestamp += pd.Timedelta(minutes=interval_minutes)
 
             predictions[sensor_type] = {
                 'predictions': predicted_values,
