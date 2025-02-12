@@ -1,17 +1,17 @@
-# ml_model.py
+# File: ml_model.py
+# Description: Machine learning model for predicting sensor values
+
+import numpy as np
+import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from collect_database import get_all_data
-import numpy as np
-import pandas as pd
 
 # Constants
-WINDOW_SIZE = 20  # 20
-TEST_SIZE = 0.1  # .2
-RANDOM_STATE = 42  # 42
-N_ESTIMATORS = 20  # 20
-
-# Prepare data function
+WINDOW_SIZE = 20  # Number of past values to use for prediction
+TEST_SIZE = 0.1  # Proportion of data to use for testing
+RANDOM_STATE = 42  # Random state for reproducibility
+N_ESTIMATORS = 20  # Number of estimators for the random forest model
 
 
 def prepare_data(sensor_type: str) -> tuple:
@@ -52,8 +52,6 @@ def prepare_data(sensor_type: str) -> tuple:
 
     return X_train, X_test, y_train, y_test, (latest_X, last_reading)
 
-# Train model using Random Forest
-
 
 def train_model(X_train: np.ndarray, y_train: np.ndarray) -> RandomForestRegressor:
     """
@@ -72,15 +70,16 @@ def train_model(X_train: np.ndarray, y_train: np.ndarray) -> RandomForestRegress
     return model
 
 
-def get_predictions(sensor_types):
+def get_predictions(sensor_types, prediction_steps=10) -> dict:
     """
     Returns the predictions and accuracy for each sensor type.
 
     Args:
         sensor_types (list): List of sensor types.
+        prediction_steps (int): Number of steps to predict into the future.
 
     Returns:
-        dict: Dictionary with sensor types as keys and tuples of predictions, accuracy, and last reading as values.
+        dict: Dictionary with sensor types as keys and lists of predictions, accuracy, and last reading as values.
     """
     predictions = {}
     for sensor_type in sensor_types:
@@ -89,13 +88,28 @@ def get_predictions(sensor_types):
         if X_train is not None:
             model = train_model(X_train, y_train)
             latest_X, last_reading = latest_data
-            next_prediction = model.predict(latest_X)[0]
             accuracy = calculate_accuracy(model, X_test, y_test)
-            predictions[sensor_type] = (
-                next_prediction, accuracy, last_reading)
-    return predictions
 
-# Evaluate accuracy
+            # Generate multiple predictions
+            predicted_values = []
+            predicted_timestamps = []
+            current_timestamp = pd.to_datetime(
+                get_all_data()[sensor_type][-1]['timestamp'])
+            for i in range(prediction_steps):
+                next_prediction = model.predict(latest_X)[0]
+                predicted_values.append(next_prediction)
+                predicted_timestamps.append(
+                    current_timestamp + pd.Timedelta(minutes=i))
+                latest_X = np.roll(latest_X, -1)  # Shift the input values
+                latest_X[-1] = next_prediction  # Update the last input value
+
+            predictions[sensor_type] = {
+                'predictions': predicted_values,
+                'timestamps': predicted_timestamps,
+                'accuracy': accuracy,
+                'last_reading': last_reading
+            }
+    return predictions
 
 
 def calculate_accuracy(model: RandomForestRegressor, X_test: np.ndarray, y_test: np.ndarray) -> float:
@@ -111,8 +125,6 @@ def calculate_accuracy(model: RandomForestRegressor, X_test: np.ndarray, y_test:
         float: R² score.
     """
     return model.score(X_test, y_test)
-
-# Main function
 
 
 def main() -> None:
