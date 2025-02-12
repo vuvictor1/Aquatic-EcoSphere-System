@@ -30,11 +30,21 @@ def create_connection():  # Establish MySQL connection
     )
 
 
-connection = create_connection()
+def get_connection(): # Check if connection is still active
+    global connection
+    try:
+        connection.ping(reconnect=True)
+    except (AttributeError, pymysql.MySQLError):
+        connection = create_connection()
+    return connection
+
+
+connection = create_connection() # create a connection object
 
 
 def get_latest_data():  # Fetch latest sensor data for each type
-    with connection.cursor() as cursor:  # Create a cursor object
+    conn = get_connection()
+    with conn.cursor() as cursor:  # Create a cursor object
         cursor.execute("SET time_zone = '-08:00';")  # set timezone to PST
         # Execute a query to fetch data
         cursor.execute("""
@@ -57,7 +67,8 @@ def get_latest_data():  # Fetch latest sensor data for each type
 def get_all_data(
     start_date=None, end_date=None
 ):  # Fetch all  data within a specified range
-    with connection.cursor() as cursor:
+    conn = get_connection()
+    with conn.cursor() as cursor:
         cursor.execute("SET time_zone = '-08:00';")
         if (
             start_date is None or end_date is None
