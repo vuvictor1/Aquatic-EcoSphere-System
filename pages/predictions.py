@@ -69,13 +69,13 @@ def display_predictions(predictions, container, interval_minutes):
                 # Display last reading
                 last_reading = prediction_data["last_reading"]
                 ui.label(f'Current Reading: {last_reading:.2f} {unit}').classes(
-                    'text-lg sm:text-xl text-gray-500')
+                    'text-lg sm:text-xl text-gray-300')  # Lighter gray
 
                 # Display next predicted reading
                 next_predicted_value = prediction_data['predictions'][0]
                 next_timestamp = prediction_data['timestamps'][0]
                 ui.label(f'Next Predicted Reading: {next_timestamp.strftime("%Y-%m-%d %H:%M")}: {next_predicted_value:.2f} {unit}').classes(
-                    'text-lg sm:text-xl text-yellow-500')
+                    'text-lg sm:text-xl text-blue-500')  # Blue
 
                 # Display expected change
                 expected_change = next_predicted_value - last_reading
@@ -86,7 +86,7 @@ def display_predictions(predictions, container, interval_minutes):
                 # Display model accuracy
                 accuracy = prediction_data["accuracy"]
                 ui.label(f'Model Accuracy (R² Score): {accuracy:.2f}').classes(
-                    'text-lg sm:text-xl text-blue-500')
+                    'text-lg sm:text-xl text-amber-500')  # Gold color
 
                 # Print the many predictions
                 print(

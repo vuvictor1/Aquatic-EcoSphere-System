@@ -1,18 +1,26 @@
+# Authors: Victor Vu and Jordan Morris
+# File: firebase.py
+# Description: Firebase push notification system.
+# Copyright (C) 2025 Victor V. Vu and Jordan Morris
+# License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 import firebase_admin
 from firebase_admin import credentials, messaging
-from dotenv import load_dotenv
+from collect_database import env_reuse
 import os
 
-# Load the environment variables from the .env file
-load_dotenv()
+env_reuse() # reuse loaded .env instead of recreating in other files
 
 # Initialize Firebase Admin SDK
 cred = credentials.Certificate(
-    "config/aquatic-ecosphere-firebase-adminsdk-fbsvc-d66639d5a5.json")
-firebase_admin.initialize_app(cred, {
-    # Get the private key from .env
-    'vapid_private_key': os.getenv('FIREBASE_VAPID_PRIVATE_KEY'),
-})
+    "config/aquatic-ecosphere-firebase-adminsdk-fbsvc-d66639d5a5.json"
+)
+firebase_admin.initialize_app(
+    cred,
+    {
+        # Get the private key from .env
+        "vapid_private_key": os.getenv("FIREBASE_VAPID_PRIVATE_KEY"),
+    },
+)
 
 
 def send_push_notification(token, title, body):
