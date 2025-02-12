@@ -68,7 +68,7 @@ def display_predictions(predictions, container, interval_minutes):
 
                 # Display last reading
                 last_reading = prediction_data["last_reading"]
-                ui.label(f'Last Reading: {last_reading:.2f} {unit}').classes(
+                ui.label(f'Current Reading: {last_reading:.2f} {unit}').classes(
                     'text-lg sm:text-xl text-gray-500')
 
                 # Display next predicted reading
