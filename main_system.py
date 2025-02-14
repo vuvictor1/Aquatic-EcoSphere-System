@@ -15,7 +15,6 @@ from pages.login import AuthMiddleware
 from threshold_config import get_temperature_thresholds, interpolate_color
 from pages.settings import settings_page
 from pages.reminders import reminders_page
-from pages.species import species_page
 from pages.predictions import predictions_page
 from pages.recommend import recommend_page
 
