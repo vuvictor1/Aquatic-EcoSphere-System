@@ -25,7 +25,7 @@ def inject_style():
             flex: 1; /* allow main content to grow and take available space */
             /* Reduce unnecessary margin space */
             margin-top: -60px;
-            margin-bottom: -55px;
+            margin-bottom: -65px;
         }}
         .outline_label {{
             border: 2px solid transparent;
@@ -62,13 +62,13 @@ def eco_header():
         ui.link("Reminders", "/reminders").classes(
             "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
         )
-        ui.link("Encyclopedia", "/encyclopedia").classes(
-            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
-        )
         ui.link("Predictions", "/predictions").classes(
             "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
         )
         ui.link("Recommend", "/recommend").classes(
+            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
+        )
+        ui.link("Encyclopedia", "/encyclopedia").classes(
             "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
         )
         ui.link("Contacts", "/contacts").classes(
@@ -86,9 +86,6 @@ def eco_header():
             ):
                 ui.item(  # settings redirect
                     "Thresholds", on_click=lambda: ui.navigate.to("/settings")
-                )
-                ui.item(  # species redirect
-                    "Species", on_click=lambda: ui.navigate.to("/species")
                 )
 
 
