@@ -45,6 +45,5 @@ def reconnect():  # Reconnect if connection is lost
 
 
 def control_timer():  # Set timer to control the frequency
-    while True:
-        reconnect()  # Ensure connection is active
-        time.sleep(300)  # wait 300sec before reading again
+    reconnect()  # Ensure connection is active
+    time.sleep(300)  # wait 300sec before reading again
