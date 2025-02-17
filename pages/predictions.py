@@ -17,6 +17,135 @@ END_TIMESTAMP = datetime.now() + timedelta(hours=1)
 INTERVAL_MINUTES = 10
 
 
+def get_target_time(current_time):
+    """
+    Calculate the target time 10 minutes ahead of the current time.
+
+    Args:
+        current_time (datetime): Current time.
+
+    Returns:
+        datetime: Target time.
+    """
+    return current_time + timedelta(minutes=10)
+
+
+def get_filtered_predictions(predictions, current_time):
+    """
+    Filter predictions that are only for current time and beyond.
+
+    Args:
+        predictions (dict): Dictionary with sensor types as keys and lists of predictions, accuracy, and last reading as values.
+        current_time (datetime): Current time.
+
+    Returns:
+        list: Filtered predictions.
+    """
+    filtered_predictions = []
+    for sensor_type, prediction_data in predictions.items():
+        filtered_predictions.extend([
+            (value, timestamp) for value, timestamp in zip(prediction_data['predictions'], prediction_data['timestamps'])
+            if timestamp >= current_time
+        ])
+    return filtered_predictions
+
+
+def get_closest_prediction(filtered_predictions, target_time):
+    """
+    Find the prediction closest to the target time.
+
+    Args:
+        filtered_predictions (list): Filtered predictions.
+        target_time (datetime): Target time.
+
+    Returns:
+        tuple: Closest prediction.
+    """
+    return min(filtered_predictions, key=lambda x: abs(x[1] - target_time))
+
+
+def display_sensor_data(sensor_type, prediction_data, unit, target_time):
+    """
+    Display sensor data.
+
+    Args:
+        sensor_type (str): Sensor type.
+        prediction_data (dict): Prediction data.
+        unit (str): Unit of measurement.
+        target_time (datetime): Target time.
+    """
+    with ui.column().classes('outline_label bg-gray-800 rounded-lg shadow-lg p-4').style('align-items: center; margin-bottom: 20px;'):
+        # Display sensor type
+        ui.label(f'{sensor_type.title()}').classes(
+            'text-3xl sm:text-4xl text-white font-bold')
+
+        # Display last reading
+        last_reading = prediction_data["last_reading"]
+        ui.label(f'Current Reading: {last_reading:.2f} {unit}').classes(
+            'text-lg sm:text-xl text-gray-300')  # Lighter gray
+
+        # Display next predicted reading
+        predicted_value, predicted_timestamp = get_closest_prediction(
+            [(value, timestamp) for value, timestamp in zip(
+                prediction_data['predictions'], prediction_data['timestamps'])],
+            target_time
+        )
+        ui.label(f'Predicted Reading at {target_time.strftime("%Y-%m-%d %H:%M")}: {predicted_value:.2f} {unit}').classes(
+            'text-lg sm:text-xl text-blue-500')  # Blue
+
+        # Display expected change
+        expected_change = predicted_value - last_reading
+        expected_change_color = 'text-green-500' if expected_change > 0 else 'text-red-500'
+        ui.label(f'Expected Change: {expected_change:+.2f} {unit}').classes(
+            f'text-lg sm:text-xl {expected_change_color}')
+
+        # Display model accuracy
+        accuracy = prediction_data["accuracy"]
+        ui.label(f'Model Accuracy (R² Score): {accuracy:.2f}').classes(
+            'text-lg sm:text-xl text-amber-500')  # Gold color
+
+
+def display_predictions(predictions, container, interval_minutes):
+    """
+    Display the predictions for the next sensor values.
+
+    Args:
+        predictions (dict): Dictionary with sensor types as keys and lists of predictions, accuracy, and last reading as values.
+        container (ui.row): Container to display the predictions.
+    """
+    sensor_units = {  # sensor_type: unit
+        'total dissolved solids': 'ppm',
+        'turbidity': 'NTU',
+        'temperature': '°F'
+    }
+
+    current_time = datetime.now()
+    target_time = get_target_time(current_time)
+    container.clear()  # Clear the container before displaying predictions
+
+    with container:
+        for sensor_type, prediction_data in predictions.items():
+            unit = sensor_units.get(sensor_type, '')
+
+            filtered_predictions = get_filtered_predictions(
+                {sensor_type: prediction_data}, current_time)
+
+            if not filtered_predictions:
+                ui.label(f'No upcoming predictions available for {sensor_type}.').classes(
+                    'text-lg sm:text-xl text-gray-300')
+                continue
+
+            display_sensor_data(
+                sensor_type, prediction_data, unit, target_time)
+
+            # Print filtered predictions
+            print(
+                f"Filtered Predictions for {sensor_type} (every {interval_minutes} minutes):")
+            for i, (predicted_value, timestamp) in enumerate(filtered_predictions):
+                print(
+                    f"  {timestamp.strftime('%Y-%m-%d %H:%M')}: {predicted_value:.2f} {unit}")
+
+
 def predictions_page():
     """
     Display predictions for the next sensor values.
@@ -42,78 +171,6 @@ def predictions_page():
 
     # Display the footer
     eco_footer()
-
-
-def display_predictions(predictions, container, interval_minutes):
-    """
-    Display the predictions for the next sensor values.
-
-    Args:
-        predictions (dict): Dictionary with sensor types as keys and lists of predictions, accuracy, and last reading as values.
-        container (ui.row): Container to display the predictions.
-    """
-    sensor_units = {  # sensor_type: unit
-        'total dissolved solids': 'ppm',
-        'turbidity': 'NTU',
-        'temperature': '°F'
-    }
-
-    current_time = datetime.now()
-    # 10 minutes ahead of current time
-    target_time = current_time + timedelta(minutes=10)
-    container.clear()  # Clear the container before displaying predictions
-
-    with container:
-        for sensor_type, prediction_data in predictions.items():
-            unit = sensor_units.get(sensor_type, '')
-
-            # Filter predictions that are only for current time and beyond
-            filtered_predictions = [
-                (value, timestamp) for value, timestamp in zip(prediction_data['predictions'], prediction_data['timestamps'])
-                if timestamp >= current_time
-            ]
-
-            if not filtered_predictions:
-                ui.label(f'No upcoming predictions available for {sensor_type}.').classes(
-                    'text-lg sm:text-xl text-gray-300')
-                continue
-
-            # Find the prediction closest to the target time
-            closest_prediction = min(
-                filtered_predictions, key=lambda x: abs(x[1] - target_time))
-
-            with ui.column().classes('outline_label bg-gray-800 rounded-lg shadow-lg p-4').style('align-items: center; margin-bottom: 20px;'):
-                # Display sensor type
-                ui.label(f'{sensor_type.title()}').classes(
-                    'text-3xl sm:text-4xl text-white font-bold')
-
-                # Display last reading
-                last_reading = prediction_data["last_reading"]
-                ui.label(f'Current Reading: {last_reading:.2f} {unit}').classes(
-                    'text-lg sm:text-xl text-gray-300')  # Lighter gray
-
-                # Display next predicted reading
-                predicted_value, predicted_timestamp = closest_prediction
-                ui.label(f'Predicted Reading at {target_time.strftime("%Y-%m-%d %H:%M")}: {predicted_value:.2f} {unit}').classes(
-                    'text-lg sm:text-xl text-blue-500')  # Blue
-
-                # Display expected change
-                expected_change = predicted_value - last_reading
-                expected_change_color = 'text-green-500' if expected_change > 0 else 'text-red-500'
-                ui.label(f'Expected Change: {expected_change:+.2f} {unit}').classes(
-                    f'text-lg sm:text-xl {expected_change_color}')
-
-                # Display model accuracy
-                accuracy = prediction_data["accuracy"]
-                ui.label(f'Model Accuracy (R² Score): {accuracy:.2f}').classes(
-                    'text-lg sm:text-xl text-amber-500')  # Gold color
-
-                # Print filtered predictions
-                print(
-                    f"Filtered Predictions for {sensor_type} (every {interval_minutes} minutes):")
-                for i, (predicted_value, timestamp) in enumerate(filtered_predictions):
-                    print(
-                        f"  {timestamp.strftime('%Y-%m-%d %H:%M')}: {predicted_value:.2f} {unit}")
 
 
 @ui.page('/predictions')
