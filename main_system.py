@@ -109,7 +109,7 @@ def home_page():  # Home page function
     with ui.row().classes("justify-center w-full mt-5"):  # Additional cards
         card_labels = {  # Card for alerts, reminders, & recommendations
             "Alerts": "Coming soon... W.I.P.",
-            "Reminders": f"Upcoming Task: {upcoming_task['task']} ({upcoming_task['frequency']} days)"
+            "Reminders": f"Upcoming Task: {upcoming_task['task']} ({upcoming_task['priority']} days)"
             if upcoming_task
             else "No upcoming tasks",
             "Recommendations": "Coming soon... W.I.P.",
