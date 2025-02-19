@@ -94,7 +94,7 @@ def reminders_page():  # Renders the reminders page
                             )
 
                         with table.cell():  # Input for new priority
-                            new_priority = ui.input("priority").classes(
+                            new_priority = ui.input("Priority").classes(
                                 "bg-gray-200 px-4 py-2 w-full mb-4"
                             )
             ui.button(
