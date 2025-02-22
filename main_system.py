@@ -103,13 +103,17 @@ def home_page():  # Home page function
                 )
                 labels[sensor_type] = (sensor_label, value_label, timestamp_label)
 
-    reminders = read_reminders()
-    upcoming_task = reminders[0] if reminders else None
+    reminders = read_reminders() # read reminders from reminders.json
+    if reminders: # Sort reminders by priority
+        reminders.sort(key=lambda x: x['priority'])
+        upcoming_task = reminders[0]
+    else:
+        upcoming_task = None
 
     with ui.row().classes("justify-center w-full mt-5"):  # Additional cards
         card_labels = {  # Card for alerts, reminders, & recommendations
             "Alerts": "Coming soon... W.I.P.",
-            "Reminders": f"Upcoming Task: {upcoming_task['task']} ({upcoming_task['priority']} days)"
+            "Reminders": f"Upcoming Task: {upcoming_task['task']} (Priority Rank: {upcoming_task['priority']})"
             if upcoming_task
             else "No upcoming tasks",
             "Recommendations": "Coming soon... W.I.P.",

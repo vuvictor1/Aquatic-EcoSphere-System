@@ -124,9 +124,9 @@ def reminders_page():  # Renders the reminders page
     # Function to update the label with the task with the least amount of days left
     def update_task(rows):
         global upcoming_task
-        # store the task with the least amount of days
-        least_days_task = get_upcoming_task(rows)
-        upcoming_task = least_days_task  # update the global variable
+        # store the task with the least number or highest priority
+        least_task = get_upcoming_task(rows)
+        upcoming_task = least_task  # update the global variable
 
     update_task(rows)  # update the label
 
