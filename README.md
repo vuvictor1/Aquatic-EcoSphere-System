@@ -15,6 +15,7 @@
 - **Algorithm Analysis**: Utilize algorithms for interpreting data and providing recommendations.
 - **Account Management**: Securely sync tank-specific data across remote locations.
 - **Graph Generation**: Visualize collected data for detailed observation.
+- **Reminders**: Assign critical tasks to be completed by priority. 
 - **Mobile Support**: Complementary Android application for convenient access to the EcoSphere system.
 
 ## Technologies Used:
