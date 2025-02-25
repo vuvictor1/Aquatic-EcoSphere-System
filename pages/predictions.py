@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from web_functions import inject_style, eco_footer, eco_header
 from collect_database import get_latest_data, get_all_data
 from ml_model import get_predictions
+import asyncio
 
 # Constants
 SENSOR_TYPES = ['turbidity', 'total dissolved solids', 'temperature']
@@ -105,7 +106,7 @@ def display_sensor_data(sensor_type, prediction_data, unit, target_time):
             'text-lg sm:text-xl text-amber-500')  # Gold color
 
 
-def display_predictions(predictions, container, interval_minutes):
+async def display_predictions(predictions, container, interval_minutes):
     """
     Display the predictions for the next sensor values.
 
@@ -144,6 +145,7 @@ def display_predictions(predictions, container, interval_minutes):
             for i, (predicted_value, timestamp) in enumerate(filtered_predictions):
                 print(
                     f"  {timestamp.strftime('%Y-%m-%d %H:%M')}: {predicted_value:.2f} {unit}")
+    await asyncio.sleep(0)
 
 
 def predictions_page():
@@ -162,13 +164,29 @@ def predictions_page():
     # Create a container to display predictions
     predictions_container = ui.row().classes('justify-center w-full')
 
+    spinner = ui.spinner('audio', size='xl', color='green')
+    spinner.set_visibility(False)
+    spinner.style('margin:auto; display: block;')
+
     # Create a button to trigger prediction calculation and display
     with ui.row().classes('justify-center w-full'):
-        ui.button('Calculate Predictions', on_click=lambda: (
-            display_predictions(get_predictions(
-                SENSOR_TYPES, END_TIMESTAMP, INTERVAL_MINUTES), predictions_container, INTERVAL_MINUTES)
-        ))
+        async def calculate_predictions():
+            # Show the spinner
+            spinner.set_visibility(True)
+            ui.update()  # Force UI update so the spinner appears
 
+            # Run the computation in a separate thread
+            predictions = await asyncio.to_thread(get_predictions, SENSOR_TYPES, END_TIMESTAMP, INTERVAL_MINUTES)
+
+            # Display predictions
+            await display_predictions(predictions, predictions_container, INTERVAL_MINUTES)
+
+            # Hide the spinner after computation
+            spinner.set_visibility(False)
+            ui.update()  # Ensure the UI updates
+
+        ui.button('Calculate Predictions',
+                  on_click=lambda: asyncio.create_task(calculate_predictions()))
     # Display the footer
     eco_footer()
 
