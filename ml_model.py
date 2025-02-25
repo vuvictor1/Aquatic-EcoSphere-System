@@ -13,6 +13,10 @@ TEST_SIZE = 0.1  # Proportion of data to use for testing
 RANDOM_STATE = 42  # Random state for reproducibility
 N_ESTIMATORS = 20  # Number of estimators for the random forest model
 
+# TODO:
+# 1. Implement partial fit for random forest tree for improving model
+# 2. Other incremental learning practices
+
 
 def prepare_data(sensor_type: str) -> tuple:
     """

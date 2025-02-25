@@ -1,4 +1,4 @@
-# File: contacts.py
+# File: graphs.py
 # Description: Graphing page for the web interface
 from nicegui import ui
 from datetime import datetime
@@ -40,7 +40,8 @@ def generate_graphs(graph_container, data=None):  # Generate graphs for sensor d
                 min_value = min(filtered_values) if filtered_values else 0
                 max_value = max(filtered_values) if filtered_values else 1
                 distance_padding = 0.10  # padding for y-axis
-                y_min = max(0, min_value - distance_padding * (max_value - min_value))
+                y_min = max(0, min_value - distance_padding *
+                            (max_value - min_value))
                 y_max = max_value + distance_padding * (max_value - min_value)
 
                 with graph_container:  # Create a graph container
