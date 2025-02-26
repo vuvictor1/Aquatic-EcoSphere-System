@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from collect_database import get_all_data
 
 # Constants
-WINDOW_SIZE = 20  # Number of past values to use for prediction
+WINDOW_SIZE = 50  # Number of past values to use for prediction
 TEST_SIZE = 0.1  # Proportion of data to use for testing
 RANDOM_STATE = 42  # Random state for reproducibility
 N_ESTIMATORS = 20  # Number of estimators for the random forest model
@@ -28,33 +28,58 @@ def prepare_data(sensor_type: str) -> tuple:
     Returns:
         tuple: X_train, X_test, y_train, y_test, latest_data
     """
+    # Load all data
     data = get_all_data()
 
-    if sensor_type not in data or len(data[sensor_type]) < WINDOW_SIZE + 1:
+    # Check if sensor type has sufficient data
+    if not is_sufficient_data(data, sensor_type):
         print(f"Warning: Not enough data for {sensor_type}.")
         return None, None, None, None, None
 
+    # Create a DataFrame from the sensor data
+    df = create_dataframe(data, sensor_type)
+
+    # Generate lag features using all available past readings
+    df = add_lag_features(df)
+
+    # Split data into training and testing sets
+    X_train, X_test, y_train, y_test = split_data(df)
+
+    # Get the most recent sample for future prediction
+    latest_data = get_latest_data(df)
+
+    return X_train, X_test, y_train, y_test, latest_data
+
+
+def is_sufficient_data(data, sensor_type):
+    return sensor_type in data and len(data[sensor_type]) >= 5
+
+
+def create_dataframe(data, sensor_type):
     df = pd.DataFrame(data[sensor_type])
     df['timestamp'] = pd.to_datetime(df['timestamp'])
     df.sort_values(by='timestamp', inplace=True)
+    return df
 
-    # Generate lag features using ALL available past readings
+
+def add_lag_features(df):
     for i in range(1, WINDOW_SIZE + 1):
         df[f'lag_{i}'] = df['value'].shift(i)
+    df.dropna(inplace=True)
+    return df
 
-    df.dropna(inplace=True)  # Remove NaNs from shifting
 
-    # Train-test split
+def split_data(df):
     X = df[[f'lag_{i}' for i in range(1, WINDOW_SIZE + 1)]].values
     y = df['value'].values
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
+    return train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
 
-    # Get the most recent sample for future prediction
+
+def get_latest_data(df):
     last_reading = df.iloc[-1]['value']
-    latest_X = X[-1].reshape(1, -1)  # Latest input values for prediction
-
-    return X_train, X_test, y_train, y_test, (latest_X, last_reading)
+    latest_X = df.iloc[-1][[f'lag_{i}' for i in range(
+        1, WINDOW_SIZE + 1)]].values.reshape(1, -1)
+    return latest_X, last_reading
 
 
 def train_model(X_train: np.ndarray, y_train: np.ndarray) -> RandomForestRegressor:
