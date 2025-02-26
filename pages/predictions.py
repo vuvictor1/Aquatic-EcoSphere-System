@@ -173,6 +173,7 @@ def predictions_page():
         async def calculate_predictions():
             # Show the spinner
             spinner.set_visibility(True)
+            button.set_text('Loading . . .')
             ui.update()  # Force UI update so the spinner appears
 
             # Run the computation in a separate thread
@@ -183,10 +184,11 @@ def predictions_page():
 
             # Hide the spinner after computation
             spinner.set_visibility(False)
+            button.set_text('Calculate Predictions')
             ui.update()  # Ensure the UI updates
 
-        ui.button('Calculate Predictions',
-                  on_click=lambda: asyncio.create_task(calculate_predictions()))
+        button = ui.button('Calculate Predictions',
+                           on_click=lambda: asyncio.create_task(calculate_predictions()))
     # Display the footer
     eco_footer()
 
