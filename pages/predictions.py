@@ -42,13 +42,11 @@ def get_filtered_predictions(predictions, current_time):
     Returns:
         list: Filtered predictions.
     """
-    filtered_predictions = []
-    for sensor_type, prediction_data in predictions.items():
-        filtered_predictions.extend([
-            (value, timestamp) for value, timestamp in zip(prediction_data['predictions'], prediction_data['timestamps'])
-            if timestamp >= current_time
-        ])
-    return filtered_predictions
+    return [
+        (value, timestamp) for sensor_type, prediction_data in predictions.items()
+        for value, timestamp in zip(prediction_data['predictions'], prediction_data['timestamps'])
+        if timestamp >= current_time
+    ]
 
 
 def get_closest_prediction(filtered_predictions, target_time):
@@ -65,7 +63,7 @@ def get_closest_prediction(filtered_predictions, target_time):
     return min(filtered_predictions, key=lambda x: abs(x[1] - target_time))
 
 
-def display_sensor_data(sensor_type, prediction_data, unit, target_time):
+def display_sensor_data(sensor_type, prediction_data, unit, target_time, closest_prediction):
     """
     Display sensor data.
 
@@ -74,6 +72,7 @@ def display_sensor_data(sensor_type, prediction_data, unit, target_time):
         prediction_data (dict): Prediction data.
         unit (str): Unit of measurement.
         target_time (datetime): Target time.
+        closest_prediction (tuple): Closest prediction.
     """
     with ui.column().classes('outline_label bg-gray-800 rounded-lg shadow-lg p-4').style('align-items: center; margin-bottom: 20px;'):
         # Display sensor type
@@ -86,11 +85,7 @@ def display_sensor_data(sensor_type, prediction_data, unit, target_time):
             'text-lg sm:text-xl text-gray-300')  # Lighter gray
 
         # Display next predicted reading
-        predicted_value, predicted_timestamp = get_closest_prediction(
-            [(value, timestamp) for value, timestamp in zip(
-                prediction_data['predictions'], prediction_data['timestamps'])],
-            target_time
-        )
+        predicted_value, predicted_timestamp = closest_prediction
         ui.label(f'Predicted Reading at {target_time.strftime("%Y-%m-%d %H:%M")}: {predicted_value:.2f} {unit}').classes(
             'text-lg sm:text-xl text-blue-500')  # Blue
 
@@ -136,16 +131,12 @@ async def display_predictions(predictions, container, interval_minutes):
                     'text-lg sm:text-xl text-gray-300')
                 continue
 
-            display_sensor_data(
-                sensor_type, prediction_data, unit, target_time)
+            closest_prediction = get_closest_prediction(
+                filtered_predictions, target_time)
 
-            # Print filtered predictions
-            print(
-                f"Filtered Predictions for {sensor_type} (every {interval_minutes} minutes):")
-            for i, (predicted_value, timestamp) in enumerate(filtered_predictions):
-                print(
-                    f"  {timestamp.strftime('%Y-%m-%d %H:%M')}: {predicted_value:.2f} {unit}")
-    await asyncio.sleep(0)
+            display_sensor_data(
+                sensor_type, prediction_data, unit, target_time, closest_prediction)
+            await asyncio.sleep(0)
 
 
 def predictions_page():
