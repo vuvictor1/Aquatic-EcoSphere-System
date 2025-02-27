@@ -27,6 +27,11 @@ def inject_style():
             margin-top: -60px;
             margin-bottom: -65px;
         }}
+        @media (max-width: 768px) {{
+            main {{
+                margin-top: -150px; /* further reduce top margin on mobile devices */
+            }}
+        }}
         .outline_label {{
             border: 2px solid transparent;
             transition: transform 0.3s ease, border-color 0.3s ease;
@@ -53,26 +58,25 @@ def eco_header():
         .classes("justify-center flex-wrap static p-4")
         .style(f"background-color: {header_footer_color}")
     ):
-        ui.link("🌊 Home", "/").classes(
-            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
-        )
+        ui.link("🌊 Home", "/").classes("text-white text-2xl no-underline mb-2 md:mb-0")
+        ui.label("|").classes("text-white text-2xl hidden md:inline-block")
         ui.link("Graphs", "/graphs").classes(
-            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
+            "text-white text-2xl no-underline mb-2 md:mb-0"
         )
         ui.link("Reminders", "/reminders").classes(
-            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
+            "text-white text-2xl no-underline mb-2 md:mb-0"
         )
         ui.link("Predictions", "/predictions").classes(
-            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
+            "text-white text-2xl no-underline mb-2 md:mb-0"
         )
         ui.link("Recommend", "/recommend").classes(
-            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
+            "text-white text-2xl no-underline mb-2 md:mb-0"
         )
         ui.link("Encyclopedia", "/encyclopedia").classes(
-            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
+            "text-white text-2xl no-underline mb-2 md:mb-0"
         )
         ui.link("Contacts", "/contacts").classes(
-            "text-white text-2xl no-underline mb-2 md:mb-0 mx-2"
+            "text-white text-2xl no-underline mb-2 md:mb-0"
         )
 
         with ui.row().classes("gap-2 mt-2 md:mt-0"):  # Buttons for account and settings
@@ -97,5 +101,5 @@ def eco_footer():
         .style(f"background-color: {header_footer_color}")
     ):
         ui.label("Copyright (C) 2025 | Victor Vu & Jordan Morris").classes(
-            "text-white text-xl"
+            "text-white text-xl text-center mb-2 md:mb-0"
         )
