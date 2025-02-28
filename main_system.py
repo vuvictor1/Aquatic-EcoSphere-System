@@ -12,7 +12,7 @@ from pages.contacts import contacts_page
 from pages.graphs import graphs_page
 from pages.encyclopedia import encyclopedia_page
 from pages.login import AuthMiddleware
-from pages.settings import settings_page
+from pages.thresholds import thresholds_page
 from pages.reminders import reminders_page
 from pages.predictions import predictions_page
 from pages.recommend import recommend_page
