@@ -85,12 +85,10 @@ def eco_header():
                 icon="account_circle",
                 on_click=lambda: ui.navigate.to("/login"),
             )
-            with ui.dropdown_button(  # Settings dropdown 2 options
-                icon="settings", auto_close=True
-            ):
-                ui.item(  # settings redirect
-                    "Thresholds", on_click=lambda: ui.navigate.to("/settings")
-                )
+            ui.button(  # settings redirect
+                icon="settings",
+                on_click=lambda: ui.navigate.to("/thresholds"),
+            )
 
 
 # Footer for the web interface
