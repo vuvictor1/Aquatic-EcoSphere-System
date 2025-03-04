@@ -82,7 +82,7 @@ def home_page():  # Home page function
                 loop autoplay speed="0.25" style="height: 300px;"></lottie-player>''')
 
     with ui.row().classes("justify-center w-full"):  # Main title
-        ui.label("Aquatic EcoSphere System").classes("text-white text-4xl mt-[-50px]")
+        ui.label("Aquatic EcoSphere System").classes("text-white text-4xl mt-[-50px] text-center")
 
     # Sensor Cards
     global labels
