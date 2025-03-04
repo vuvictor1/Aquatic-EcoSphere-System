@@ -10,9 +10,9 @@ from adafruit_ads1x15.analog_in import AnalogIn
 from connect_timer import create_connection, control_timer
 
 connection = create_connection()  # Create a connection to the database
-i2c = busio.I2C( # I2C interface that reads from GPIO pins SCL and SDA
+i2c = busio.I2C(  # I2C interface that reads from GPIO pins SCL and SDA
     board.SCL, board.SDA
-)  
+)
 ads = ADS.ADS1115(i2c)  # ADS1115 object that converts the analog signal to digital
 channel_1 = AnalogIn(ads, ADS.P1)  # Read from analog input channel on Pin 1
 
@@ -37,6 +37,16 @@ def insert_data_into_db(
 
     except Exception as e:  # Catch any errors
         print(f"Error inserting data into database: {e}")
+        reconnect_to_db()  # attempt to reconnect to the database
+
+
+def reconnect_to_db(): # Function to reconnect to the database
+    global connection
+    try:
+        connection.close()  # close the existing connection
+    except Exception as e:
+        print(f"Error closing the connection: {e}")
+    connection = create_connection()  # recreate the connection
 
 
 # Main loop to read and store the TDS value
@@ -44,4 +54,4 @@ while True:
     tds = read_tds()
     print(f"TDS: {tds} ppm")
     insert_data_into_db("total dissolved solids", tds)  # insert the TDS data
-    control_timer()  # wait for a speficied time
+    control_timer()  # wait for a specified time

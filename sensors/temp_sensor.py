@@ -21,6 +21,16 @@ def insert_data_into_db(  # Function to insert data into the database
 
     except Exception as e:  # Catch any errors
         print(f"Error inserting data into database: {e}")
+        reconnect_to_db()  # attempt to reconnect to the database
+
+
+def reconnect_to_db():  # Function to reconnect to the database
+    global connection
+    try:
+        connection.close()  # close the existing connection
+    except Exception as e:
+        print(f"Error closing the connection: {e}")
+    connection = create_connection()  # recreate the connection
 
 
 # Main loop to read and store the temperature value

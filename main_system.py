@@ -12,8 +12,7 @@ from pages.contacts import contacts_page
 from pages.graphs import graphs_page
 from pages.encyclopedia import encyclopedia_page
 from pages.login import AuthMiddleware
-from threshold_config import get_temperature_thresholds, interpolate_color
-from pages.settings import settings_page
+from pages.thresholds import thresholds_page
 from pages.reminders import reminders_page
 from pages.predictions import predictions_page
 from pages.recommend import recommend_page
@@ -27,6 +26,7 @@ sensor_units = {  # sensor_type: unit
     "turbidity": "NTU",
     "temperature": "°F",
 }
+
 
 # Function to read reminders from reminders.json
 def read_reminders():
@@ -82,7 +82,7 @@ def home_page():  # Home page function
                 loop autoplay speed="0.25" style="height: 300px;"></lottie-player>''')
 
     with ui.row().classes("justify-center w-full"):  # Main title
-        ui.label("Aquatic EcoSphere System").classes("text-white text-4xl mt-[-50px]")
+        ui.label("Aquatic EcoSphere System").classes("text-white text-4xl mt-[-50px] text-center")
 
     # Sensor Cards
     global labels
@@ -103,9 +103,9 @@ def home_page():  # Home page function
                 )
                 labels[sensor_type] = (sensor_label, value_label, timestamp_label)
 
-    reminders = read_reminders() # read reminders from reminders.json
-    if reminders: # Sort reminders by priority
-        reminders.sort(key=lambda x: x['priority'])
+    reminders = read_reminders()  # read reminders from reminders.json
+    if reminders:  # Sort reminders by priority
+        reminders.sort(key=lambda x: x["priority"])
         upcoming_task = reminders[0]
     else:
         upcoming_task = None
@@ -140,14 +140,6 @@ def update_ui(labels):  # Update sensor labels with the latest data
             unit = sensor_units.get(sensor_type, "")
             labels[sensor_type][1].set_text(f"{value['value']:.2f} {unit}")
             labels[sensor_type][2].set_text(f"{value['timestamp']}")
-
-            if sensor_type == "temperature":  # Update temperature card color
-                current_temp = value["value"]
-                thresholds = get_temperature_thresholds()  # get current thresholds
-                color = interpolate_color(current_temp, thresholds)
-                labels[sensor_type][0].classes("text-white text-base")
-                labels[sensor_type][1].classes(f"text-{color} text-base")
-                labels[sensor_type][2].classes("text-white text-base")
 
 
 @ui.page("/")  # Set homepage route
