@@ -32,7 +32,7 @@ def register_page():
             ui.navigate.to("/login")  # navigate to login page
 
     with ui.column().classes(
-        "flex justify-center items-center w-full h-screen p-4 md:h-3/4 md:mt-20"
+        "flex justify-center items-center w-full h-screen p-4 md:h-3/4 md:mt-40"
     ):  # Register page layout
         with ui.element("div").classes(
             "outline_label p-6 md:p-12 bg-gray-800 rounded-lg shadow-lg w-full max-w-md"
