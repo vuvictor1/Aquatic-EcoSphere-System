@@ -2,6 +2,11 @@
 # Description: Encyclopedia page for the web interface
 from nicegui import ui, html
 from web_functions import inject_style, eco_header, eco_footer
+import requests
+
+
+# FishBase API Endpoint
+FISHBASE_API_URL = "https://fishbase.ropensci.org/species"
 
 # Sample data for aquatic species
 species_data = [
@@ -26,6 +31,35 @@ species_data = [
     {"name": "Cherry Shrimp", "description": "Cherry Shrimp are small, colorful shrimp that are great for planted tanks.",
         "tolerance_levels": "Temperature: 22-28°C, pH: 6.5-8.0"},
 ]
+
+
+def fetch_fishbase_data(species_name: str):
+    """Query FishBase API for species data."""
+    params = {"Genus": species_name.split(
+    )[0], "Species": species_name.split()[-1]}
+    response = requests.get(FISHBASE_API_URL, params=params)
+    if response.status_code == 200:
+        data = response.json()["data"]
+        return data[0] if data else None
+    return None
+
+
+def query_fishbase(species_name: str, results_container: ui.row):
+    """Query FishBase API and update the offline database."""
+    species_data_fetched = fetch_fishbase_data(species_name)
+
+    if species_data_fetched:
+        new_species = {
+            "name": f"{species_data_fetched['Genus']} {species_data_fetched['Species']}",
+            "description": f"Family: {species_data_fetched['Family']}, Habitat: {species_data_fetched['Habitat']}",
+            "tolerance_levels": f"Temperature: {species_data_fetched.get('TempMin', 'Unknown')}°C - {species_data_fetched.get('TempMax', 'Unknown')}°C",
+        }
+        species_data.append(new_species)
+        ui.notify(f"✅ {species_name} added to database!", type="success")
+    else:
+        ui.notify(f"❌ {species_name} not found.", type="error")
+
+    display_species(species_data, results_container)
 
 
 def filter_species(query: str) -> list:
@@ -54,7 +88,7 @@ def display_species(species_list: list, results_container: ui.row) -> None:
     # Clear the results container
     results_container.clear()
 
-   # Define the card classes
+    # Define the card classes
     card_classes = "sm:w-64 md:w-80 lg:w-96 m-2 p-3 bg-gray-700 text-white hover:scale-105 transition duration-300 ease-in-out"
 
     # Define the image styles
@@ -80,15 +114,12 @@ def display_species(species_list: list, results_container: ui.row) -> None:
                 ui.label(f"Tolerance: {species['tolerance_levels']}").classes(
                     "text-xs text-gray-500")
 
-    # Update the UI
-    ui.update()
-
-    # Log the number of species displayed
-    print(f"📢 Updating UI with {len(species_list)} species")
-
 
 def encyclopedia_page() -> None:
-    """Encyclopedia page."""
+    """
+    Encyclopedia page.
+    """
+
     eco_header()
     inject_style()
 
@@ -104,6 +135,11 @@ def encyclopedia_page() -> None:
                 .on_value_change(lambda e: display_species(filter_species(e.value), results))
                 .style("width: 100%; margin-bottom: 20px; padding: 10px; border-radius: 25px; border: 1px solid #ccc; font-size: 16px; background-color: #e0e0e0;")
             )
+
+            # Add a button to query FishBase
+            # Make it look nice
+            query_button = ui.button(
+                "Query Fishbase:", on_click=lambda: query_fishbase(search_field.value, results))
 
     results = ui.row().classes("w-full mt-4 flex flex-wrap justify-center")
     display_species(species_data, results)
