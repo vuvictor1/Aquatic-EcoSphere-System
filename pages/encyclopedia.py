@@ -6,7 +6,7 @@ from web_functions import inject_style, eco_header, eco_footer
 # Sample data for aquatic species
 species_data = [
     {"name": "Clownfish", "description": "Clownfish are small, brightly colored fish found in warm waters.",
-        "tolerance_levels": "Temperature: 24-27°C, pH: 7.8-8.4, Salinity: 1.020-1.025"},
+        "tolerance_levels": "Temperature: 24-27°C, pH: 7.8-8.4, Salinity: 1.020-1.025", "image_url": "https://www.aquariumofpacific.org/images/made_new/images-uploads-clownfish_400_q85.jpg"},
     {"name": "Neon Tetra", "description": "Neon Tetras are small, colorful fish that are popular in home aquariums.",
         "tolerance_levels": "Temperature: 20-26°C, pH: 6.0-7.0"},
     {"name": "Guppy", "description": "Guppies are small, colorful fish that are easy to care for and breed.",
@@ -40,19 +40,51 @@ def filter_species(query: str) -> list:
 
 
 def display_species(species_list: list, results_container: ui.row) -> None:
-    """Update the displayed species list dynamically."""
-    print(f"📢 Updating UI with {len(species_list)} species")
+    """
+    Update the displayed species list dynamically.
+
+    Args:
+        species_list (list): A list of species data.
+        results_container (ui.row): The container to display the species list.
+
+    Returns:
+        None
+    """
+
+    # Clear the results container
     results_container.clear()
+
+   # Define the card classes
+    card_classes = "sm:w-64 md:w-80 lg:w-96 m-2 p-3 bg-gray-700 text-white hover:scale-105 transition duration-300 ease-in-out"
+
+    # Define the image styles
+    image_styles = "width: 120px; height: 120px; border-radius: 10px;"
+
+    # Display each species in the list
     with results_container:
         for species in species_list:
-            with ui.card().classes("w-64 m-2 p-3 bg-gray-700 text-white"):
-                html.img(src="https://placehold.co/120")
+            # Create a card for the species
+            with ui.card().classes(card_classes):
+                # Display the species image
+                html.img(src=species.get(
+                    "image_url", "https://placehold.co/120"), style=image_styles)
+
+                # Display the species name
                 ui.label(species["name"]).classes("text-lg font-bold")
+
+                # Display the species description
                 ui.label(species["description"]).classes(
                     "text-sm text-gray-300")
+
+                # Display the species tolerance levels
                 ui.label(f"Tolerance: {species['tolerance_levels']}").classes(
                     "text-xs text-gray-500")
+
+    # Update the UI
     ui.update()
+
+    # Log the number of species displayed
+    print(f"📢 Updating UI with {len(species_list)} species")
 
 
 def encyclopedia_page() -> None:
