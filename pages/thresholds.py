@@ -58,6 +58,40 @@ def thresholds_page():  # Renders the thresholds page
                     input_references["Max Temperature"].value,
                 ),
             ).classes("bg-teal-500 text-white w-full sm:w-auto")
+
+    with ui.card().classes(
+        "outline_label bg-gray-800 p-5 rounded-lg w-full max-w-2xl mx-auto mt-5"
+    ):  # Turbidity card
+        with ui.row().classes("justify-center w-full mt-5"):  # Turbidity Thresholds
+            ui.label("Turbidity Thresholds").classes(
+                "text-2xl text-white text-center sm:text-xl"
+            )
+
+        turbidity_fields = [  # Input fields for turbidity thresholds
+            ("Min Turbidity", "0"),
+            ("Max Turbidity", "100"),
+        ]
+
+        # Store references to the turbidity input fields
+        turbidity_references = {}
+
+        for label, value in turbidity_fields:  # Loop through input fields to display them
+            with ui.row().classes("justify-center items-center w-full mt-2"):
+                ui.label(label).classes("text-lg text-white text-center sm:text-base")
+                turbidity_references[label] = ui.input(label, value=value).classes(
+                    "w-24 bg-gray-800 mx-2 sm:w-20"
+                )
+                ui.label("NTU").classes("text-lg text-white sm:text-base")
+
+        with ui.row().classes("justify-center w-full mt-5"):  # Save button
+            ui.button(
+                "Save Turbidity Settings",
+                on_click=lambda: save_turbidity_settings(
+                    turbidity_references["Min Turbidity"].value,
+                    turbidity_references["Max Turbidity"].value,
+                ),
+            ).classes("bg-teal-500 text-white w-full sm:w-auto")
+
     eco_footer()  # add footer
 
 
@@ -65,6 +99,12 @@ def thresholds_page():  # Renders the thresholds page
 def save_settings(min_temp, low_temp, mid_temp, max_temp):
     print(
         f"Saving settings: Min Temperature={min_temp}, Low Temperature={low_temp}, Mid Temperature={mid_temp}, Max Temperature={max_temp}"
+    )
+
+# Save turbidity settings to database or file (not implemented)
+def save_turbidity_settings(min_turbidity, max_turbidity):
+    print(
+        f"Saving turbidity settings: Min Turbidity={min_turbidity}, Max Turbidity={max_turbidity}"
     )
 
 
