@@ -139,7 +139,7 @@ def encyclopedia_page() -> None:
             # Add a button to query FishBase
             # Make it look nice
             query_button = ui.button(
-                "Query Fishbase:", on_click=lambda: query_fishbase(search_field.value, results))
+                "Query Fishbase", on_click=lambda: query_fishbase(search_field.value, results))
 
     results = ui.row().classes("w-full mt-4 flex flex-wrap justify-center")
     display_species(species_data, results)
