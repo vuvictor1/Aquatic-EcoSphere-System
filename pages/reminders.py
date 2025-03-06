@@ -52,13 +52,13 @@ def reminders_page():  # Renders the reminders page
     rows = load_data()  # Load data from file
 
     with ui.column().classes(
-        "flex justify-center items-center w-full h-screen p-4 md:h-3/4 md:mt-20"
+        "flex justify-center items-center w-full h-screen p-0 md:h-3/4 mt-0"
     ):  # Center the column
         with ui.element("div").classes(
-            "outline_label p-6 md:p-12 bg-gray-800 rounded-lg shadow-lg w-full max-w-md"
+            "outline_label p-4 md:p-8 bg-gray-800 rounded-lg shadow-lg w-full max-w-md mt-0"
         ):  # Responsive container
             ui.label("Reminders").classes(
-                "text-white text-2xl md:text-3xl mb-5 text-center"
+                "text-white text-2xl md:text-3xl mb-4 text-center mt-0"
             )
             with ui.table(
                 title="Maintenance Tasks",
@@ -66,7 +66,7 @@ def reminders_page():  # Renders the reminders page
                 rows=rows,
                 selection="multiple",
                 pagination=10,
-            ).classes("w-full mb-4") as table:
+            ).classes("w-full mb-4 mt-0") as table:
                 with table.add_slot("top-right"):  # Add a search bar to search for task
                     with (
                         ui.input(placeholder="Search")
@@ -90,12 +90,12 @@ def reminders_page():  # Renders the reminders page
 
                         with table.cell():  # Input for new task
                             new_task = ui.input("Task").classes(
-                                "bg-gray-200 px-4 py-2 w-full mb-4"
+                                "bg-gray-200 px-4 py-2 w-full mb-2 mt-0"
                             )
 
                         with table.cell():  # Input for new priority
                             new_priority = ui.input("Priority").classes(
-                                "bg-gray-200 px-4 py-2 w-full mb-4"
+                                "bg-gray-200 px-4 py-2 w-full mb-2 mt-0"
                             )
             ui.button(
                 "Remove",
@@ -105,7 +105,7 @@ def reminders_page():  # Renders the reminders page
                     save_data(rows),  # save data to file
                 ),
             ).classes(
-                "w-full bg-red-500 text-white py-2 rounded mb-4"
+                "w-full bg-red-500 text-white py-2 rounded mb-2 mt-0"
             )  # take out items
     eco_footer()  # add footer
 

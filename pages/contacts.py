@@ -11,7 +11,7 @@ def contacts_page():  # Contacts page
     inject_style()  # inject CSS for background
 
     with ui.row().classes(
-        "justify-center w-full my-4 px-4"
+        "justify-center w-full mt-0 px-4"
     ):  # Center the contacts title and add padding for mobile
         inject_lottie()  # inject lottie animation
         with (
@@ -23,25 +23,25 @@ def contacts_page():  # Contacts page
         ):
             ui.html(
                 f'''<lottie-player src="{lottie_url}" loop autoplay speed="0.25"></lottie-player>'''
-            ).classes("w-48 mx-auto")  # play file
+            ).classes("w-48 mx-auto mt-0")  # play file
             ui.label("Contact Us").classes(
-                "text-white text-4xl font-bold"
+                "text-white text-4xl font-bold mt-0"
             )  # mail title
             # Create input fields for the form
             ui.html(f"""
-                <form action="https://api.web3forms.com/submit" method="POST" class="w-full">
+                <form action="https://api.web3forms.com/submit" method="POST" class="w-full mt-0">
                     <input type="hidden" name="access_key" value="5378da98-377b-464f-990d-f97e70c28023">
-                    <input type="text" name="name" placeholder="Your Name" required class="text-lg w-full mb-2 bg-gray-700 text-white border-none p-2 rounded-md">
-                    <input type="email" name="email" placeholder="Your Email (So we can reply)" required class="text-lg w-full mb-2 bg-gray-700 text-white border-none p-2 rounded-md">
-                    <textarea name="message" placeholder="Your Message" required class="text-lg w-full h-72 mb-2 bg-gray-700 text-white border-none p-2 rounded-md"></textarea>
+                    <input type="text" name="name" placeholder="Your Name" required class="text-lg w-full my-2 bg-gray-700 text-white border-none p-2 rounded-md">
+                    <input type="email" name="email" placeholder="Your Email (So we can reply)" required class="text-lg w-full my-2 bg-gray-700 text-white border-none p-2 rounded-md">
+                    <textarea name="message" placeholder="Your Message" required class="text-lg w-full h-72 my-2 bg-gray-700 text-white border-none p-2 rounded-md"></textarea>
                     <input type="checkbox" name="botcheck" class="hidden">
-                    <div class="text-center">
+                    <div class="text-center my-2">
                         <button type="submit" class="text-white w-full sm:w-1/2 p-2 cursor-pointer rounded-md text-xl" style="background-color: #5898D4;">Send Message</button>
                     </div>
                 </form>
             """)
             ui.label("📬 Product Owner: vuvictor@csu.fullerton.edu").classes(
-                "text-white text-lg"
+                "text-white text-lg mt-0"
             )  # mail label
     eco_footer()  # footer function
 

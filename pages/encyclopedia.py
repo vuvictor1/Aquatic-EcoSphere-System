@@ -65,10 +65,13 @@ def query_fishbase(species_name: str, results_container: ui.row):
 def filter_species(query: str) -> list:
     """Filter species based on the query."""
     query = query.lower().strip()
-    filtered = [species for species in species_data if
-                query in species["name"].lower() or
-                query in species["description"].lower() or
-                query in species["tolerance_levels"].lower()]
+    filtered = [
+        species
+        for species in species_data
+        if query in species["name"].lower()
+        or query in species["description"].lower()
+        or query in species["tolerance_levels"].lower()
+    ]
     print(f"🔍 Filtering with query: '{query}', Found {len(filtered)} species")
     return filtered
 
@@ -123,17 +126,24 @@ def encyclopedia_page() -> None:
     eco_header()
     inject_style()
 
-    with ui.row().classes("justify-center w-full mt-5"):
-        with ui.column().classes("outline_label items-center bg-gray-800 p-5 rounded-lg w-full max-w-2xl"):
+    with ui.row().classes("justify-center w-full mt-0"):
+        with ui.column().classes(
+            "outline_label items-center bg-gray-800 p-5 rounded-lg w-full max-w-2xl"
+        ):
             ui.label("Aquatic Species Encyclopedia").classes(
-                "text-4xl text-white font-bold")
+                "text-4xl text-white font-bold"
+            )
 
             search_field = (
                 ui.input(placeholder="Search for species...")
                 .props('autofocus outlined rounded item-aligned input-class="ml-3"')
-                .classes("w-96 self-center mt-6 transition-all")
-                .on_value_change(lambda e: display_species(filter_species(e.value), results))
-                .style("width: 100%; margin-bottom: 20px; padding: 10px; border-radius: 25px; border: 1px solid #ccc; font-size: 16px; background-color: #e0e0e0;")
+                .classes("w-96 self-center mt-0 transition-all")
+                .on_value_change(
+                    lambda e: display_species(filter_species(e.value), results)
+                )
+                .style(
+                    "width: 100%; padding: 10px; border-radius: 25px; border: 1px solid #ccc; font-size: 16px; background-color: #e0e0e0;"
+                )
             )
 
             # Add a button to query FishBase

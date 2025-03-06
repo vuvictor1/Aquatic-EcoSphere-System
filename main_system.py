@@ -77,20 +77,20 @@ def home_page():  # Home page function
     inject_style()  # call inject_style function
     inject_lottie()  # call inject_lottie function
     lottie_url = "https://lottie.host/33548596-614d-4e89-a0a8-69126f02a92a/EmTPHrDT7l.json"  # lottie url
-    with ui.row().classes("justify-center w-full mt-[-50px]"):  # Lottie player
+    with ui.row().classes("justify-center w-full mt-0"):  # Lottie player
         ui.html(f'''<lottie-player src="{lottie_url}"
                 loop autoplay speed="0.25" style="height: 300px;"></lottie-player>''')
 
-    with ui.row().classes("justify-center w-full"):  # Main title
-        ui.label("Aquatic EcoSphere System").classes("text-white text-4xl mt-[-50px] text-center")
+    with ui.row().classes("justify-center w-full mt-0"):  # Main title
+        ui.label("Aquatic EcoSphere System").classes("text-white text-4xl mt-0 text-center")
 
     # Sensor Cards
     global labels
     labels = {}
-    with ui.row().classes("justify-center w-full"):
+    with ui.row().classes("justify-center w-full mt-0"):
         for sensor_type in ["total dissolved solids", "turbidity", "temperature"]:
             with ui.column().classes(
-                "outline_label  items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm my-4 mx-2"
+                "outline_label items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm my-2"
             ):
                 sensor_label = ui.label(sensor_type.title()).classes(
                     "text-white text-base"
@@ -110,7 +110,7 @@ def home_page():  # Home page function
     else:
         upcoming_task = None
 
-    with ui.row().classes("justify-center w-full mt-5"):  # Additional cards
+    with ui.row().classes("justify-center w-full mt-2"):  # Additional cards
         card_labels = {  # Card for alerts, reminders, & recommendations
             "Alerts": "Coming soon... W.I.P.",
             "Reminders": f"Upcoming Task: {upcoming_task['task']} (Priority Rank: {upcoming_task['priority']})"
@@ -121,7 +121,7 @@ def home_page():  # Home page function
 
         for card_type, card_label in card_labels.items():  # Use css class
             with ui.column().classes(
-                "outline_label items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm my-4 mx-2"
+                "outline_label items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm my-2"
             ):
                 ui.label(card_type).classes("text-white text-base")
                 ui.label(card_label).classes("text-white text-base")

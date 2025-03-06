@@ -84,11 +84,11 @@ def graphs_page(graph_container):  # Graphs page for the web interface
     eco_header()  # display the header
     inject_style()  # inject custom CSS styles
 
-    with ui.row().classes("justify-center w-full mt-5"):  # Title for the page
+    with ui.row().classes("justify-center w-full mt-0"):  # Title for the page
         ui.label("Generate Graphs").classes("text-2xl sm:text-4xl text-white")
 
     with ui.dialog() as date_dialog:  # Create a dialog for selecting date range
-        with ui.column().classes("bg-gray-800 p-4 sm:p-8 rounded-lg"):
+        with ui.column().classes("bg-gray-800 p-4 sm:p-8 rounded-lg my-2"):
             ui.label("Select Date Range:").classes(
                 "text-white text-lg sm:text-xl bg-gray-700 p-2 sm:p-4"
             )
@@ -117,7 +117,7 @@ def graphs_page(graph_container):  # Graphs page for the web interface
             # on value change, update the date input
             date_picker.on("update:model-value", update_date_input)
 
-            with ui.row().classes("mt-4"):  # Create a row for the filter button
+            with ui.row().classes("mt-0 my-2"):  # Create a row for the filter button
                 ui.button(
                     "Filter Data",
                     on_click=lambda: (
@@ -129,21 +129,21 @@ def graphs_page(graph_container):  # Graphs page for the web interface
                         ),
                         date_dialog.close(),  # close the dialog
                     ),
-                ).classes("bg-teal-500 text-white mt-4")
+                ).classes("bg-teal-500 text-white mt-0 my-2")
 
     with ui.row().classes(
-        "justify-center w-full"
+        "justify-center w-full mt-0 my-2"
     ):  # Create a row for the refresh/date button
         ui.button(
             "Generate", on_click=lambda: generate_graphs(graph_container)
-        ).classes("bg-teal-500 text-white mt-4 mb-12")
+        ).classes("bg-teal-500 text-white mt-0 my-2")
         ui.button("Select Date Range", on_click=lambda: date_dialog.open()).classes(
-            "bg-teal-500 text-white mt-4 mb-12"
+            "bg-teal-500 text-white mt-0 my-2"
         )
 
     # Generate graph with style
     graph_container = ui.row().classes(
-        "outline_label graph-container justify-center items-center bg-gray-800 p-4 my-4 mx-auto w-full max-w-screen-md"
+        "outline_label graph-container justify-center items-center bg-gray-800 p-4 my-2 mx-auto w-full max-w-screen-md"
     )
     with graph_container:
         ui.label("Press generate to see graphing data").classes(

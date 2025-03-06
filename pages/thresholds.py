@@ -16,18 +16,25 @@ def thresholds_page():  # Renders the thresholds page
             .q-field__label {
                 color: white;
             }
+            .mt-0 {
+                margin-top: 0 !important;
+            }
+            .my-2 {
+                margin-top: 0.5rem !important;
+                margin-bottom: 0.5rem !important;
+            }
         </style>
     """)
 
-    with ui.row().classes("justify-center w-full mt-2"):  # Title for the page
-        ui.label("Settings").classes("text-4xl text-white text-center sm:text-3xl")
+    with ui.row().classes("justify-center w-full mt-0"):  # Title for the page
+        ui.label("Settings").classes("text-4xl text-white text-center sm:text-3xl mt-0")
 
     with ui.card().classes(
-        "outline_label bg-gray-800 p-5 rounded-lg w-full max-w-2xl mx-auto"
+        "outline_label bg-gray-800 p-5 rounded-lg w-full max-w-2xl mx-auto mt-0"
     ):  # Main card
-        with ui.row().classes("justify-center w-full mt-5"):  # Temperature Thresholds
+        with ui.row().classes("justify-center w-full mt-0"):  # Temperature Thresholds
             ui.label("Temperature Thresholds").classes(
-                "text-2xl text-white text-center sm:text-xl"
+                "text-2xl text-white text-center sm:text-xl mt-0"
             )
 
         input_fields = [  # Input fields for temp thresholds
@@ -41,14 +48,14 @@ def thresholds_page():  # Renders the thresholds page
         input_references = {}
 
         for label, value in input_fields:  # Loop through input fields to display them
-            with ui.row().classes("justify-center items-center w-full mt-2"):
-                ui.label(label).classes("text-lg text-white text-center sm:text-base")
+            with ui.row().classes("justify-center items-center w-full my-2"):
+                ui.label(label).classes("text-lg text-white text-center sm:text-base mt-0")
                 input_references[label] = ui.input(label, value=value).classes(
-                    "w-24 bg-gray-800 mx-2 sm:w-20"
+                    "w-24 bg-gray-800 mx-2 sm:w-20 mt-0"
                 )
-                ui.label("°F").classes("text-lg text-white sm:text-base")
+                ui.label("°F").classes("text-lg text-white sm:text-base mt-0")
 
-        with ui.row().classes("justify-center w-full mt-5"):  # Save button
+        with ui.row().classes("justify-center w-full my-2"):  # Save button
             ui.button(
                 "Save Settings",
                 on_click=lambda: save_settings(
@@ -57,7 +64,41 @@ def thresholds_page():  # Renders the thresholds page
                     input_references["Mid Temperature"].value,
                     input_references["Max Temperature"].value,
                 ),
-            ).classes("bg-teal-500 text-white w-full sm:w-auto")
+            ).classes("bg-teal-500 text-white w-full sm:w-auto mt-0")
+
+    with ui.card().classes(
+        "outline_label bg-gray-800 p-5 rounded-lg w-full max-w-2xl mx-auto my-2"
+    ):  # Turbidity card
+        with ui.row().classes("justify-center w-full mt-0"):  # Turbidity Thresholds
+            ui.label("Turbidity Thresholds").classes(
+                "text-2xl text-white text-center sm:text-xl mt-0"
+            )
+
+        turbidity_fields = [  # Input fields for turbidity thresholds
+            ("Min Turbidity", "0"),
+            ("Max Turbidity", "100"),
+        ]
+
+        # Store references to the turbidity input fields
+        turbidity_references = {}
+
+        for label, value in turbidity_fields:  # Loop through input fields to display them
+            with ui.row().classes("justify-center items-center w-full my-2"):
+                ui.label(label).classes("text-lg text-white text-center sm:text-base mt-0")
+                turbidity_references[label] = ui.input(label, value=value).classes(
+                    "w-24 bg-gray-800 mx-2 sm:w-20 mt-0"
+                )
+                ui.label("NTU").classes("text-lg text-white sm:text-base mt-0")
+
+        with ui.row().classes("justify-center w-full my-2"):  # Save button
+            ui.button(
+                "Save Turbidity Settings",
+                on_click=lambda: save_turbidity_settings(
+                    turbidity_references["Min Turbidity"].value,
+                    turbidity_references["Max Turbidity"].value,
+                ),
+            ).classes("bg-teal-500 text-white w-full sm:w-auto mt-0")
+
     eco_footer()  # add footer
 
 
@@ -65,6 +106,12 @@ def thresholds_page():  # Renders the thresholds page
 def save_settings(min_temp, low_temp, mid_temp, max_temp):
     print(
         f"Saving settings: Min Temperature={min_temp}, Low Temperature={low_temp}, Mid Temperature={mid_temp}, Max Temperature={max_temp}"
+    )
+
+# Save turbidity settings to database or file (not implemented)
+def save_turbidity_settings(min_turbidity, max_turbidity):
+    print(
+        f"Saving turbidity settings: Min Turbidity={min_turbidity}, Max Turbidity={max_turbidity}"
     )
 
 
