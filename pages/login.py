@@ -53,33 +53,33 @@ def login_page():
         ui.navigate.to("/")
 
     with ui.column().classes(
-        "flex justify-center items-center w-full h-screen p-4 md:h-3/4 md:mt-40"
-    ):  # Login page layout
+        "flex justify-center items-center w-full h-screen p-4"
+    ):  # Adjusted layout to match register page
         with ui.element("div").classes(
-            "outline_label p-6 md:p-12 bg-gray-800 rounded-lg shadow-lg w-full max-w-md"
-        ):  # Responsive container
+            "outline_label p-6 bg-gray-800 rounded-lg shadow-lg w-full max-w-md my-2"
+        ):
             ui.label("Please login or register.").classes(
-                "text-white text-2xl md:text-3xl mb-5 text-center"
+                "text-white text-2xl md:text-3xl mb-5 text-center my-2"
             )
             username_input = (
                 ui.input("Username")
-                .classes("bg-gray-200 px-4 py-2 w-full mb-4")
+                .classes("bg-gray-200 px-4 py-2 w-full mb-4 my-2")
                 .on("keydown.enter", authenticate)
             )
             password_input = (
                 ui.input("Password", password=True, password_toggle_button=True)
-                .classes("bg-gray-200 px-4 py-2 w-full mb-4")
+                .classes("bg-gray-200 px-4 py-2 w-full mb-4 my-2")
                 .on("keydown.enter", authenticate)
             )
             ui.button("Login", on_click=authenticate).classes(
-                "w-full bg-blue-500 text-white py-2 rounded mb-4"
+                "w-full bg-blue-500 text-white py-2 rounded mb-4 my-2"
             )  # create a login button
             ui.button("Proceed as Guest", on_click=proceed_as_guest).classes(
-                "w-full bg-gray-500 text-white py-2 rounded mb-4"
+                "w-full bg-gray-500 text-white py-2 rounded my-2"
             )  # create a button to proceed as a guest
             ui.button(
                 "No account? Register here",
                 on_click=lambda: ui.navigate.to("/register"),
             ).classes(
-                "w-full bg-green-500 text-white py-2 rounded"
+                "w-full bg-green-500 text-white py-2 rounded my-2"
             )  # create a button to navigate to the registration page

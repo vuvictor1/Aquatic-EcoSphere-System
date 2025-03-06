@@ -29,7 +29,7 @@ def inject_style():
         }}
         @media (max-width: 768px) {{
             main {{
-                margin-top: -50px; /* further reduce top margin on mobile devices */
+                margin-top: -45px; /* further reduce top margin on mobile devices */
             }}
         }}
         .outline_label {{

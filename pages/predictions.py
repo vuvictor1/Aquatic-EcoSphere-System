@@ -77,28 +77,28 @@ def display_sensor_data(sensor_type, prediction_data, unit, target_time, closest
     with ui.column().classes('outline_label bg-gray-800 rounded-lg shadow-lg p-4').style('align-items: center; margin-bottom: 20px;'):
         # Display sensor type
         ui.label(f'{sensor_type.title()}').classes(
-            'text-3xl sm:text-4xl text-white font-bold')
+            'text-3xl sm:text-4xl text-white font-bold mt-0')
 
         # Display last reading
         last_reading = prediction_data["last_reading"]
         ui.label(f'Current Reading: {last_reading:.2f} {unit}').classes(
-            'text-lg sm:text-xl text-gray-300')  # Lighter gray
+            'text-lg sm:text-xl text-gray-300 my-2')
 
         # Display next predicted reading
         predicted_value, predicted_timestamp = closest_prediction
         ui.label(f'Predicted Reading at {target_time.strftime("%Y-%m-%d %H:%M")}: {predicted_value:.2f} {unit}').classes(
-            'text-lg sm:text-xl text-blue-500')  # Blue
+            'text-lg sm:text-xl text-blue-500 my-2')
 
         # Display expected change
         expected_change = predicted_value - last_reading
         expected_change_color = 'text-green-500' if expected_change > 0 else 'text-red-500'
         ui.label(f'Expected Change: {expected_change:+.2f} {unit}').classes(
-            f'text-lg sm:text-xl {expected_change_color}')
+            f'text-lg sm:text-xl {expected_change_color} my-2')
 
         # Display model accuracy
         accuracy = prediction_data["accuracy"]
         ui.label(f'Model Accuracy (R² Score): {accuracy:.2f}').classes(
-            'text-lg sm:text-xl text-amber-500')  # Gold color
+            'text-lg sm:text-xl text-amber-500 my-2')
 
 
 async def display_predictions(predictions, container, interval_minutes):
@@ -148,19 +148,19 @@ def predictions_page():
     inject_style()
 
     # Create a title
-    with ui.row().classes('justify-center w-full'):
+    with ui.row().classes('justify-center w-full mt-0'):
         ui.label('Sensor Predictions').classes(
-            'text-3xl sm:text-5xl text-white')
+            'text-3xl sm:text-5xl text-white mt-0')
 
     # Create a container to display predictions
-    predictions_container = ui.row().classes('justify-center w-full')
+    predictions_container = ui.row().classes('justify-center w-full mt-0')
 
     spinner = ui.spinner('audio', size='xl', color='green')
     spinner.set_visibility(False)
     spinner.style('margin:auto; display: block;')
 
     # Create a button to trigger prediction calculation and display
-    with ui.row().classes('justify-center w-full'):
+    with ui.row().classes('justify-center w-full mt-0'):
         async def calculate_predictions():
             # Show the spinner
             spinner.set_visibility(True)
