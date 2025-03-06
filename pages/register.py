@@ -32,25 +32,25 @@ def register_page():
             ui.navigate.to("/login")  # navigate to login page
 
     with ui.column().classes(
-        "flex justify-center items-center w-full h-screen p-4 md:h-3/4 md:mt-40"
+        "flex justify-center items-center w-full h-screen p-4"
     ):  # Register page layout
         with ui.element("div").classes(
-            "outline_label p-6 md:p-12 bg-gray-800 rounded-lg shadow-lg w-full max-w-md"
+            "outline_label p-6 bg-gray-800 rounded-lg shadow-lg w-full max-w-md my-2"
         ):
             ui.label("Create an account or return to login.").classes(
-                "text-white text-2xl md:text-3xl mb-5 text-center"
+                "text-white text-2xl md:text-3xl mb-5 text-center my-2"
             )
             username_input = ui.input("Username").classes(
-                "bg-gray-200 px-4 py-2 w-full mb-4"
+                "bg-gray-200 px-4 py-2 w-full mb-4 my-2"
             )  # input user
             password_input = ui.input(
                 "Password", password=True, password_toggle_button=True
-            ).classes("bg-gray-200 px-4 py-2 w-full mb-4")  # pass & toggle
+            ).classes("bg-gray-200 px-4 py-2 w-full mb-4 my-2")  # pass & toggle
             ui.button("Register", on_click=register).classes(
-                "w-full bg-blue-500 text-white py-2 rounded mb-4"
+                "w-full bg-blue-500 text-white py-2 rounded mb-4 my-2"
             )  # create a register button
             ui.button(
                 "Back to Login", on_click=lambda: ui.navigate.to("/login")
             ).classes(
-                "w-full bg-gray-500 text-white py-2 rounded"
+                "w-full bg-gray-500 text-white py-2 rounded my-2"
             )  # create a button to go back to login page
