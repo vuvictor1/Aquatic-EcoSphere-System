@@ -57,7 +57,7 @@ def thresholds_page():  # Renders the thresholds page
 
         with ui.row().classes("justify-center w-full my-2"):  # Save button
             ui.button(
-                "Save Settings",
+                "Save",
                 on_click=lambda: save_settings(
                     input_references["Min Temperature"].value,
                     input_references["Low Temperature"].value,
@@ -76,6 +76,8 @@ def thresholds_page():  # Renders the thresholds page
 
         turbidity_fields = [  # Input fields for turbidity thresholds
             ("Min Turbidity", "0"),
+            ("Low Turbidity", "25"),
+            ("Mid Turbidity", "50"),
             ("Max Turbidity", "100"),
         ]
 
@@ -92,9 +94,11 @@ def thresholds_page():  # Renders the thresholds page
 
         with ui.row().classes("justify-center w-full my-2"):  # Save button
             ui.button(
-                "Save Turbidity Settings",
+                "Save",
                 on_click=lambda: save_turbidity_settings(
                     turbidity_references["Min Turbidity"].value,
+                    turbidity_references["Low Turbidity"].value,
+                    turbidity_references["Mid Turbidity"].value,
                     turbidity_references["Max Turbidity"].value,
                 ),
             ).classes("bg-teal-500 text-white w-full sm:w-auto mt-0")
@@ -109,9 +113,9 @@ def save_settings(min_temp, low_temp, mid_temp, max_temp):
     )
 
 # Save turbidity settings to database or file (not implemented)
-def save_turbidity_settings(min_turbidity, max_turbidity):
+def save_turbidity_settings(min_turbidity, low_turbidity, mid_turbidity, max_turbidity):
     print(
-        f"Saving turbidity settings: Min Turbidity={min_turbidity}, Max Turbidity={max_turbidity}"
+        f"Saving turbidity settings: Min Turbidity={min_turbidity}, Low Turbidity={low_turbidity}, Mid Turbidity={mid_turbidity}, Max Turbidity={max_turbidity}"
     )
 
 
