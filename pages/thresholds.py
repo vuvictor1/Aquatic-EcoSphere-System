@@ -103,6 +103,43 @@ def thresholds_page():  # Renders the thresholds page
                 ),
             ).classes("bg-teal-500 text-white w-full sm:w-auto mt-0")
 
+    with ui.card().classes(
+        "outline_label bg-gray-800 p-5 rounded-lg w-full max-w-2xl mx-auto my-2"
+    ):  # TDS card
+        with ui.row().classes("justify-center w-full mt-0"):  # TDS Thresholds
+            ui.label("Total Dissolved Solids Thresholds").classes(
+                "text-2xl text-white text-center sm:text-xl mt-0"
+            )
+
+        tds_fields = [  # Input fields for TDS thresholds
+            ("Min TDS", "0"),
+            ("Low TDS", "300"),
+            ("Mid TDS", "600"),
+            ("Max TDS", "1000"),
+        ]
+
+        # Store references to the TDS input fields
+        tds_references = {}
+
+        for label, value in tds_fields:  # Loop through input fields to display them
+            with ui.row().classes("justify-center items-center w-full my-2"):
+                ui.label(label).classes("text-lg text-white text-center sm:text-base mt-0")
+                tds_references[label] = ui.input(label, value=value).classes(
+                    "w-24 bg-gray-800 mx-2 sm:w-20 mt-0"
+                )
+                ui.label("ppm").classes("text-lg text-white sm:text-base mt-0")
+
+        with ui.row().classes("justify-center w-full my-2"):  # Save button
+            ui.button(
+                "Save",
+                on_click=lambda: save_tds_settings(
+                    tds_references["Min TDS"].value,
+                    tds_references["Low TDS"].value,
+                    tds_references["Mid TDS"].value,
+                    tds_references["Max TDS"].value,
+                ),
+            ).classes("bg-teal-500 text-white w-full sm:w-auto mt-0")
+
     eco_footer()  # add footer
 
 
@@ -116,6 +153,12 @@ def save_settings(min_temp, low_temp, mid_temp, max_temp):
 def save_turbidity_settings(min_turbidity, low_turbidity, mid_turbidity, max_turbidity):
     print(
         f"Saving turbidity settings: Min Turbidity={min_turbidity}, Low Turbidity={low_turbidity}, Mid Turbidity={mid_turbidity}, Max Turbidity={max_turbidity}"
+    )
+
+# Save TDS settings to database or file (not implemented)
+def save_tds_settings(min_tds, low_tds, mid_tds, max_tds):
+    print(
+        f"Saving TDS settings: Min TDS={min_tds}, Low TDS={low_tds}, Mid TDS={mid_tds}, Max TDS={max_tds}"
     )
 
 
