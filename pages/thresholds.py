@@ -32,37 +32,37 @@ def thresholds_page():  # Renders the thresholds page
     with ui.card().classes(
         "outline_label bg-gray-800 p-5 rounded-lg w-full max-w-2xl mx-auto mt-0"
     ):  # Main card
-        with ui.row().classes("justify-center w-full mt-0"):  # Temperature Thresholds
-            ui.label("Temperature Thresholds").classes(
+        with ui.row().classes("justify-center w-full mt-0"):  # TDS Thresholds
+            ui.label("Total Dissolved Solids Thresholds").classes(
                 "text-2xl text-white text-center sm:text-xl mt-0"
             )
 
-        input_fields = [  # Input fields for temp thresholds
-            ("Min Temperature", "50"),
-            ("Low Temperature", "60"),
-            ("Mid Temperature", "75"),
-            ("Max Temperature", "90"),
+        tds_fields = [  # Input fields for TDS thresholds
+            ("Min TDS", "0"),
+            ("Low TDS", "300"),
+            ("Mid TDS", "600"),
+            ("Max TDS", "1000"),
         ]
 
-        # Store references to the input fields
-        input_references = {}
+        # Store references to the TDS input fields
+        tds_references = {}
 
-        for label, value in input_fields:  # Loop through input fields to display them
+        for label, value in tds_fields:  # Loop through input fields to display them
             with ui.row().classes("justify-center items-center w-full my-2"):
                 ui.label(label).classes("text-lg text-white text-center sm:text-base mt-0")
-                input_references[label] = ui.input(label, value=value).classes(
+                tds_references[label] = ui.input(label, value=value).classes(
                     "w-24 bg-gray-800 mx-2 sm:w-20 mt-0"
                 )
-                ui.label("°F").classes("text-lg text-white sm:text-base mt-0")
+                ui.label("ppm").classes("text-lg text-white sm:text-base mt-0")
 
         with ui.row().classes("justify-center w-full my-2"):  # Save button
             ui.button(
                 "Save",
-                on_click=lambda: save_settings(
-                    input_references["Min Temperature"].value,
-                    input_references["Low Temperature"].value,
-                    input_references["Mid Temperature"].value,
-                    input_references["Max Temperature"].value,
+                on_click=lambda: save_tds_settings(
+                    tds_references["Min TDS"].value,
+                    tds_references["Low TDS"].value,
+                    tds_references["Mid TDS"].value,
+                    tds_references["Max TDS"].value,
                 ),
             ).classes("bg-teal-500 text-white w-full sm:w-auto mt-0")
 
@@ -105,38 +105,38 @@ def thresholds_page():  # Renders the thresholds page
 
     with ui.card().classes(
         "outline_label bg-gray-800 p-5 rounded-lg w-full max-w-2xl mx-auto my-2"
-    ):  # TDS card
-        with ui.row().classes("justify-center w-full mt-0"):  # TDS Thresholds
-            ui.label("Total Dissolved Solids Thresholds").classes(
+    ):  # Temperature card
+        with ui.row().classes("justify-center w-full mt-0"):  # Temperature Thresholds
+            ui.label("Temperature Thresholds").classes(
                 "text-2xl text-white text-center sm:text-xl mt-0"
             )
 
-        tds_fields = [  # Input fields for TDS thresholds
-            ("Min TDS", "0"),
-            ("Low TDS", "300"),
-            ("Mid TDS", "600"),
-            ("Max TDS", "1000"),
+        input_fields = [  # Input fields for temp thresholds
+            ("Min Temperature", "50"),
+            ("Low Temperature", "60"),
+            ("Mid Temperature", "75"),
+            ("Max Temperature", "90"),
         ]
 
-        # Store references to the TDS input fields
-        tds_references = {}
+        # Store references to the input fields
+        input_references = {}
 
-        for label, value in tds_fields:  # Loop through input fields to display them
+        for label, value in input_fields:  # Loop through input fields to display them
             with ui.row().classes("justify-center items-center w-full my-2"):
                 ui.label(label).classes("text-lg text-white text-center sm:text-base mt-0")
-                tds_references[label] = ui.input(label, value=value).classes(
+                input_references[label] = ui.input(label, value=value).classes(
                     "w-24 bg-gray-800 mx-2 sm:w-20 mt-0"
                 )
-                ui.label("ppm").classes("text-lg text-white sm:text-base mt-0")
+                ui.label("°F").classes("text-lg text-white sm:text-base mt-0")
 
         with ui.row().classes("justify-center w-full my-2"):  # Save button
             ui.button(
                 "Save",
-                on_click=lambda: save_tds_settings(
-                    tds_references["Min TDS"].value,
-                    tds_references["Low TDS"].value,
-                    tds_references["Mid TDS"].value,
-                    tds_references["Max TDS"].value,
+                on_click=lambda: save_settings(
+                    input_references["Min Temperature"].value,
+                    input_references["Low Temperature"].value,
+                    input_references["Mid Temperature"].value,
+                    input_references["Max Temperature"].value,
                 ),
             ).classes("bg-teal-500 text-white w-full sm:w-auto mt-0")
 
