@@ -2,44 +2,50 @@
 # Description: Recommend algorithm for users based on their preferences.
 
 from datetime import datetime
-from typing import List, Tuple
 from uuid import uuid4
 from nicegui import ui
 from web_functions import eco_header, eco_footer, inject_style
 
-# List to store chat messages
-messages: List[Tuple[str, str, str, str]] = []
 
-
-def display_messages(user_id: str) -> None:
-    # Clear the messages container
-    messages_container.clear()
-    if messages:
-        for msg_user_id, avatar, text, timestamp in messages:
-            ui.chat_message(
-                text=text, stamp=timestamp, avatar=avatar, sent=user_id == msg_user_id
-            ).classes("message")
-    else:
-        ui.label("No messages yet").classes("mx-auto my-2 bg-gray-800 text-white p-2 rounded")
-
-
-def recommend_page(): # Function to display the recommend page
+def recommend_page():  # Function to display the recommend page
     eco_header()  # inject the CSS styles
     inject_style()  # inject additional styles
 
-    user_id = str(uuid4()) # generate a random user id
-    avatar = f"https://robohash.org/{user_id}?bgset=bg2" # generate a random avatar
+    user_id = str(uuid4())  # generate a random user id
+    avatar = f"https://robohash.org/{user_id}?bgset=bg2"  # generate a random avatar
 
-    with ui.row().classes('justify-center w-full mt-0'):
-        ui.label('Recommendations').classes('text-3xl sm:text-5xl text-white mt-0')
+    # Generate two more random avatars
+    user_id2 = str(uuid4())
+    avatar2 = f"https://robohash.org/{user_id2}?bgset=bg2"
 
-    with ui.row().classes('justify-center w-full mt-0'):
-        with ui.avatar().on("click", lambda: ui.navigate.to(main)):
+    user_id3 = str(uuid4())
+    avatar3 = f"https://robohash.org/{user_id3}?bgset=bg2"
+
+    with ui.row().classes("justify-center w-full mt-0"):
+        ui.label("Recommendations").classes("text-3xl sm:text-5xl text-white mt-0")
+
+    with ui.row().classes("justify-center w-full mt-0"):
+        with ui.column().classes("items-center mx-4"):
+            ui.avatar().on("click", lambda: ui.navigate.to(main))
             ui.image(avatar)
+            ui.label("Hi, I am the TDS advisor.").classes(
+                "mx-auto my-2 bg-gray-800 text-white p-2 rounded"
+            )
+        with ui.column().classes("items-center mx-4"):
+            ui.avatar().on("click", lambda: ui.navigate.to(main))
+            ui.image(avatar2)
+            ui.label("Hello, I am the turbidty advisor.").classes(
+                "mx-auto my-2 bg-gray-800 text-white p-2 rounded"
+            )
+        with ui.column().classes("items-center mx-4"):
+            ui.avatar().on("click", lambda: ui.navigate.to(main))
+            ui.image(avatar3)
+            ui.label("Hey, I am the temperature advisor.").classes(
+                "mx-auto my-2 bg-gray-800 text-white p-2 rounded"
+            )
 
-    global messages_container 
+    global messages_container
     messages_container = ui.column().classes("mt-0")
-    display_messages(user_id)
     eco_footer()  # inject the CSS styles
 
 
