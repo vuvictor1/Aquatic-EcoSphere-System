@@ -5,7 +5,12 @@ from web_functions import inject_style, eco_header, eco_footer
 import requests
 import json
 import os
+import urllib.parse
 
+# TODO:
+# Make the editing through the add species part better, either fill
+# in information from the other fields automatically or a button to fill in the info
+# Add different fields for the different tolerance levels
 
 # Load the species data from the JSON file
 current_file_path = os.path.abspath(__file__)
@@ -75,14 +80,49 @@ def display_species(species_list: list, results_container: ui.row) -> None:
 # Function to add custom species
 
 
-def add_custom_species(name, description, tolerance_levels, image_url, results, add_species_form):
-    # Create a new species dictionary
-    new_species = {
-        "name": name,
-        "description": description,
-        "tolerance_levels": tolerance_levels,
-        "image_url": image_url
-    }
+def add_custom_species(name, species_name, description, tolerance_levels, image_url, results, add_species_form):
+    if not name and not species_name:
+        ui.notif("Please provide at least one valid name", type="error")
+        return
+
+    # Placeholder URL
+    PLACEHOLDER_URL = "https://placehold.co/120"
+
+    # Validate the image URL
+    if not image_url.startswith("http"):
+        image_url = PLACEHOLDER_URL  # default to placeholder URL
+
+    try:
+        result = urllib.parse.urlparse(image_url)
+        if not all([result.scheme, result.netloc]):
+            image_url = PLACEHOLDER_URL  # default to placeholder URL
+
+        response = requests.head(image_url)
+        if response.status_code != 200:
+            image_url = PLACEHOLDER_URL  # default to placeholder URL
+    except (ValueError, requests.RequestException):
+        image_url = PLACEHOLDER_URL  # default to placeholder URL
+
+    # Check if a species with the provided name already exists
+    existing_species = next((species for species in species_data if species.get(
+        "species_name") == species_name or species.get("name") == name), None)
+
+    if existing_species:
+        # Update the existing species with the new information
+        existing_species["name"] = name
+        existing_species["species_name"] = species_name
+        existing_species["description"] = description
+        existing_species["tolerance_levels"] = tolerance_levels
+        existing_species["image_url"] = image_url
+    else:
+        # Create a new species dictionary
+        new_species = {
+            "name": name,
+            "species_name": species_name,
+            "description": description,
+            "tolerance_levels": tolerance_levels,
+            "image_url": image_url
+        }
 
     # Add the new species to the species data
     species_data.append(new_species)
@@ -94,7 +134,10 @@ def add_custom_species(name, description, tolerance_levels, image_url, results, 
     # Update the displayed species list
     display_species(species_data, results)
 
-    ui.notify(f"Added {name} to the encyclopedia!", type="positive")
+    if existing_species:
+        ui.notify(f"Updated {name} in the encyclopedia!", type="positive")
+    else:
+        ui.notify(f"Added {name} to the encyclopedia!", type="positive")
 
     # Close the add custom species form
     add_species_form.close()
@@ -143,7 +186,11 @@ def encyclopedia_page() -> None:
         with ui.card().classes("p-5 bg-gray-800 text-white rounded-lg"):
             ui.label("Add Custom Species").classes("text-xl font-bold mb-4")
 
-            name_input = ui.input(label="Name:").props(common_input_props)
+            name_input = ui.input(label="Common Name:").props(
+                common_input_props)
+
+            optional_species_name_input = ui.input(
+                label="Species Name", placeholder="(Optional) e.g: Pteris volantis").props(common_input_props)
 
             description_input = ui.textarea(
                 label="Description:").props(common_input_props)
