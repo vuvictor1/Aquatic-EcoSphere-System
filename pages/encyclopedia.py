@@ -3,63 +3,18 @@
 from nicegui import ui, html
 from web_functions import inject_style, eco_header, eco_footer
 import requests
+import json
+import os
 
 
-# FishBase API Endpoint
-FISHBASE_API_URL = "https://fishbase.ropensci.org/species"
+# Load the species data from the JSON file
+current_file_path = os.path.abspath(__file__)
+current_dir_path = os.path.dirname(current_file_path)
+parent_dir_path = os.path.dirname(current_dir_path)
+species_data_path = os.path.join(parent_dir_path, 'data', 'species_data.json')
 
-# Sample data for aquatic species
-species_data = [
-    {"name": "Clownfish", "description": "Clownfish are small, brightly colored fish found in warm waters.",
-        "tolerance_levels": "Temperature: 24-27°C, pH: 7.8-8.4, Salinity: 1.020-1.025", "image_url": "https://www.aquariumofpacific.org/images/made_new/images-uploads-clownfish_400_q85.jpg"},
-    {"name": "Neon Tetra", "description": "Neon Tetras are small, colorful fish that are popular in home aquariums.",
-        "tolerance_levels": "Temperature: 20-26°C, pH: 6.0-7.0"},
-    {"name": "Guppy", "description": "Guppies are small, colorful fish that are easy to care for and breed.",
-        "tolerance_levels": "Temperature: 22-28°C, pH: 7.0-8.0"},
-    {"name": "Betta Fish", "description": "Betta Fish are known for their vibrant colors and long, flowing fins.",
-        "tolerance_levels": "Temperature: 24-30°C, pH: 6.5-7.5"},
-    {"name": "Angelfish", "description": "Angelfish are elegant fish with long fins and a distinctive shape.",
-        "tolerance_levels": "Temperature: 24-28°C, pH: 6.8-7.8"},
-    {"name": "Goldfish", "description": "Goldfish are hardy fish that come in a variety of colors and shapes.",
-        "tolerance_levels": "Temperature: 10-24°C, pH: 6.0-8.0"},
-    {"name": "Molly Fish", "description": "Molly Fish are versatile fish that can live in both freshwater and saltwater.",
-        "tolerance_levels": "Temperature: 24-28°C, pH: 7.5-8.5"},
-    {"name": "Zebra Danio", "description": "Zebra Danios are small, active fish with distinctive horizontal stripes.",
-        "tolerance_levels": "Temperature: 18-24°C, pH: 6.5-7.5"},
-    {"name": "Corydoras Catfish", "description": "Corydoras Catfish are small, bottom-dwelling fish that are great for cleaning the tank.",
-        "tolerance_levels": "Temperature: 22-26°C, pH: 6.0-7.5"},
-    {"name": "Cherry Shrimp", "description": "Cherry Shrimp are small, colorful shrimp that are great for planted tanks.",
-        "tolerance_levels": "Temperature: 22-28°C, pH: 6.5-8.0"},
-]
-
-
-def fetch_fishbase_data(species_name: str):
-    """Query FishBase API for species data."""
-    params = {"Genus": species_name.split(
-    )[0], "Species": species_name.split()[-1]}
-    response = requests.get(FISHBASE_API_URL, params=params)
-    if response.status_code == 200:
-        data = response.json()["data"]
-        return data[0] if data else None
-    return None
-
-
-def query_fishbase(species_name: str, results_container: ui.row):
-    """Query FishBase API and update the offline database."""
-    species_data_fetched = fetch_fishbase_data(species_name)
-
-    if species_data_fetched:
-        new_species = {
-            "name": f"{species_data_fetched['Genus']} {species_data_fetched['Species']}",
-            "description": f"Family: {species_data_fetched['Family']}, Habitat: {species_data_fetched['Habitat']}",
-            "tolerance_levels": f"Temperature: {species_data_fetched.get('TempMin', 'Unknown')}°C - {species_data_fetched.get('TempMax', 'Unknown')}°C",
-        }
-        species_data.append(new_species)
-        ui.notify(f"✅ {species_name} added to database!", type="success")
-    else:
-        ui.notify(f"❌ {species_name} not found.", type="error")
-
-    display_species(species_data, results_container)
+with open(species_data_path, 'r') as file:
+    species_data = json.load(file)
 
 
 def filter_species(query: str) -> list:
@@ -117,6 +72,33 @@ def display_species(species_list: list, results_container: ui.row) -> None:
                 ui.label(f"Tolerance: {species['tolerance_levels']}").classes(
                     "text-xs text-gray-500")
 
+# Function to add custom species
+
+
+def add_custom_species(name, description, tolerance_levels, image_url, results, add_species_form):
+    # Create a new species dictionary
+    new_species = {
+        "name": name,
+        "description": description,
+        "tolerance_levels": tolerance_levels,
+        "image_url": image_url
+    }
+
+    # Add the new species to the species data
+    species_data.append(new_species)
+
+    # Save the updated species data to the JSON file
+    with open(species_data_path, 'w', encoding='utf-8') as file:
+        json.dump(species_data, file, ensure_ascii=False, indent=4)
+
+    # Update the displayed species list
+    display_species(species_data, results)
+
+    ui.notify(f"Added {name} to the encyclopedia!", type="positive")
+
+    # Close the add custom species form
+    add_species_form.close()
+
 
 def encyclopedia_page() -> None:
     """
@@ -146,13 +128,34 @@ def encyclopedia_page() -> None:
                 )
             )
 
-            # Add a button to query FishBase
-            # Make it look nice
-            query_button = ui.button(
-                "Query Fishbase", on_click=lambda: query_fishbase(search_field.value, results))
+            # Button to show the add species form
+            ui.button("Add Species", on_click=lambda: add_custom_species_form.open()).classes(
+                "mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded")
 
     results = ui.row().classes("w-full mt-4 flex flex-wrap justify-center")
     display_species(species_data, results)
+
+    # Define common props for inputs
+    common_input_props = 'label-color="white" input-class="text-white"'
+
+    # Dialog to add custom species
+    with ui.dialog() as add_custom_species_form:
+        with ui.card().classes("p-5 bg-gray-800 text-white rounded-lg"):
+            ui.label("Add Custom Species").classes("text-xl font-bold mb-4")
+
+            name_input = ui.input(label="Name:").props(common_input_props)
+
+            description_input = ui.textarea(
+                label="Description:").props(common_input_props)
+            tolerance_levels_input = ui.textarea(
+                label="Tolerance Levels:").props(common_input_props)
+            image_url_input = ui.input(
+                label="Image URL:").props(common_input_props)
+
+            ui.button("Add", on_click=lambda: add_custom_species(
+                name_input.value, description_input.value, tolerance_levels_input.value, image_url_input.value, results, add_custom_species_form
+            )).classes("mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded")
+
     eco_footer()
 
 
