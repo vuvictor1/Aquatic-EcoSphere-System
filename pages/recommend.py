@@ -1,52 +1,48 @@
 # File: recommend.py
 # Description: Recommend algorithm for users based on their preferences.
 
-from datetime import datetime
-from uuid import uuid4
 from nicegui import ui
 from web_functions import eco_header, eco_footer, inject_style
 
 
 def recommend_page():  # Function to display the recommend page
-    eco_header()  # inject the CSS styles
-    inject_style()  # inject additional styles
+    eco_header()  # Inject the header
+    inject_style()  # Inject additional styles
 
-    user_id = str(uuid4())  # generate a random user id
-    avatar = f"https://robohash.org/{user_id}?bgset=bg2"  # generate a random avatar
+    # Use fixed user IDs
+    avatar = "https://robohash.org/user1?bgset=bg2"  # Fixed avatar
+    avatar2 = "https://robohash.org/user2?bgset=bg2"  # Fixed avatar
+    avatar3 = "https://robohash.org/user3?bgset=bg2"  # Fixed avatar
 
-    # Generate two more random avatars
-    user_id2 = str(uuid4())
-    avatar2 = f"https://robohash.org/{user_id2}?bgset=bg2"
+    # Title
+    with ui.row().classes("justify-center w-full mt-4"):
+        ui.label("Recommendations").classes("text-white text-4xl font-bold text-center")
 
-    user_id3 = str(uuid4())
-    avatar3 = f"https://robohash.org/{user_id3}?bgset=bg2"
+    # Recommendation Cards
+    with ui.row().classes("justify-center items-center flex-wrap gap-6 mt-6"):
+        with ui.column().classes(
+            "items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm"
+        ):
+            ui.image(avatar).classes("w-24 h-24 rounded-full mx-auto")
+            ui.label("Hi, I am the TDS advisor.").classes("text-white text-base mt-4")
 
-    with ui.row().classes("justify-center w-full mt-0"):
-        ui.label("Recommendations").classes("text-3xl sm:text-5xl text-white mt-0")
-
-    with ui.row().classes("justify-center w-full mt-0"):
-        with ui.column().classes("items-center mx-4"):
-            ui.avatar().on("click", lambda: ui.navigate.to(main))
-            ui.image(avatar)
-            ui.label("Hi, I am the TDS advisor.").classes(
-                "mx-auto my-2 bg-gray-800 text-white p-2 rounded"
+        with ui.column().classes(
+            "items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm"
+        ):
+            ui.image(avatar2).classes("w-24 h-24 rounded-full mx-auto")
+            ui.label("Hello, I am the turbidity advisor.").classes(
+                "text-white text-base mt-4"
             )
-        with ui.column().classes("items-center mx-4"):
-            ui.avatar().on("click", lambda: ui.navigate.to(main))
-            ui.image(avatar2)
-            ui.label("Hello, I am the turbidty advisor.").classes(
-                "mx-auto my-2 bg-gray-800 text-white p-2 rounded"
-            )
-        with ui.column().classes("items-center mx-4"):
-            ui.avatar().on("click", lambda: ui.navigate.to(main))
-            ui.image(avatar3)
+
+        with ui.column().classes(
+            "items-center text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm"
+        ):
+            ui.image(avatar3).classes("w-24 h-24 rounded-full mx-auto")
             ui.label("Hey, I am the temperature advisor.").classes(
-                "mx-auto my-2 bg-gray-800 text-white p-2 rounded"
+                "text-white text-base mt-4"
             )
 
-    global messages_container
-    messages_container = ui.column().classes("mt-0")
-    eco_footer()  # inject the CSS styles
+    eco_footer()  # Inject the footer
 
 
 @ui.page("/recommend")  # Route for recommend page
