@@ -24,24 +24,40 @@ def recommend_page():  # Function to display the recommend page
             "text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm"
         ):
             ui.image(avatar).classes("w-24 h-24 rounded-full mx-auto")
-            ui.label("Hi, I am the TDS advisor.").classes("text-white text-base mt-4")
+            tds_label = ui.label("Hi, I am the TDS advisor.").classes("text-white text-base mt-4")
+            tds_loading = ui.skeleton().classes("w-full h-4 mt-2 hidden")  # Hidden by default
 
         with ui.column().classes(
             "text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm"
         ):
             ui.image(avatar2).classes("w-24 h-24 rounded-full mx-auto")
-            ui.label("Hello, I am the turbidity advisor.").classes(
+            turbidity_label = ui.label("Hello, I am the turbidity advisor.").classes(
                 "text-white text-base mt-4"
             )
+            turbidity_loading = ui.skeleton().classes("w-full h-4 mt-2 hidden")  # Hidden by default
 
         with ui.column().classes(
             "text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm"
         ):
             ui.image(avatar3).classes("w-24 h-24 rounded-full mx-auto")
-            ui.label("Hey, I am the temperature advisor.").classes(
+            temperature_label = ui.label("Hey, I am the temperature advisor.").classes(
                 "text-white text-base mt-4"
             )
-    ui.skeleton().classes("w-1/2 mx-auto")  # experimental loading bar
+            temperature_loading = ui.skeleton().classes("w-full h-4 mt-2 hidden")  # Hidden by default
+
+    # Button to trigger "Thinking..." and show loading screen
+    def on_button_click():
+        tds_label.set_text("Thinking...")
+        turbidity_label.set_text("Thinking...")
+        temperature_label.set_text("Thinking...")
+        tds_loading.classes(remove="hidden")  # Show loading bar
+        turbidity_loading.classes(remove="hidden")  # Show loading bar
+        temperature_loading.classes(remove="hidden")  # Show loading bar
+
+    # Add the button below the recommendation cards
+    with ui.row().classes("justify-center w-full mt-6"):
+        ui.button("Activate advisors", on_click=on_button_click).classes("bg-blue-500 text-white px-4 py-2 rounded")
+
     eco_footer()  # inject the footer
 
 
