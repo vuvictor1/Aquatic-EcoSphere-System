@@ -56,7 +56,7 @@ def recommend_page():  # Function to display the recommend page
 
     # Add the button below the recommendation cards
     with ui.row().classes("justify-center w-full mt-6"):
-        ui.button("Activate advisors", on_click=on_button_click).classes("bg-blue-500 text-white px-4 py-2 rounded")
+        ui.button("Request advice", on_click=on_button_click).classes("bg-blue-500 text-white px-4 py-2 rounded")
 
     eco_footer()  # inject the footer
 
