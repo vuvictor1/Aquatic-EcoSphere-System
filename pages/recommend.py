@@ -3,7 +3,7 @@
 
 from nicegui import ui
 from web_functions import eco_header, eco_footer, inject_style
-
+from collect_database import get_latest_data  # Import the function to fetch sensor data
 
 def recommend_page():  # Function to display the recommend page
     eco_header()  # inject the header
@@ -45,14 +45,29 @@ def recommend_page():  # Function to display the recommend page
             )
             temperature_loading = ui.skeleton().classes("w-full h-4 mt-2 hidden")  # Hidden by default
 
-    # Button to trigger "Thinking..." and show loading screen
+    # Button to fetch sensor data and update labels
     def on_button_click():
-        tds_label.set_text("Thinking...")
-        turbidity_label.set_text("Thinking...")
-        temperature_label.set_text("Thinking...")
+        tds_label.set_text("Fetching data...")
+        turbidity_label.set_text("Fetching data...")
+        temperature_label.set_text("Fetching data...")
         tds_loading.classes(remove="hidden")  # Show loading bar
         turbidity_loading.classes(remove="hidden")  # Show loading bar
         temperature_loading.classes(remove="hidden")  # Show loading bar
+
+        # Fetch the latest sensor data
+        data = get_latest_data()
+        if data:
+            tds_label.set_text(f"TDS: {data['total dissolved solids']['value']:.2f} ppm")
+            turbidity_label.set_text(f"Turbidity: {data['turbidity']['value']:.2f} NTU")
+            temperature_label.set_text(f"Temperature: {data['temperature']['value']:.2f} °F")
+        else:
+            tds_label.set_text("No data available")
+            turbidity_label.set_text("No data available")
+            temperature_label.set_text("No data available")
+
+        tds_loading.classes(add="hidden")  # Hide loading bar
+        turbidity_loading.classes(add="hidden")  # Hide loading bar
+        temperature_loading.classes(add="hidden")  # Hide loading bar
 
     # Add the button below the recommendation cards
     with ui.row().classes("justify-center w-full mt-6"):
