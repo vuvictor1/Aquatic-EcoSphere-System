@@ -10,7 +10,8 @@ import urllib.parse
 # TODO:
 # Make the editing through the add species part better, either fill
 # in information from the other fields automatically or a button to fill in the info
-# Add different fields for the different tolerance levels
+# Add different fields for the different tolerance levels ("Other" field)
+# Remove a species feature
 
 # Load the species data from the JSON file
 current_file_path = os.path.abspath(__file__)
@@ -90,29 +91,34 @@ def add_custom_species(name, species_name, description, tolerance_levels, image_
 
     # Validate the image URL
     if not image_url.startswith("http"):
-        image_url = PLACEHOLDER_URL  # default to placeholder URL
+        image_url = PLACEHOLDER_URL
 
     try:
         result = urllib.parse.urlparse(image_url)
         if not all([result.scheme, result.netloc]):
-            image_url = PLACEHOLDER_URL  # default to placeholder URL
+            image_url = PLACEHOLDER_URL
 
         response = requests.head(image_url)
         if response.status_code != 200:
-            image_url = PLACEHOLDER_URL  # default to placeholder URL
+            image_url = PLACEHOLDER_URL
     except (ValueError, requests.RequestException):
-        image_url = PLACEHOLDER_URL  # default to placeholder URL
+        image_url = PLACEHOLDER_URL
 
     # Check if a species with the provided name already exists
     existing_species = next((species for species in species_data if species.get(
         "species_name") == species_name or species.get("name") == name), None)
+
+    tolerance_levels_dict = {}
+    for tolerance_level in tolerance_levels:
+        key, value = tolerance_level.split(": ")
+        tolerance_levels_dict[key] = value
 
     if existing_species:
         # Update the existing species with the new information
         existing_species["name"] = name
         existing_species["species_name"] = species_name
         existing_species["description"] = description
-        existing_species["tolerance_levels"] = tolerance_levels
+        existing_species["tolerance_levels"] = tolerance_levels_dict
         existing_species["image_url"] = image_url
     else:
         # Create a new species dictionary
@@ -120,7 +126,7 @@ def add_custom_species(name, species_name, description, tolerance_levels, image_
             "name": name,
             "species_name": species_name,
             "description": description,
-            "tolerance_levels": tolerance_levels,
+            "tolerance_levels": tolerance_levels_dict,
             "image_url": image_url
         }
 
@@ -194,14 +200,33 @@ def encyclopedia_page() -> None:
 
             description_input = ui.textarea(
                 label="Description:").props(common_input_props)
-            tolerance_levels_input = ui.textarea(
-                label="Tolerance Levels:").props(common_input_props)
+
+            ui.label("Tolerance Levels:")
+
+            # Store dynamic tolerance levels
+            tolerance_entries = []
+
+            def add_tolerance_level():
+                """Dynamically add a new tolerance input row."""
+                with tolerance_levels_container:
+                    tolerance_type = ui.input(
+                        label="Type:").props(common_input_props)
+                    tolerance_value = ui.input(
+                        label="Value:").props(common_input_props)
+                    # Keep track of the inputs to extract their values later
+                    tolerance_entries.append((tolerance_type, tolerance_value))
+
+            # Container to hold dynamic tolerance inputs
+            with ui.column() as tolerance_levels_container:
+                pass
+
+            # Button to add more tolerance levels
+            ui.button("➕ Add Tolerance Level", on_click=add_tolerance_level).classes(
+                "mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            )
+
             image_url_input = ui.input(
                 label="Image URL:").props(common_input_props)
-
-            ui.button("Add", on_click=lambda: add_custom_species(
-                name_input.value, description_input.value, tolerance_levels_input.value, image_url_input.value, results, add_custom_species_form
-            )).classes("mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded")
 
     eco_footer()
 
