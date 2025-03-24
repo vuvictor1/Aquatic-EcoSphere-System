@@ -228,6 +228,20 @@ def encyclopedia_page() -> None:
             image_url_input = ui.input(
                 label="Image URL:").props(common_input_props)
 
+            # Button to add more tolerance levels
+            ui.button("Submit Species", on_click=add_custom_species(
+                name_input.value,
+                optional_species_name_input.value,
+                description_input.value,
+                [f"{tolerance_type.value}: {tolerance_value.value}" for tolerance_type,
+                    tolerance_value in tolerance_entries],
+                image_url_input.value,
+                results,
+                add_custom_species_form
+            )).classes(
+                "mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            )
+
     eco_footer()
 
 
