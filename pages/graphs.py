@@ -143,7 +143,7 @@ def graphs_page(graph_container):  # Graphs page for the web interface
 
     # Generate graph with style
     graph_container = ui.row().classes(
-        "outline_label graph-container justify-center items-center bg-gray-800 p-4 my-2 mx-auto w-full max-w-screen-md"
+        "graph-container justify-center items-center bg-gray-800 p-4 my-2 mx-auto w-full max-w-screen-md"
     )
     with graph_container:
         ui.label("Press generate to see graphing data").classes(

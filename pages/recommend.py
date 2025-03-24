@@ -1,52 +1,79 @@
 # File: recommend.py
 # Description: Recommend algorithm for users based on their preferences.
 
-from datetime import datetime
-from uuid import uuid4
 from nicegui import ui
 from web_functions import eco_header, eco_footer, inject_style
-
+from collect_database import get_latest_data  # Import the function to fetch sensor data
 
 def recommend_page():  # Function to display the recommend page
-    eco_header()  # inject the CSS styles
+    eco_header()  # inject the header
     inject_style()  # inject additional styles
 
-    user_id = str(uuid4())  # generate a random user id
-    avatar = f"https://robohash.org/{user_id}?bgset=bg2"  # generate a random avatar
+    # Use fixed robot IDs
+    avatar = "https://robohash.org/user1?bgset=bg2"
+    avatar2 = "https://robohash.org/user2?bgset=bg2"
+    avatar3 = "https://robohash.org/user3?bgset=bg2"
 
-    # Generate two more random avatars
-    user_id2 = str(uuid4())
-    avatar2 = f"https://robohash.org/{user_id2}?bgset=bg2"
+    # Title
+    with ui.row().classes("justify-center w-full mt-4"):
+        ui.label("Recommendations").classes("text-white text-4xl font-bold text-center")
 
-    user_id3 = str(uuid4())
-    avatar3 = f"https://robohash.org/{user_id3}?bgset=bg2"
+    # Recommendation Cards
+    with ui.row().classes("justify-center w-full mt-6"):
+        with ui.column().classes(
+            "text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm"
+        ):
+            ui.image(avatar).classes("w-24 h-24 rounded-full mx-auto")
+            tds_label = ui.label("Hi, I am the TDS advisor.").classes("text-white text-base mt-4")
+            tds_loading = ui.skeleton().classes("w-full h-4 mt-2 hidden")  # Hidden by default
 
-    with ui.row().classes("justify-center w-full mt-0"):
-        ui.label("Recommendations").classes("text-3xl sm:text-5xl text-white mt-0")
-
-    with ui.row().classes("justify-center w-full mt-0"):
-        with ui.column().classes("items-center mx-4"):
-            ui.avatar().on("click", lambda: ui.navigate.to(main))
-            ui.image(avatar)
-            ui.label("Hi, I am the TDS advisor.").classes(
-                "mx-auto my-2 bg-gray-800 text-white p-2 rounded"
+        with ui.column().classes(
+            "text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm"
+        ):
+            ui.image(avatar2).classes("w-24 h-24 rounded-full mx-auto")
+            turbidity_label = ui.label("Hello, I am the turbidity advisor.").classes(
+                "text-white text-base mt-4"
             )
-        with ui.column().classes("items-center mx-4"):
-            ui.avatar().on("click", lambda: ui.navigate.to(main))
-            ui.image(avatar2)
-            ui.label("Hello, I am the turbidty advisor.").classes(
-                "mx-auto my-2 bg-gray-800 text-white p-2 rounded"
-            )
-        with ui.column().classes("items-center mx-4"):
-            ui.avatar().on("click", lambda: ui.navigate.to(main))
-            ui.image(avatar3)
-            ui.label("Hey, I am the temperature advisor.").classes(
-                "mx-auto my-2 bg-gray-800 text-white p-2 rounded"
-            )
+            turbidity_loading = ui.skeleton().classes("w-full h-4 mt-2 hidden")  # Hidden by default
 
-    global messages_container
-    messages_container = ui.column().classes("mt-0")
-    eco_footer()  # inject the CSS styles
+        with ui.column().classes(
+            "text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm"
+        ):
+            ui.image(avatar3).classes("w-24 h-24 rounded-full mx-auto")
+            temperature_label = ui.label("Hey, I am the temperature advisor.").classes(
+                "text-white text-base mt-4"
+            )
+            temperature_loading = ui.skeleton().classes("w-full h-4 mt-2 hidden")  # Hidden by default
+
+    # Button to fetch sensor data and update labels
+    def on_button_click():
+        tds_label.set_text("Fetching data...")
+        turbidity_label.set_text("Fetching data...")
+        temperature_label.set_text("Fetching data...")
+        tds_loading.classes(remove="hidden")  # Show loading bar
+        turbidity_loading.classes(remove="hidden")  # Show loading bar
+        temperature_loading.classes(remove="hidden")  # Show loading bar
+
+        # Fetch the latest sensor data
+        data = get_latest_data()
+        if data:
+            tds_label.set_text(f"TDS: {data['total dissolved solids']['value']:.2f} ppm")
+            turbidity_label.set_text(f"Turbidity: {data['turbidity']['value']:.2f} NTU")
+            temperature_label.set_text(f"Temperature: {data['temperature']['value']:.2f} °F")
+        else:
+            tds_label.set_text("No data available")
+            turbidity_label.set_text("No data available")
+            temperature_label.set_text("No data available")
+
+        tds_loading.classes(add="hidden")  # Hide loading bar
+        turbidity_loading.classes(add="hidden")  # Hide loading bar
+        temperature_loading.classes(add="hidden")  # Hide loading bar
+
+    # Add the button below the recommendation cards
+    with ui.row().classes("justify-center w-full mt-6"):
+        ui.button("Request advice", on_click=on_button_click).classes("bg-blue-500 text-white px-4 py-2 rounded")
+
+    eco_footer()  # inject the footer
 
 
 @ui.page("/recommend")  # Route for recommend page

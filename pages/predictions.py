@@ -74,7 +74,7 @@ def display_sensor_data(sensor_type, prediction_data, unit, target_time, closest
         target_time (datetime): Target time.
         closest_prediction (tuple): Closest prediction.
     """
-    with ui.column().classes('outline_label bg-gray-800 rounded-lg shadow-lg p-4').style('align-items: center; margin-bottom: 20px;'):
+    with ui.column().classes('bg-gray-800 rounded-lg shadow-lg p-4').style('align-items: center; margin-bottom: 20px;'):
         # Display sensor type
         ui.label(f'{sensor_type.title()}').classes(
             'text-3xl sm:text-4xl text-white font-bold mt-0')
