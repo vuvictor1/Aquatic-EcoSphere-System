@@ -247,6 +247,61 @@ def encyclopedia_page() -> None:
                 "mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             )
 
+    # Dialog to edit a species
+    with ui.dialog() as edit_custom_species_form:
+        with ui.card().classes("p-5 bg-gray-800 text-white rounded-lg"):
+            ui.label("Add Custom Species").classes("text-xl font-bold mb-4")
+
+            name_input = ui.input(label="Common Name:").props(
+                common_input_props)
+
+            optional_species_name_input = ui.input(
+                label="Species Name", placeholder="(Optional) e.g: Pteris volantis").props(common_input_props)
+
+            description_input = ui.textarea(
+                label="Description:").props(common_input_props)
+
+            ui.label("Tolerance Levels:")
+
+            # Store dynamic tolerance levels
+            tolerance_entries = []
+
+            def add_tolerance_level():
+                """Dynamically add a new tolerance input row."""
+                with tolerance_levels_container:
+                    tolerance_type = ui.input(
+                        label="Type:").props(common_input_props)
+                    tolerance_value = ui.input(
+                        label="Value:").props(common_input_props)
+                    # Keep track of the inputs to extract their values later
+                    tolerance_entries.append((tolerance_type, tolerance_value))
+
+            # Container to hold dynamic tolerance inputs
+            with ui.column() as tolerance_levels_container:
+                pass
+
+            # Button to add more tolerance levels
+            ui.button("➕ Add Tolerance Level", on_click=add_tolerance_level).classes(
+                "mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            )
+
+            image_url_input = ui.input(
+                label="Image URL:").props(common_input_props)
+
+            # Button to add more tolerance levels
+            ui.button("Submit Species", on_click=lambda: add_custom_species(
+                name_input.value,
+                optional_species_name_input.value,
+                description_input.value,
+                [f"{tolerance_type.value}: {tolerance_value.value}" for tolerance_type,
+                    tolerance_value in tolerance_entries],
+                image_url_input.value,
+                results,
+                add_custom_species_form
+            )).classes(
+                "mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            )
+
     eco_footer()
 
 
