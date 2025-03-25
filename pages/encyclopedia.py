@@ -83,7 +83,7 @@ def display_species(species_list: list, results_container: ui.row) -> None:
 
 def add_custom_species(name, species_name, description, tolerance_levels, image_url, results, add_species_form):
     if not name and not species_name:
-        ui.notif("Please provide at least one valid name", type="error")
+        ui.notify("Please provide at least one valid name", type="error")
         return
 
     # Placeholder URL
@@ -229,7 +229,7 @@ def encyclopedia_page() -> None:
                 label="Image URL:").props(common_input_props)
 
             # Button to add more tolerance levels
-            ui.button("Submit Species", on_click=add_custom_species(
+            ui.button("Submit Species", on_click=lambda: add_custom_species(
                 name_input.value,
                 optional_species_name_input.value,
                 description_input.value,
