@@ -18,6 +18,9 @@ current_file_path = os.path.abspath(__file__)
 current_dir_path = os.path.dirname(current_file_path)
 parent_dir_path = os.path.dirname(current_dir_path)
 species_data_path = os.path.join(parent_dir_path, 'data', 'species_data.json')
+# Define common props for inputs
+common_input_props = 'label-color="white" input-class="text-white"'
+
 
 with open(species_data_path, 'r') as file:
     species_data = json.load(file)
@@ -77,6 +80,11 @@ def display_species(species_list: list, results_container: ui.row) -> None:
                 # Display the species tolerance levels
                 ui.label(f"Tolerance: {species['tolerance_levels']}").classes(
                     "text-xs text-gray-500")
+
+                # Add an edit icon to each card
+                ui.button(icon='edit', on_click=lambda s=species: open_edit_species_form(s, results_container)).classes(
+                    "absolute top-2 right-2 bg-transparent text-white hover:text-blue-400"
+                )
 
 # Function to add custom species
 
@@ -183,9 +191,6 @@ def encyclopedia_page() -> None:
 
     results = ui.row().classes("w-full mt-4 flex flex-wrap justify-center")
     display_species(species_data, results)
-
-    # Define common props for inputs
-    common_input_props = 'label-color="white" input-class="text-white"'
 
     # Dialog to add custom species
     with ui.dialog() as add_custom_species_form:
