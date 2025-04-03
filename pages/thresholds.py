@@ -3,7 +3,28 @@
 from nicegui import ui
 from web_functions import inject_style, eco_header, eco_footer
 import json  
+import os
 
+DEFAULT_THRESHOLDS = {
+    "TDS Thresholds": {
+        "Min TDS": "0",
+        "Low TDS": "300",
+        "Mid TDS": "600",
+        "Max TDS": "1000",
+    },
+    "Turbidity Thresholds": {
+        "Min Turbidity": "0",
+        "Low Turbidity": "25",
+        "Mid Turbidity": "50",
+        "Max Turbidity": "100",
+    },
+    "Temperature Thresholds": {
+        "Min Temperature": "50",
+        "Low Temperature": "60",
+        "Mid Temperature": "75",
+        "Max Temperature": "90",
+    },
+}
 
 def thresholds_page():  # Renders the thresholds page
     eco_header()  # Add header
@@ -31,93 +52,37 @@ def thresholds_page():  # Renders the thresholds page
         ui.label("Settings").classes("text-4xl text-white text-center sm:text-3xl mt-0")
 
     # Store references to all input fields
-    tds_references = {}
-    turbidity_references = {}
-    temperature_references = {}
+    references = {
+        "TDS Thresholds": {},
+        "Turbidity Thresholds": {},
+        "Temperature Thresholds": {},
+    }
 
-    with ui.card().classes( # Card for TDS thresholds
-        "outline_label bg-gray-800 p-5 rounded-lg w-full max-w-2xl mx-auto mt-0"
-    ):
-        with ui.row().classes("justify-center w-full mt-0"):
-            ui.label("Total Dissolved Solids Thresholds").classes(
-                "text-2xl text-white text-center sm:text-xl mt-0"
-            )
-
-        tds_fields = [("Min TDS", "0"), ("Low TDS", "300"), ("Mid TDS", "600"), ("Max TDS", "1000")]
-        for label, value in tds_fields:
-            with ui.row().classes("justify-center items-center w-full my-2"):
-                ui.label(label).classes("text-lg text-white text-center sm:text-base mt-0")
-                tds_references[label] = ui.input(label, value=value).classes(
-                    "w-24 bg-gray-800 mx-2 sm:w-20 mt-0"
+    for category, fields in DEFAULT_THRESHOLDS.items():
+        with ui.card().classes(
+            "outline_label bg-gray-800 p-5 rounded-lg w-full max-w-2xl mx-auto my-2"
+        ):
+            with ui.row().classes("justify-center w-full mt-0"):
+                ui.label(category).classes(
+                    "text-2xl text-white text-center sm:text-xl mt-0"
                 )
-                ui.label("ppm").classes("text-lg text-white sm:text-base mt-0")
 
-    with ui.card().classes( # Card for turbidity thresholds
-        "outline_label bg-gray-800 p-5 rounded-lg w-full max-w-2xl mx-auto my-2"
-    ):
-        with ui.row().classes("justify-center w-full mt-0"):
-            ui.label("Turbidity Thresholds").classes(
-                "text-2xl text-white text-center sm:text-xl mt-0"
-            )
+            for label, value in fields.items():
+                with ui.row().classes("justify-center items-center w-full my-2"):
+                    ui.label(label).classes("text-lg text-white text-center sm:text-base mt-0")
+                    references[category][label] = ui.input(label, value=value).classes(
+                        "w-24 bg-gray-800 mx-2 sm:w-20 mt-0"
+                    )
+                    unit = "ppm" if "TDS" in label else "NTU" if "Turbidity" in label else "°F"
+                    ui.label(unit).classes("text-lg text-white sm:text-base mt-0")
 
-        turbidity_fields = [
-            ("Min Turbidity", "0"),
-            ("Low Turbidity", "25"),
-            ("Mid Turbidity", "50"),
-            ("Max Turbidity", "100"),
-        ]
-        for label, value in turbidity_fields:
-            with ui.row().classes("justify-center items-center w-full my-2"):
-                ui.label(label).classes("text-lg text-white text-center sm:text-base mt-0")
-                turbidity_references[label] = ui.input(label, value=value).classes(
-                    "w-24 bg-gray-800 mx-2 sm:w-20 mt-0"
-                )
-                ui.label("NTU").classes("text-lg text-white sm:text-base mt-0")
-
-    with ui.card().classes( # Card for temperature thresholds
-        "outline_label bg-gray-800 p-5 rounded-lg w-full max-w-2xl mx-auto my-2"
-    ):
-        with ui.row().classes("justify-center w-full mt-0"):
-            ui.label("Temperature Thresholds").classes(
-                "text-2xl text-white text-center sm:text-xl mt-0"
-            )
-
-        temperature_fields = [
-            ("Min Temperature", "50"),
-            ("Low Temperature", "60"),
-            ("Mid Temperature", "75"),
-            ("Max Temperature", "90"),
-        ]
-        for label, value in temperature_fields:
-            with ui.row().classes("justify-center items-center w-full my-2"):
-                ui.label(label).classes("text-lg text-white text-center sm:text-base mt-0")
-                temperature_references[label] = ui.input(label, value=value).classes(
-                    "w-24 bg-gray-800 mx-2 sm:w-20 mt-0"
-                )
-                ui.label("°F").classes("text-lg text-white sm:text-base mt-0")
-
-    with ui.row().classes("justify-center w-full my-4"): # Save button for all thresholds
+    with ui.row().classes("justify-center w-full my-4"):  # Save button for all thresholds
         ui.button(
             "Save All",
             on_click=lambda: save_all_thresholds(
-                {
-                    "Min TDS": tds_references["Min TDS"].value,
-                    "Low TDS": tds_references["Low TDS"].value,
-                    "Mid TDS": tds_references["Mid TDS"].value,
-                    "Max TDS": tds_references["Max TDS"].value,
-                },
-                {
-                    "Min Turbidity": turbidity_references["Min Turbidity"].value,
-                    "Low Turbidity": turbidity_references["Low Turbidity"].value,
-                    "Mid Turbidity": turbidity_references["Mid Turbidity"].value,
-                    "Max Turbidity": turbidity_references["Max Turbidity"].value,
-                },
-                {
-                    "Min Temperature": temperature_references["Min Temperature"].value,
-                    "Low Temperature": temperature_references["Low Temperature"].value,
-                    "Mid Temperature": temperature_references["Mid Temperature"].value,
-                    "Max Temperature": temperature_references["Max Temperature"].value,
-                },
+                {key: ref.value for key, ref in references["TDS Thresholds"].items()},
+                {key: ref.value for key, ref in references["Turbidity Thresholds"].items()},
+                {key: ref.value for key, ref in references["Temperature Thresholds"].items()},
             ),
         ).classes("bg-teal-500 text-white w-full sm:w-auto mt-0")
 
@@ -193,6 +158,16 @@ def save_settings(min_temp, low_temp, mid_temp, max_temp): # Save temperature se
         data.get("Turbidity Thresholds", {}),
         data.get("Temperature Thresholds", {}),
     )
+
+
+def generate_default_settings():  # Generate default settings file if it doesn't exist
+    if not os.path.exists("thresholds.json"):  # Check if the file already exists
+        try:
+            with open("thresholds.json", "x") as file:  # Use "x" mode to create the file if it doesn't exist
+                json.dump(DEFAULT_THRESHOLDS, file, indent=4)
+                print("Default thresholds.json file created.")
+        except FileExistsError:
+            print("File already exists, no action taken.")
 
 
 @ui.page("/thresholds")  # Route for thresholds page
