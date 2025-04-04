@@ -1,51 +1,41 @@
 # File: recommend.py
 # Description: Recommend algorithm for users based on their preferences.
-
+import json
 from nicegui import ui
 from web_functions import eco_header, eco_footer, inject_style
-from collect_database import get_latest_data  # Import the function to fetch sensor data
+from collect_database import get_latest_data 
 
 # Define global dictionaries for thresholds
 tds_references = {}
 turbidity_references = {}
+temperature_references = {}
 input_fields = []
 
+def load_thresholds(): # Function to load thresholds from JSON file
+    global tds_references, turbidity_references, temperature_references, input_fields
+    try:
+        with open("thresholds.json", "r") as file:
+            thresholds = json.load(file)
+            tds_references = thresholds.get("TDS Thresholds", {})
+            turbidity_references = thresholds.get("Turbidity Thresholds", {})
+            temperature_references = thresholds.get("Temperature Thresholds", {})
+            input_fields = [
+                ("Min Temperature", temperature_references.get("Min Temperature", "0")),
+                ("Low Temperature", temperature_references.get("Low Temperature", "0")),
+                ("Mid Temperature", temperature_references.get("Mid Temperature", "0")),
+                ("Max Temperature", temperature_references.get("Max Temperature", "0")),
+            ]
+    except FileNotFoundError:
+        print("Error: thresholds.json file not found.")
+    except json.JSONDecodeError:
+        print("Error: Failed to decode thresholds.json.")
 
 def recommend_page():  # Function to display the recommend page
     global tds_references, turbidity_references, input_fields
 
+    load_thresholds() # load the thresholds
     eco_header()  # inject the header
     inject_style()  # inject additional styles
-
-    # Define TDS thresholds (hidden from UI)
-    tds_fields = [
-        ("Min TDS", "0"),
-        ("Low TDS", "300"),
-        ("Mid TDS", "600"),
-        ("Max TDS", "1000"),
-    ]
-    for label, value in tds_fields:
-        tds_references[label] = value  # Store thresholds in the dictionary
-
-    # Define Turbidity thresholds (hidden from UI)
-    turbidity_fields = [
-        ("Min Turbidity", "0"),
-        ("Low Turbidity", "25"),
-        ("Mid Turbidity", "50"),
-        ("Max Turbidity", "100"),
-    ]
-    for label, value in turbidity_fields:
-        turbidity_references[label] = value  # Store thresholds in the dictionary
-
-    # Define Temperature thresholds (hidden from UI)
-    temperature_fields = [
-        ("Min Temperature", "50"),
-        ("Low Temperature", "60"),
-        ("Mid Temperature", "75"),
-        ("Max Temperature", "90"),
-    ]
-    for label, value in temperature_fields:
-        input_fields.append((label, value))  # Store thresholds in the list
 
     # Use fixed robot IDs
     avatar = "https://robohash.org/user1?bgset=bg2"
@@ -82,8 +72,7 @@ def recommend_page():  # Function to display the recommend page
                 "text-white text-base mt-4"
             )
 
-    # Button to fetch sensor data and update labels
-    def on_button_click():
+    def on_button_click(): # Function to handle button click
         tds_label.set_text("Fetching data...")
         turbidity_label.set_text("Fetching data...")
         temperature_label.set_text("Fetching data...")
