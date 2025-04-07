@@ -60,7 +60,8 @@ def home_page():  # Home page function
                 avatar="https://robohash.org/iamexpertfishadvisor",
             ).classes("text-white text-base")
 
-        ui.label("[Disclaimer]").classes("text-white text-2xl")  # disclaimer title
+        ui.label("[Disclaimer]").classes(
+            "text-white text-2xl")  # disclaimer title
         disclaimers = [
             "1. Recommendations are suggestions only and up to user discretion.",
             "2. This tool must be manually configured for salt-water setups.",
@@ -83,7 +84,8 @@ def home_page():  # Home page function
                 loop autoplay speed="0.25" style="height: 300px;"></lottie-player>''')
 
     with ui.row().classes("justify-center w-full mt-0"):  # Main title
-        ui.label("Aquatic EcoSphere System").classes("text-white text-4xl mt-0 text-center")
+        ui.label("Aquatic EcoSphere System").classes(
+            "text-white text-4xl mt-0 text-center")
 
     # Sensor Cards
     global labels
@@ -102,7 +104,8 @@ def home_page():  # Home page function
                 timestamp_label = ui.label("Timestamp: Loading...").classes(
                     "text-white text-base"
                 )
-                labels[sensor_type] = (sensor_label, value_label, timestamp_label)
+                labels[sensor_type] = (
+                    sensor_label, value_label, timestamp_label)
 
     reminders = read_reminders()  # read reminders from reminders.json
     if reminders:  # Sort reminders by priority
