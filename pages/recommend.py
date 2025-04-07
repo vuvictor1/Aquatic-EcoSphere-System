@@ -1,11 +1,39 @@
 # File: recommend.py
 # Description: Recommend algorithm for users based on their preferences.
-
+import json
 from nicegui import ui
 from web_functions import eco_header, eco_footer, inject_style
-from collect_database import get_latest_data  # Import the function to fetch sensor data
+from collect_database import get_latest_data 
+
+# Define global dictionaries for thresholds
+tds_references = {}
+turbidity_references = {}
+temperature_references = {}
+input_fields = []
+
+def load_thresholds(): # Function to load thresholds from JSON file
+    global tds_references, turbidity_references, temperature_references, input_fields
+    try:
+        with open("thresholds.json", "r") as file:
+            thresholds = json.load(file)
+            tds_references = thresholds.get("TDS Thresholds", {})
+            turbidity_references = thresholds.get("Turbidity Thresholds", {})
+            temperature_references = thresholds.get("Temperature Thresholds", {})
+            input_fields = [
+                ("Min Temperature", temperature_references.get("Min Temperature", "0")),
+                ("Low Temperature", temperature_references.get("Low Temperature", "0")),
+                ("Mid Temperature", temperature_references.get("Mid Temperature", "0")),
+                ("Max Temperature", temperature_references.get("Max Temperature", "0")),
+            ]
+    except FileNotFoundError:
+        print("Error: thresholds.json file not found.")
+    except json.JSONDecodeError:
+        print("Error: Failed to decode thresholds.json.")
 
 def recommend_page():  # Function to display the recommend page
+    global tds_references, turbidity_references, input_fields
+
+    load_thresholds() # load the thresholds
     eco_header()  # inject the header
     inject_style()  # inject additional styles
 
@@ -24,8 +52,9 @@ def recommend_page():  # Function to display the recommend page
             "text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm"
         ):
             ui.image(avatar).classes("w-24 h-24 rounded-full mx-auto")
-            tds_label = ui.label("Hi, I am the TDS advisor.").classes("text-white text-base mt-4")
-            tds_loading = ui.skeleton().classes("w-full h-4 mt-2 hidden")  # Hidden by default
+            tds_label = ui.label("Hi, I am the TDS advisor.").classes(
+                "text-white text-base mt-4"
+            )
 
         with ui.column().classes(
             "text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm"
@@ -34,7 +63,6 @@ def recommend_page():  # Function to display the recommend page
             turbidity_label = ui.label("Hello, I am the turbidity advisor.").classes(
                 "text-white text-base mt-4"
             )
-            turbidity_loading = ui.skeleton().classes("w-full h-4 mt-2 hidden")  # Hidden by default
 
         with ui.column().classes(
             "text-center p-5 bg-gray-800 rounded-lg shadow-lg max-w-sm"
@@ -43,35 +71,79 @@ def recommend_page():  # Function to display the recommend page
             temperature_label = ui.label("Hey, I am the temperature advisor.").classes(
                 "text-white text-base mt-4"
             )
-            temperature_loading = ui.skeleton().classes("w-full h-4 mt-2 hidden")  # Hidden by default
 
-    # Button to fetch sensor data and update labels
-    def on_button_click():
+    def on_button_click(): # Function to handle button click
         tds_label.set_text("Fetching data...")
         turbidity_label.set_text("Fetching data...")
         temperature_label.set_text("Fetching data...")
-        tds_loading.classes(remove="hidden")  # Show loading bar
-        turbidity_loading.classes(remove="hidden")  # Show loading bar
-        temperature_loading.classes(remove="hidden")  # Show loading bar
 
         # Fetch the latest sensor data
         data = get_latest_data()
         if data:
-            tds_label.set_text(f"TDS: {data['total dissolved solids']['value']:.2f} ppm")
-            turbidity_label.set_text(f"Turbidity: {data['turbidity']['value']:.2f} NTU")
-            temperature_label.set_text(f"Temperature: {data['temperature']['value']:.2f} °F")
+            # TDS Recommendations
+            tds_value = data["total dissolved solids"]["value"]
+            if tds_value < float(tds_references["Low TDS"]):
+                tds_label.set_text(
+                    f"TDS: {tds_value:.2f} ppm - Too Low, consider adding minerals."
+                )
+            elif tds_value < float(tds_references["Mid TDS"]):
+                tds_label.set_text(f"TDS: {tds_value:.2f} ppm - Optimal range.")
+            elif tds_value <= float(tds_references["Max TDS"]):
+                tds_label.set_text(
+                    f"TDS: {tds_value:.2f} ppm - High, consider diluting."
+                )
+            else:
+                tds_label.set_text(
+                    f"TDS: {tds_value:.2f} ppm - Too High, immediate action needed!"
+                )
+
+            # Turbidity Recommendations
+            turbidity_value = data["turbidity"]["value"]
+            if turbidity_value < float(turbidity_references["Low Turbidity"]):
+                turbidity_label.set_text(
+                    f"Turbidity: {turbidity_value:.2f} NTU - Clear water."
+                )
+            elif turbidity_value < float(turbidity_references["Mid Turbidity"]):
+                turbidity_label.set_text(
+                    f"Turbidity: {turbidity_value:.2f} NTU - Slightly cloudy."
+                )
+            elif turbidity_value <= float(turbidity_references["Max Turbidity"]):
+                turbidity_label.set_text(
+                    f"Turbidity: {turbidity_value:.2f} NTU - Cloudy, consider filtration."
+                )
+            else:
+                turbidity_label.set_text(
+                    f"Turbidity: {turbidity_value:.2f} NTU - Very cloudy, immediate action needed!"
+                )
+
+            # Temperature Recommendations
+            temperature_value = data["temperature"]["value"]
+            if temperature_value < float(input_fields[1][1]):
+                temperature_label.set_text(
+                    f"Temperature: {temperature_value:.2f} °F - Too cold, consider heating."
+                )
+            elif temperature_value < float(input_fields[2][1]):
+                temperature_label.set_text(
+                    f"Temperature: {temperature_value:.2f} °F - Optimal range."
+                )
+            elif temperature_value <= float(input_fields[3][1]):
+                temperature_label.set_text(
+                    f"Temperature: {temperature_value:.2f} °F - Warm, monitor closely."
+                )
+            else:
+                temperature_label.set_text(
+                    f"Temperature: {temperature_value:.2f} °F - Too hot, immediate cooling needed!"
+                )
         else:
             tds_label.set_text("No data available")
             turbidity_label.set_text("No data available")
             temperature_label.set_text("No data available")
 
-        tds_loading.classes(add="hidden")  # Hide loading bar
-        turbidity_loading.classes(add="hidden")  # Hide loading bar
-        temperature_loading.classes(add="hidden")  # Hide loading bar
-
     # Add the button below the recommendation cards
     with ui.row().classes("justify-center w-full mt-6"):
-        ui.button("Request advice", on_click=on_button_click).classes("bg-blue-500 text-white px-4 py-2 rounded")
+        ui.button("Request advice", on_click=on_button_click).classes(
+            "bg-blue-500 text-white px-4 py-2 rounded"
+        )
 
     eco_footer()  # inject the footer
 

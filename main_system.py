@@ -12,7 +12,7 @@ from pages.contacts import contacts_page
 from pages.graphs import graphs_page
 from pages.encyclopedia import encyclopedia_page
 from pages.login import AuthMiddleware
-from pages.thresholds import thresholds_page
+from pages.thresholds import thresholds_page, generate_default_settings
 from pages.reminders import reminders_page
 from pages.predictions import predictions_page
 from pages.recommend import recommend_page
@@ -27,6 +27,7 @@ sensor_units = {  # sensor_type: unit
     "temperature": "°F",
 }
 
+generate_default_settings()  # Ensure default settings file exists
 
 # Function to read reminders from reminders.json
 def read_reminders():
@@ -119,7 +120,7 @@ def home_page():  # Home page function
             "Reminders": f"Upcoming Task: {upcoming_task['task']} (Priority Rank: {upcoming_task['priority']})"
             if upcoming_task
             else "No upcoming tasks",
-            "Recommendations": "Coming soon... W.I.P.",
+            "Recommendations": "Consult recommend page",
         }
 
         for card_type, card_label in card_labels.items():  # Use css class
