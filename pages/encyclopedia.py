@@ -34,7 +34,7 @@ def filter_species(query: str) -> list:
         for species in species_data
         if query in species["name"].lower()
         or query in species["description"].lower()
-        or query in species["tolerance_levels"].lower()
+        # or query in species["tolerance_levels"].lower()
     ]
     print(f"🔍 Filtering with query: '{query}', Found {len(filtered)} species")
     return filtered
