@@ -1,0 +1,20 @@
+{
+    "TDS Thresholds": {
+        "Min TDS": "0",
+        "Low TDS": "300",
+        "Mid TDS": "600",
+        "Max TDS": "1000"
+    },
+    "Turbidity Thresholds": {
+        "Min Turbidity": "0",
+        "Low Turbidity": "25",
+        "Mid Turbidity": "50",
+        "Max Turbidity": "100"
+    },
+    "Temperature Thresholds": {
+        "Min Temperature": "50",
+        "Low Temperature": "60",
+        "Mid Temperature": "75",
+        "Max Temperature": "90"
+    }
+}
