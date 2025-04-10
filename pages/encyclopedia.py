@@ -243,7 +243,7 @@ def open_edit_species_form(s, results):
             )
 
             # Button to delete species
-            ui.button("Delete Species", on_click=lambda: delete_species(
+            ui.button("Delete Species", icon='delete_forever', on_click=lambda: delete_species(
                 species,
                 results,
                 edit_species_form
