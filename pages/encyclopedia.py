@@ -158,6 +158,19 @@ def add_custom_species(name, species_name, description, tolerance_levels, image_
     # Close the add custom species form
     add_species_form.close()
 
+# Function to delete species
+
+
+def delete_species(species, results, edit_species_form):
+    global species_data
+    species_data.remove(species)
+    with open(species_data_path, 'w', encoding='utf-8') as file:
+        json.dump(species_data, file, ensure_ascii=False, indent=4)
+    display_species(species_data, results)
+    edit_species_form.close()
+    ui.notify(
+        f"Deleted {species['name']} from the encyclopedia!", type="positive")
+
 
 def open_edit_species_form(s, results):
     # Populate the input fields with the existing data
@@ -227,6 +240,15 @@ def open_edit_species_form(s, results):
                 edit_species_form
             )).classes(
                 "mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            )
+
+            # Button to delete species
+            ui.button("Delete Species", on_click=lambda: delete_species(
+                species,
+                results,
+                edit_species_form
+            )).classes(
+                "mb-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
             )
     edit_species_form.open()
 
