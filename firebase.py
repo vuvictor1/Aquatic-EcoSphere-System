@@ -1,6 +1,6 @@
 # Authors: Victor Vu and Jordan Morris
 # File: firebase.py
-# Description: Firebase push notification system.
+# Description: Expo push notification system.
 # Copyright (C) 2025 Victor V. Vu and Jordan Morris
 # License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
 from nicegui import ui
