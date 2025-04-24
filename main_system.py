@@ -16,6 +16,7 @@ from pages.thresholds import thresholds_page, generate_default_settings
 from pages.reminders import reminders_page
 from pages.predictions import predictions_page
 from pages.recommend import recommend_page
+from firebase import notifications_page
 
 # Initialize global variables
 connection = create_connection()  # create a database connection
@@ -129,6 +130,12 @@ def home_page():  # Home page function
             ):
                 ui.label(card_type).classes("text-white text-base")
                 ui.label(card_label).classes("text-white text-base")
+
+    with ui.row().classes("justify-center w-full mt-2"): # TEMP only to test noftifications -------------------------------
+        ui.link("Go to Notifications Page", "/notifications").classes(
+            "text-white text-2xl no-underline mb-2 md:mb-0"
+        )
+
     eco_footer()  # call eco_footer function
     ui.timer(290, lambda: update_ui(labels))  # update ui every 290s
 
