@@ -3,74 +3,17 @@
 // Description: Mobile app for Aquatic EcoSphere web app.
 // Copyright (C) 2025 Victor V. Vu and Jordan Morris
 // License: GNU GPL v3 - See https://www.gnu.org/licenses/gpl-3.0.en.html
-import React, { useEffect, useRef } from 'react';
-import { SafeAreaView, StyleSheet, View, Platform, Alert } from 'react-native';
+import React from 'react';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
-import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
-import Constants from 'expo-constants';
 
-const App = () => {
-  const notificationListener = useRef();
-  const responseListener = useRef();
+const App = () => { // App component
 
-  useEffect(() => {
-    // Request permissions for notifications
-    const registerForPushNotificationsAsync = async () => {
-      if (Constants.isDevice) {
-        const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-        let finalStatus = existingStatus;
-
-        if (existingStatus !== 'granted') {
-          const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-          finalStatus = status;
-        }
-
-        if (finalStatus !== 'granted') {
-          Alert.alert('Failed to get push token for push notification!');
-          return;
-        }
-
-        const token = (await Notifications.getExpoPushTokenAsync()).data;
-        console.log('Expo Push Token:', token);
-        // You can send this token to your server to send push notifications
-      } else {
-        Alert.alert('Must use physical device for Push Notifications');
-      }
-
-      if (Platform.OS === 'android') {
-        Notifications.setNotificationChannelAsync('default', {
-          name: 'default',
-          importance: Notifications.AndroidImportance.MAX,
-          vibrationPattern: [0, 250, 250, 250],
-          lightColor: '#FF231F7C',
-        });
-      }
-    };
-
-    registerForPushNotificationsAsync();
-
-    // Listen for incoming notifications
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      console.log('Notification Received:', notification);
-    });
-
-    // Handle notification responses
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log('Notification Response:', response);
-    });
-
-    return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
-
-  return (
-    <SafeAreaView style={styles.safeArea}>
+  return ( // Uses SafeAreaView to avoid blocking front camera and other sensors
+    <SafeAreaView style={styles.safeArea}> 
       <View style={styles.container}>
-        <WebView
-          source={{ uri: 'https://aquatic-eco.up.railway.app/' }}
+        <WebView // WebView component to display the web app
+          source={{ uri: 'https://aquatic-eco.up.railway.app/' }} // use web app URL
           style={styles.webview}
           javaScriptEnabled={true}
           domStorageEnabled={true}
@@ -83,18 +26,18 @@ const App = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ // Set styles
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff', // set background color for the safe area
   },
   container: {
     flex: 1,
-    marginTop: 35,
+    marginTop: 35, // add vertical margin to avoid edges
   },
   webview: {
     flex: 1,
   },
 });
 
-export default App;
+export default App; // export App component
