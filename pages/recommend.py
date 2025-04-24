@@ -84,36 +84,36 @@ def recommend_page():  # Function to display the recommend page
             tds_value = data["total dissolved solids"]["value"]
             if tds_value < float(tds_references["Low TDS"]):
                 tds_label.set_text(
-                    f"TDS: {tds_value:.2f} ppm - Too Low, consider adding minerals."
+                    f"TDS: {tds_value:.2f} ppm - Too Low. Consider adding minerals like calcium or magnesium which are present in tap water."
                 )
             elif tds_value < float(tds_references["Mid TDS"]):
                 tds_label.set_text(f"TDS: {tds_value:.2f} ppm - Optimal range.")
             elif tds_value <= float(tds_references["Max TDS"]):
                 tds_label.set_text(
-                    f"TDS: {tds_value:.2f} ppm - High, consider diluting."
+                    f"TDS: {tds_value:.2f} ppm - High. Consider performing a partial water change."
                 )
             else:
                 tds_label.set_text(
-                    f"TDS: {tds_value:.2f} ppm - Too High, immediate action needed!"
+                    f"TDS: {tds_value:.2f} ppm - Too High! Immediate action needed. Perform a large water change."
                 )
 
             # Turbidity Recommendations
             turbidity_value = data["turbidity"]["value"]
             if turbidity_value < float(turbidity_references["Low Turbidity"]):
                 turbidity_label.set_text(
-                    f"Turbidity: {turbidity_value:.2f} NTU - Clear water."
+                    f"Turbidity: {turbidity_value:.2f} NTU - Clear water. No action needed."
                 )
             elif turbidity_value < float(turbidity_references["Mid Turbidity"]):
                 turbidity_label.set_text(
-                    f"Turbidity: {turbidity_value:.2f} NTU - Slightly cloudy."
+                    f"Turbidity: {turbidity_value:.2f} NTU - Slightly cloudy. Be careful with overfeeding."
                 )
             elif turbidity_value <= float(turbidity_references["Max Turbidity"]):
                 turbidity_label.set_text(
-                    f"Turbidity: {turbidity_value:.2f} NTU - Cloudy, consider filtration."
+                    f"Turbidity: {turbidity_value:.2f} NTU - Cloudy. Consider cleaning your filter."
                 )
             else:
                 turbidity_label.set_text(
-                    f"Turbidity: {turbidity_value:.2f} NTU - Very cloudy, immediate action needed!"
+                    f"Turbidity: {turbidity_value:.2f} NTU - Very cloudy! Immediate action needed! Perform a large water change."
                 )
 
             # Temperature Recommendations
@@ -128,7 +128,7 @@ def recommend_page():  # Function to display the recommend page
                 )
             elif temperature_value <= float(input_fields[3][1]):
                 temperature_label.set_text(
-                    f"Temperature: {temperature_value:.2f} °F - Warm, monitor closely."
+                    f"Temperature: {temperature_value:.2f} °F - Warm. Monitor closely."
                 )
             else:
                 temperature_label.set_text(
