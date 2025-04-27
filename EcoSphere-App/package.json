@@ -13,7 +13,6 @@
     "expo": "~52.0.35",
     "expo-constants": "^17.0.8",
     "expo-notifications": "^0.29.14",
-    "expo-permissions": "^14.4.0",
     "react": "18.3.1",
     "react-native": "0.76.9",
     "react-native-webview": "13.12.5"
