@@ -7,7 +7,6 @@ import React, { useEffect, useRef } from 'react';
 import { SafeAreaView, StyleSheet, View, Platform, Alert } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 
 const App = () => {
@@ -18,11 +17,11 @@ const App = () => {
     // Request permissions for notifications
     const registerForPushNotificationsAsync = async () => {
       if (Constants.isDevice) {
-        const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
         let finalStatus = existingStatus;
 
         if (existingStatus !== 'granted') {
-          const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+          const { status } = await Notifications.requestPermissionsAsync();
           finalStatus = status;
         }
 
@@ -33,7 +32,7 @@ const App = () => {
 
         const token = (await Notifications.getExpoPushTokenAsync()).data;
         console.log('Expo Push Token:', token);
-        // You can send this token to your server to send push notifications
+        // We can send this token to our server for sending push notifications
       } else {
         Alert.alert('Must use physical device for Push Notifications');
       }
