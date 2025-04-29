@@ -22,7 +22,7 @@ species_data_path = os.path.join(parent_dir_path, 'data', 'species_data.json')
 common_input_props = 'label-color="white" input-class="text-white"'
 
 
-with open(species_data_path, 'r') as file:
+with open(species_data_path, 'r', encoding='utf-8') as file:
     species_data = json.load(file)
 
 
@@ -106,8 +106,10 @@ def add_custom_species(name, species_name, description, tolerance_levels, image_
 
     try:
         result = urllib.parse.urlparse(image_url)
+        print("Image changed")
         if not all([result.scheme, result.netloc]):
             image_url = PLACEHOLDER_URL
+            print("Image is Placeholder again")
 
         response = requests.head(image_url)
         if response.status_code != 200:
@@ -116,8 +118,20 @@ def add_custom_species(name, species_name, description, tolerance_levels, image_
         image_url = PLACEHOLDER_URL
 
     # Check if a species with the provided name already exists
-    existing_species = next((species for species in species_data if species.get(
-        "species_name") == species_name or species.get("name") == name), None)
+    existing_species = next(
+        (species for species in species_data if
+         species.get("name") == name or (
+             species_name and species.get("species_name") == species_name)),
+        None
+    )
+
+    # Debugging print statements
+    print(
+        f"Checking for existing species with name: '{name}' or species_name: '{species_name}'")
+    if existing_species:
+        print(f"Found existing species: {existing_species}")
+    else:
+        print("No existing species found.")
 
     tolerance_levels_dict = {}
     for tolerance_level in tolerance_levels:
@@ -226,7 +240,11 @@ def open_edit_species_form(s, results):
             )
 
             image_url_input = ui.input(
-                label="Image URL:").props(common_input_props)
+                label="Image URL:",
+                value=species.get("image_url", "https://placehold.co/120"),
+                validation={
+                    "URL needs to originally start with http or https": lambda value: value.startswith("http")}
+            ).props(common_input_props)
 
             # Button to add more tolerance levels
             ui.button("Finish Editing Species", on_click=lambda: add_custom_species(
@@ -327,7 +345,11 @@ def encyclopedia_page() -> None:
             )
 
             image_url_input = ui.input(
-                label="Image URL:").props(common_input_props)
+                label="Image URL:",
+                value="https://placehold.co/120",
+                validation={
+                    "URL needs to originally start with http or https": lambda value: value.startswith("http")}
+            ).props(common_input_props)
 
             # Button to add more tolerance levels
             ui.button("Submit Species", on_click=lambda: add_custom_species(
