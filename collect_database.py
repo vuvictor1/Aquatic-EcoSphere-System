@@ -45,7 +45,7 @@ connection = create_connection() # create a connection object
 def get_latest_data():  # Fetch latest sensor data for each type
     conn = get_connection()
     with conn.cursor() as cursor:  # Create a cursor object
-        cursor.execute("SET time_zone = '-08:00';")  # set timezone to PST
+        cursor.execute("SET time_zone = '-09:00';")  # set timezone to PST (-1/2 hrs for daylight savings)
         # Execute a query to fetch data
         cursor.execute("""
             SELECT sd.sensor_type, sd.value, sd.timestamp
