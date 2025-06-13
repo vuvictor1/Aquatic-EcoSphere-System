@@ -9,5 +9,5 @@ PyMySQL==1.1.1
 python-dotenv==1.1.0
 Requests==2.32.4
 scikit_learn==1.7.0
-starlette==0.47.0
+starlette==0.46.0
 w1thermsensor==2.3.0
